@@ -39,7 +39,7 @@ public interface UserMapper {
      * @mbg.generated Fri Jun 14 08:00:35 CST 2019
      */
    // int insert(User record);
-    @Insert("insert into user(name,account_id,token,gmt_create,gmt_modified) value(#{name},#{accountId},#{token},#{gmtCreate},#{gmtModified})")
+    @Insert("insert into user(name,account_id,token,gmt_create,gmt_modified,avatar_url) value(#{name},#{accountId},#{token},#{gmtCreate},#{gmtModified},#{avatarUrl})")
     void insert(User user);
 
 

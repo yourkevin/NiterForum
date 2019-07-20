@@ -1,12 +1,15 @@
 package cc.ikevin.community.dto;
 
+import lombok.Data;
+
+@Data
 public class GithubUser {
 
     private String name;
     private Long id;
     private String bio;
     private String avatarUrl;
-
+/*
     public String getName() {
         return name;
     }
@@ -37,5 +40,5 @@ public class GithubUser {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
-    }
+    }*/
 }
