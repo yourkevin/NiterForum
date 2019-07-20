@@ -112,5 +112,8 @@ public interface UserMapper {
     @Select("Select * from user where token = #{token}")
     User findByToken(@Param("token") String token);
 
+    @Select("Select * from user where id = #{id}")
+    User findById(@Param("id") Long id);
+
 }
 

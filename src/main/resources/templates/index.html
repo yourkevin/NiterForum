@@ -5,7 +5,7 @@
     <title>凯文社区</title>
     <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
-
+    <link rel="stylesheet" href="css/community.css">
     <script src="http://code.jquery.com/jquery-latest.js"></script>
 
     <!-- 可选的 Bootstrap 主题文件（一般不用引入）
@@ -74,6 +74,43 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
+
+
+<div class="container-fluid main">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 col-xs-12">
+            <h2><span class="glyphicon glyphicon-list" aria-hidden="true"></span> 发现</h2>
+            <hr>
+            <div class="media" th:each="question : ${questions}">
+                <div class="media-left media-middle">
+                    <a href="#">
+                        <img class="media-object img-rounded"
+                             th:src="${question.user.avatarUrl}"
+                             th:alt="${question.user.name}">
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading"><a th:href="@{'/question/'+ ${question.id}}" th:text="${question.title}"></a></h4>
+                    <span class="text-desc">
+                        <span th:text="${question.commentCount}"></span> 个回复 •
+                        <span th:text="${question.viewCount}"></span> 次浏览 •
+                        <span th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></span> 更新
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-12 col-xs-12">
+            <h3>问题发起指南</h3>
+            • 问题标题: 请用精简的语言描述您发布的问题，不超过25字 <br>
+            • 问题补充: 详细补充您的问题内容，并确保问题描述清晰直观, 并提供一些相关的资料<br>
+            • 选择标签: 选择一个或者多个合适的标签，用逗号隔开，每个标签不超过10个字<br>
+        </div>
+    </div>
+</div>
+
+
+
+
 
 
 </body>
