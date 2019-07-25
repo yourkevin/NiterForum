@@ -33,7 +33,7 @@
             <div class="col-lg-12 col-md-12 col-xs-12" th:text="${question.description}"></div>
             <hr class="col-lg-12 col-md-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-xs-12">
-                <a class="community-menu" th:href="@{'/publish/'+${question.id}}">
+                <a class="community-menu" th:href="@{'/publish/'+${question.id}}" th:if="${session.user!=null&&session.user.id == question.creator}">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true">编辑</span>
                 </a>
             </div>

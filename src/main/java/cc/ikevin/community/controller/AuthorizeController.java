@@ -2,9 +2,9 @@ package cc.ikevin.community.controller;
 
 import cc.ikevin.community.dto.AccessTokenDTO;
 import cc.ikevin.community.dto.GithubUser;
-import cc.ikevin.community.mapper.UserMapper;
 import cc.ikevin.community.model.User;
 import cc.ikevin.community.provider.GithubProvider;
+import cc.ikevin.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -30,8 +30,9 @@ public class AuthorizeController {
     @Value("${github.redirect.uri}")
     private String redirectUri;
 
+
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
@@ -54,12 +55,12 @@ public class AuthorizeController {
             user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
+//            user.setGmtCreate(System.currentTimeMillis());
+//            user.setGmtModified(user.getGmtCreate());
             user.setAvatarUrl(githubUser.getAvatarUrl());
-            //userService.createOrUpdate(user);
+            userService.createOrUpdate(user);
             response.addCookie(new Cookie("token", token));
-           userMapper.insert(user);
+          // userMapper.insert(user);
            request.getSession().setAttribute("user",githubUser);
             return "redirect:/";
         } else {
@@ -67,6 +68,16 @@ public class AuthorizeController {
             return "redirect:/";
         }
        //return "index";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response) {
+        request.getSession().removeAttribute("user");
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/";
     }
 
 }

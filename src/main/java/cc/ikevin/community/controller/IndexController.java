@@ -1,7 +1,6 @@
 package cc.ikevin.community.controller;
 
 import cc.ikevin.community.dto.PaginationDTO;
-import cc.ikevin.community.mapper.UserMapper;
 import cc.ikevin.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,8 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class IndexController {
 
-    @Autowired
-    private UserMapper userMapper;
     @Autowired
     private QuestionService questionService;
 
