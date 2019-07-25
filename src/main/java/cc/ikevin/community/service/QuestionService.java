@@ -90,4 +90,16 @@ public class QuestionService {
         return paginationDTO;
 
     }
+
+    public QuestionDTO getById(Long id) {
+        Question question = questionMapper.selectByPrimaryKey(id);
+      /*  if (question == null) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }*/
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(question, questionDTO);
+        User user = userMapper.findById(question.getCreator());
+        questionDTO.setUser(user);
+        return questionDTO;
+    }
 }

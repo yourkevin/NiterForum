@@ -20,7 +20,7 @@ public class PaginationDTO {
         this.totalPage = totalPage;
         this.page = page;
 
-        pages.add(page);
+        if(totalPage!=0) pages.add(page);
         for (int i = 1; i <= 3; i++) {//显示前后各三页
             if (page - i > 0) {
                 pages.add(0, page - i);//一直往前加
@@ -39,21 +39,21 @@ public class PaginationDTO {
         }
 
         // 是否展示下一页
-        if (page == totalPage) {
+        if (page == totalPage||totalPage==0) {
             showNext = false;
         } else {
             showNext = true;
         }
 
         // 是否展示第一页
-        if (pages.contains(1)) {
+        if (pages.contains(1)||totalPage==0) {
             showFirstPage = false;
         } else {
             showFirstPage = true;
         }
 
         // 是否展示最后一页
-        if (pages.contains(totalPage)) {
+        if (pages.contains(totalPage)||totalPage==0) {
             showEndPage = false;
         } else {
             showEndPage = true;
