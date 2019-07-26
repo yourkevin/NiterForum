@@ -2,8 +2,11 @@ package cc.ikevin.community.service;
 
 import cc.ikevin.community.mapper.UserMapper;
 import cc.ikevin.community.model.User;
+import cc.ikevin.community.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -11,12 +14,12 @@ public class UserService {
     private UserMapper userMapper;
 
     public void createOrUpdate(User user) {
-        /*UserExample userExample = new UserExample();
+        UserExample userExample = new UserExample();
         userExample.createCriteria()
                 .andAccountIdEqualTo(user.getAccountId());
-        List<User> users = userMapper.selectByExample(userExample);*/
-        User dbUser = userMapper.findByAccountId(user.getAccountId());
-       /* if (users.size() == 0) {
+        List<User> users = userMapper.selectByExample(userExample);
+        //User dbUser = userMapper.findByAccountId(user.getAccountId());
+       if (users.size() == 0) {
             // 插入
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
@@ -33,8 +36,8 @@ public class UserService {
             example.createCriteria()
                     .andIdEqualTo(dbUser.getId());
             userMapper.updateByExampleSelective(updateUser, example);
-        }*/
-       if(dbUser==null){
+        }
+    /*   if(dbUser==null){
            //插入
            user.setGmtCreate(System.currentTimeMillis());
            user.setGmtModified(user.getGmtCreate());
@@ -48,6 +51,6 @@ public class UserService {
            dbUser.setName(user.getName());
            dbUser.setToken(user.getToken());
            userMapper.update(dbUser);
-       }
+       }*/
     }
 }
