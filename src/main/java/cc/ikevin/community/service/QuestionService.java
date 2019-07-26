@@ -2,6 +2,8 @@ package cc.ikevin.community.service;
 
 import cc.ikevin.community.dto.PaginationDTO;
 import cc.ikevin.community.dto.QuestionDTO;
+import cc.ikevin.community.exception.CustomizeErrorCode;
+import cc.ikevin.community.exception.CustomizeException;
 import cc.ikevin.community.mapper.QuestionMapper;
 import cc.ikevin.community.mapper.UserMapper;
 import cc.ikevin.community.model.Question;
@@ -104,9 +106,9 @@ public class QuestionService {
 
     public QuestionDTO getById(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
-      /*  if (question == null) {
+        if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
-        }*/
+        }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question, questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -142,6 +144,9 @@ public class QuestionService {
             example.createCriteria()
                     .andIdEqualTo(question.getId());
             int updated = questionMapper.updateByExampleSelective(question, example);
+            if (updated != 1) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
     }
 }

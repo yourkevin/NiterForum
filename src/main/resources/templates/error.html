@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>出错啦~凯文社区</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/community.css">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入）
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+     -->
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:insert="~{navigation :: nav}"></div>
+
+
+
+<div class="container-fluid main">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 col-xs-12">
+            <h2><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span> 出错啦</h2>
+            <hr>
+            <div class="jumbotron">
+                <h1 th:text="${errorCode}"></h1>
+                <p th:text="${message}">服务器太热啦，要不然稍等再来试试</p>
+                <p><a class="btn btn-primary btn-lg" href="/" role="button">回到主页</a></p>
+            </div>
+
+        </div>
+        <div class="col-lg-3 col-md-12 col-xs-12">
+            <h3>获取帮助</h3>
+            • 问题标题: 请用精简的语言描述您发布的问题，不超过25字 <br>
+            • 问题补充: 详细补充您的问题内容，并确保问题描述清晰直观, 并提供一些相关的资料<br>
+            <hr>
+            • 公益404: <a href="https://ikevin.cc/404.html">您访问的页面可能找不到了，但我们可以一起帮他们回家！</a><br>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
