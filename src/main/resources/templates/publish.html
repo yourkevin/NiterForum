@@ -4,15 +4,15 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>发布-凯文社区</title>
     <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/community.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/community.css">
     <script src="http://code.jquery.com/jquery-latest.js"></script>
 
     <!-- 可选的 Bootstrap 主题文件（一般不用引入）
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
      -->
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -24,7 +24,8 @@
         <div class="col-lg-9 col-md-12 col-xs-12">
             <h2><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 发起</h2>
             <hr>
-            <form action="publish" method="post">
+            <form action="/publish" method="post">
+                <input type="hidden" name="id" th:value="${id}">
             <div class="input-group">
                 <span class="input-group-addon" id="sizing-addon2">文章标题</span>
                 <input type="text" id="title" name="title" class="form-control" placeholder="简单扼要的标题" aria-describedby="sizing-addon1" th:value="${title}">

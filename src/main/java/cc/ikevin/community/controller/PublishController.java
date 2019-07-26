@@ -1,13 +1,14 @@
 package cc.ikevin.community.controller;
 
-import cc.ikevin.community.mapper.QuestionMapper;
-import cc.ikevin.community.mapper.UserMapper;
+import cc.ikevin.community.dto.QuestionDTO;
 import cc.ikevin.community.model.Question;
 import cc.ikevin.community.model.User;
+import cc.ikevin.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -16,9 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class PublishController {
     @Autowired
-    private QuestionMapper questionMapper;
-    @Autowired
-    private UserMapper userMapper;
+    private QuestionService questionService;
+
     @GetMapping("/publish")
     public String publish() {
         return "publish";
@@ -28,6 +28,7 @@ public class PublishController {
             @RequestParam("title") String title,
             @RequestParam("description") String description,
             @RequestParam("tag") String tag,
+            @RequestParam("id") Long id,
             HttpServletRequest request,
             Model model
     ){
@@ -72,11 +73,25 @@ public class PublishController {
         question.setDescription(description);
         question.setTag(tag);
         question.setCreator(user.getId());
-        question.setGmtCreate(System.currentTimeMillis());
-        question.setGmtModified(question.getGmtCreate());
-        questionMapper.creat(question);
+        question.setId(id);
+        //question.setGmtCreate(System.currentTimeMillis());
+        //question.setGmtModified(question.getGmtCreate());
+       // questionMapper.creat(question);
+        questionService.createOrUpdate(question);
         return "redirect:/";
     }
+
+    @GetMapping("publish/{id}")
+     public String edit(@PathVariable(name = "id") Long id,
+                        Model model){
+        QuestionDTO question = questionService.getById(id);
+        model.addAttribute("title", question.getTitle());
+        model.addAttribute("description", question.getDescription());
+        model.addAttribute("tag", question.getTag());
+        model.addAttribute("id", question.getId());
+        //model.addAttribute("tags", TagCache.get());
+        return "publish";
+     }
 
 
 }
