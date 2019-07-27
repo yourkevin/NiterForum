@@ -32,6 +32,13 @@ public class ResultDTO<T> {
         return resultDTO;
     }
 
+    public static ResultDTO okOf(String message) {
+        ResultDTO resultDTO = new ResultDTO();
+        resultDTO.setCode(200);
+        resultDTO.setMessage(message);
+        return resultDTO;
+    }
+
     public static <T> ResultDTO okOf(T t) {
         ResultDTO resultDTO = new ResultDTO();
         resultDTO.setCode(200);

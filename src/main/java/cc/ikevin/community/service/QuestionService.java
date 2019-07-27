@@ -100,8 +100,7 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
         paginationDTO.setData(questionDTOList);
-
-
+        paginationDTO.setTotalCount(totalCount);
         paginationDTO.setPagination(totalPage,page);
         return paginationDTO;
 

@@ -84,6 +84,7 @@
             <div class="list-group section">
                 <a href="/profile/questions" th:class="${section=='questions'}?'list-group-item active':'list-group-item'">
                     我的问题
+                    <span class="badge" th:text="${pagination.totalCount}"></span>
                 </a>
                 <a href="/profile/replies" th:class="${section=='replies'}?'list-group-item active':'list-group-item'">最新回复
                     <span class="badge" th:text="${section=='replies'}?'':'10'"></span>
