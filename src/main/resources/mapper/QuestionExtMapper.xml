@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.ikevin.community.mapper.QuestionExtMapper">
+    <resultMap id="BaseResultMap" type="cc.ikevin.community.model.Question">
+        <id column="ID" jdbcType="INTEGER" property="id"/>
+        <result column="TITLE" jdbcType="VARCHAR" property="title"/>
+        <result column="GMT_CREATE" jdbcType="BIGINT" property="gmtCreate"/>
+        <result column="GMT_MODIFIED" jdbcType="BIGINT" property="gmtModified"/>
+        <result column="CREATOR" jdbcType="INTEGER" property="creator"/>
+        <result column="COMMENT_COUNT" jdbcType="INTEGER" property="commentCount"/>
+        <result column="VIEW_COUNT" jdbcType="INTEGER" property="viewCount"/>
+        <result column="LIKE_COUNT" jdbcType="INTEGER" property="likeCount"/>
+        <result column="TAG" jdbcType="VARCHAR" property="tag"/>
+    </resultMap>
+
+    <update id="incView" parameterType="cc.ikevin.community.model.Question">
+    update question
+    set
+    VIEW_COUNT = VIEW_COUNT + #{viewCount,jdbcType=INTEGER}
+    where id = #{id}
+    </update>
+
+    <update id="incCommentCount" parameterType="cc.ikevin.community.model.Question">
+    update question
+    set
+    COMMENT_COUNT = COMMENT_COUNT + #{commentCount,jdbcType=INTEGER}
+    where id = #{id}
+    </update>
+
+    <select id="selectRelated" parameterType="cc.ikevin.community.model.Question" resultMap="BaseResultMap">
+        select * from question where id != #{id} and tag regexp #{tag}
+    </select>
+<!--
+    <select id="countBySearch" parameterType="cc.ikevin.community.dto.QuestionQueryDTO"
+            resultType="java.lang.Integer">
+        select count(*) from question
+        <where>
+            <if test="search != null">
+                and title regexp #{search}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBySearch" parameterType="cc.ikevin.community.dto.QuestionQueryDTO"
+            resultMap="BaseResultMap">
+        select * from question
+        <where>
+            <if test="search != null">
+                and title regexp #{search}
+            </if>
+        </where>
+        order by gmt_create desc limit #{page},#{size}
+    </select>
+    -->
+</mapper>

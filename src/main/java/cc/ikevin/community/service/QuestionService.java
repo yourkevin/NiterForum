@@ -4,6 +4,7 @@ import cc.ikevin.community.dto.PaginationDTO;
 import cc.ikevin.community.dto.QuestionDTO;
 import cc.ikevin.community.exception.CustomizeErrorCode;
 import cc.ikevin.community.exception.CustomizeException;
+import cc.ikevin.community.mapper.QuestionExtMapper;
 import cc.ikevin.community.mapper.QuestionMapper;
 import cc.ikevin.community.mapper.UserMapper;
 import cc.ikevin.community.model.Question;
@@ -23,6 +24,8 @@ public class QuestionService {
     private UserMapper userMapper;
     @Autowired
     private QuestionMapper questionMapper;
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
 
     public PaginationDTO list(Integer page, Integer size) {
         //
@@ -148,5 +151,13 @@ public class QuestionService {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
         }
+    }
+
+    public void incView(Long id) {
+        Question question = new Question();
+        question.setId(id);
+        question.setViewCount(1);
+        questionExtMapper.incView(question);
+
     }
 }
