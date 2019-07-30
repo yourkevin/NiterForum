@@ -7,13 +7,25 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/community.css">
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-
+    <script src="https://cdn.bootcss.com/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!--link href="https://cdn.bootcss.com/flat-ui/2.3.0/css/flat-ui.min.css" rel="stylesheet"-->
     <!-- 可选的 Bootstrap 主题文件（一般不用引入）
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
      -->
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="js/bootstrap.min.js"></script>
+
 </head>
+<script type="application/javascript">
+    window.onload = function () {
+        var closable = window.localStorage.getItem("closable");
+        if (closable == "true") {
+            window.close();
+            window.localStorage.removeItem("closable");
+            window.localStorage.setItem("loginState", true);
+        }
+    }
+</script>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
 

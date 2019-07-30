@@ -1,7 +1,9 @@
 package cc.ikevin.community.controller;
 
 import cc.ikevin.community.dto.CommentCreateDTO;
+import cc.ikevin.community.dto.CommentDTO;
 import cc.ikevin.community.dto.ResultDTO;
+import cc.ikevin.community.enums.CommentTypeEnum;
 import cc.ikevin.community.exception.CustomizeErrorCode;
 import cc.ikevin.community.model.Comment;
 import cc.ikevin.community.model.User;
@@ -9,12 +11,10 @@ import cc.ikevin.community.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 public class CommentController {
@@ -49,11 +49,11 @@ public class CommentController {
 
     }
 
-/*
+
     @ResponseBody
     @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
     public ResultDTO<List<CommentDTO>> comments(@PathVariable(name = "id") Long id) {
         List<CommentDTO> commentDTOS = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
         return ResultDTO.okOf(commentDTOS);
-    }*/
+    }
 }

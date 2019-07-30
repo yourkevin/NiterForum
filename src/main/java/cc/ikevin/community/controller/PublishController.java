@@ -1,6 +1,8 @@
 package cc.ikevin.community.controller;
 
 import cc.ikevin.community.dto.QuestionDTO;
+import cc.ikevin.community.exception.CustomizeErrorCode;
+import cc.ikevin.community.exception.CustomizeException;
 import cc.ikevin.community.model.Question;
 import cc.ikevin.community.model.User;
 import cc.ikevin.community.service.QuestionService;
@@ -83,8 +85,13 @@ public class PublishController {
 
     @GetMapping("publish/{id}")
      public String edit(@PathVariable(name = "id") Long id,
-                        Model model){
+                        Model model,
+                        HttpServletRequest request){
         QuestionDTO question = questionService.getById(id);
+        User user = (User)request.getSession().getAttribute("user");
+        if (question.getCreator() != user.getId() ){
+            throw new CustomizeException(CustomizeErrorCode.CAN_NOT_EDIT_QUESTION);
+        }
         model.addAttribute("title", question.getTitle());
         model.addAttribute("description", question.getDescription());
         model.addAttribute("tag", question.getTag());

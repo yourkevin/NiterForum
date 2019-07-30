@@ -1,18 +1,21 @@
 package cc.ikevin.community.service;
 
+import cc.ikevin.community.dto.CommentDTO;
 import cc.ikevin.community.enums.CommentTypeEnum;
 import cc.ikevin.community.exception.CustomizeErrorCode;
 import cc.ikevin.community.exception.CustomizeException;
-import cc.ikevin.community.mapper.CommentMapper;
-import cc.ikevin.community.mapper.QuestionExtMapper;
-import cc.ikevin.community.mapper.QuestionMapper;
-import cc.ikevin.community.mapper.UserMapper;
-import cc.ikevin.community.model.Comment;
-import cc.ikevin.community.model.Question;
-import cc.ikevin.community.model.User;
+import cc.ikevin.community.mapper.*;
+import cc.ikevin.community.model.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -29,9 +32,9 @@ public class CommentService {
     @Autowired
     private UserMapper userMapper;
 
-   /* @Autowired
+   @Autowired
     private CommentExtMapper commentExtMapper;
-
+ /*
     @Autowired
     private NotificationMapper notificationMapper;
 */
@@ -61,10 +64,10 @@ public class CommentService {
             commentMapper.insert(comment);
 
             // 增加评论数
-           /* Comment parentComment = new Comment();
+           Comment parentComment = new Comment();
             parentComment.setId(comment.getParentId());
             parentComment.setCommentCount(1);
-            commentExtMapper.incCommentCount(parentComment);*/
+            commentExtMapper.incCommentCount(parentComment);
 
             // 创建通知
           //  createNotify(comment, dbComment.getCommentator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
@@ -99,13 +102,13 @@ public class CommentService {
         notification.setOuterTitle(outerTitle);
         notificationMapper.insert(notification);
     }*/
-/*
+
     public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {
         CommentExample commentExample = new CommentExample();
         commentExample.createCriteria()
                 .andParentIdEqualTo(id)
                 .andTypeEqualTo(type.getType());
-        commentExample.setOrderByClause("gmt_create desc");
+        //commentExample.setOrderByClause("gmt_create desc");
         List<Comment> comments = commentMapper.selectByExample(commentExample);
 
         if (comments.size() == 0) {
@@ -134,5 +137,5 @@ public class CommentService {
         }).collect(Collectors.toList());
 
         return commentDTOS;
-    }*/
+    }
 }
