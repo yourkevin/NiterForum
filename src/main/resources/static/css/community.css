@@ -32,6 +32,38 @@ body{
     margin-top: 15px;
 }
 
+.question-title {
+    margin-top: 25px;
+}
+
+.question-tag {
+    margin-right: 5px;
+}
+
+.question-related {
+    line-height: 20px;
+    font-size: 12px;
+    margin-left: 0;
+    list-style: none;
+    padding-left: 0;
+}
+
+.question-wechat {
+    width: 100%;
+}
+
+.publish-tag-tab {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.publish-tag-tab .label-info {
+    white-space: normal;
+    margin: 5px 5px;
+    display: inline-block;
+}
+
 .community-menu{
     color: #999;
     font-size: 13px;
@@ -89,4 +121,9 @@ body{
 
 .menu .icon:hover {
     color: #499ef3;
+}
+
+.footer {
+    padding: 10px 25%;
+    color: #666;;
 }
