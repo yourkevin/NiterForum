@@ -1,11 +1,13 @@
 package cc.ikevin.community.controller;
 
+import cc.ikevin.community.cache.TagCache;
 import cc.ikevin.community.dto.QuestionDTO;
 import cc.ikevin.community.exception.CustomizeErrorCode;
 import cc.ikevin.community.exception.CustomizeException;
 import cc.ikevin.community.model.Question;
 import cc.ikevin.community.model.User;
 import cc.ikevin.community.service.QuestionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +24,8 @@ public class PublishController {
     private QuestionService questionService;
 
     @GetMapping("/publish")
-    public String publish() {
+    public String publish(Model model) {
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
     @PostMapping("/publish")
@@ -37,6 +40,14 @@ public class PublishController {
         model.addAttribute("title",title);
         model.addAttribute("description",description);
         model.addAttribute("tag",tag);
+        model.addAttribute("tags", TagCache.get());
+
+        User user = (User)request.getSession().getAttribute("user");
+        if(user==null) {
+            model.addAttribute("error","用户未登陆");
+            return "publish";
+        }
+
         if (title == null || title == "") {
             model.addAttribute("error", "标题不能为空");
             return "publish";
@@ -49,6 +60,13 @@ public class PublishController {
             model.addAttribute("error", "标签不能为空");
             return "publish";
         }
+//如果无需限制标签规范或者允许用户自定义标签，那么删掉下面这段代码就可以了
+        String invalid = TagCache.filterInvalid(tag);
+        if (StringUtils.isNotBlank(invalid)) {
+            model.addAttribute("error", "输入非法标签:" + invalid);
+            return "publish";
+        }
+
 
       /*  User user=null;
         Cookie[] cookies = request.getCookies();
@@ -64,11 +82,6 @@ public class PublishController {
                 }
             }
         }*/
-        User user = (User)request.getSession().getAttribute("user");
-        if(user==null) {
-            model.addAttribute("error","用户未登陆");
-            return "publish";
-        }
 
         Question question = new Question();
         question.setTitle(title);
@@ -96,7 +109,7 @@ public class PublishController {
         model.addAttribute("description", question.getDescription());
         model.addAttribute("tag", question.getTag());
         model.addAttribute("id", question.getId());
-        //model.addAttribute("tags", TagCache.get());
+        model.addAttribute("tags", TagCache.get());
         return "publish";
      }
 

@@ -7,12 +7,15 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/community.css">
     <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="https://cdn.bootcss.com/sweetalert/2.1.2/sweetalert.min.js"></script>
+
 
     <!-- 可选的 Bootstrap 主题文件（一般不用引入）
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
      -->
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/community.js"></script>
 </head>
 <body>
 
@@ -28,7 +31,10 @@
                 <input type="hidden" name="id" th:value="${id}">
             <div class="input-group">
                 <span class="input-group-addon" id="sizing-addon2">文章标题</span>
-                <input type="text" id="title" name="title" class="form-control" placeholder="简单扼要的标题" aria-describedby="sizing-addon1" th:value="${title}">
+                <input type="text" id="title" name="title" class="form-control"
+                       placeholder="简单扼要的标题" aria-describedby="sizing-addon1"
+                       th:value="${title}"
+                       autocomplete="off">
             </div>
                 <br>
             <div class="form-group" id="question-editor">
@@ -41,9 +47,35 @@
             </div>
             <div class="form-group" >
                     <label for="description">添加标签:</label>
-                <input type="text" name="tag" id="tag" class="form-control" placeholder="输入标签，以英文逗号,分割" aria-describedby="sizing-addon1" th:value="${tag}">
+                <input type="text" name="tag" id="tag" class="form-control"
+                       placeholder="输入标签，以英文逗号,分割" aria-describedby="sizing-addon1"
+                       th:value="${tag}" autocomplete="off"
+                       onclick="showSelectTag()">
+                <div id="select-tag" class="publish-tag-tab">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" th:each="selectCategory,selectCategoryStat: ${tags}"
+                            th:class="${selectCategoryStat.first ? 'active':''}">
+                            <a th:href="${'#'+selectCategory.categoryName}" aria-controls="home" role="tab"
+                               data-toggle="tab" th:text="${selectCategory.categoryName}"></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" th:id="${selectCategory.categoryName}"
+                             th:each="selectCategory: ${tags}"
+                             th:class="${selectCategoryStat.first ? 'active tab-pane':'tab-pane'}">
+                                <span>
+                                    <span class="label label-info" th:each="selectTag: ${selectCategory.tags}">
+                                    <span class="glyphicon glyphicon-tags" onclick="selectTag(this)"
+                                          th:data-tag="${selectTag}"
+                                          th:text="${' '+selectTag}">
+                                    </span>
+                                </span>
+                                </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <span class="alert alert-danger" th:if="${error!=null}" th:text="${error}"></span>
+            <span class="alert alert-danger" th:if="${error!=null}" th:text="${error}" id="error"></span>
             <button type="submit" class="btn btn-success btnpublish">发布</button>
             </form>
         </div>

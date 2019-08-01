@@ -62,6 +62,7 @@ body{
     white-space: normal;
     margin: 5px 5px;
     display: inline-block;
+    cursor: pointer;
 }
 
 .community-menu{
