@@ -24,7 +24,8 @@
         <div class="col-lg-9 col-md-12 col-xs-12">
             <h2><span class="glyphicon glyphicon-list" th:text="${sectionName}" aria-hidden="true"></span></h2>
             <hr>
-            <div class="media" th:each="question : ${pagination.data}">
+            <div class="col-lg-12 col-md-12 col-xs-12" th:if="${section == 'questions'}">
+             <div class="media" th:each="question : ${pagination.data}">
                 <div class="media-left media-middle">
                     <a href="#">
                         <img class="media-object img-rounded"
@@ -37,11 +38,14 @@
                     <span class="text-desc">
                         <span th:text="${question.commentCount}"></span> 个回复 •
                         <span th:text="${question.viewCount}"></span> 次浏览 •
-                        <span th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></span> 更新
+                        <span th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></span> 更新 •
+                        <a class="community-menu" th:href="@{'/publish/'+${question.id}}" th:if="${session.user!=null&&session.user.id == question.creator}">
+                           <span class="glyphicon glyphicon-edit" aria-hidden="true">编辑</span>
+                        </a>
                     </span>
                 </div>
             </div>
-            <div><!-- 分页展示 -->
+             <div><!-- 分页展示 -->
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         <li th:if="${pagination.showFirstPage}">
@@ -78,16 +82,33 @@
                     </ul>
                 </nav>
             </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'replies'}">
+                <div class="media" th:each="notification : ${pagination.data}">
+                    <div class="media-body">
+                        <p class="media-heading">
+                            <span th:text="${notification.notifierName +' 于 ' }"></span>
+                            <span th:text="${#dates.format(notification.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+                            <span th:text="${notification.typeName + ' '}"></span>
+                            <a th:href="@{'/notification/'+ ${notification.id}}"
+                               th:text="${notification.outerTitle}">
+                            </a>
+                            <span class="label label-success" th:if="${notification.status == 1}">已读</span>
+                            <span class="label label-danger" th:if="${notification.status == 0}">未读</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
 
         </div>
         <div class="col-lg-3 col-md-12 col-xs-12">
             <div class="list-group section">
                 <a href="/profile/questions" th:class="${section=='questions'}?'list-group-item active':'list-group-item'">
-                    我的问题
+                    我的提问
                     <span class="badge" th:text="${pagination.totalCount}"></span>
                 </a>
                 <a href="/profile/replies" th:class="${section=='replies'}?'list-group-item active':'list-group-item'">最新回复
-                    <span class="badge" th:text="${section=='replies'}?'':'10'"></span>
+                    <span class="badge" th:text="${session.unreadCount}"></span>
                 </a>
                 <a href="#" class="list-group-item">Morbi leo risus</a>
                 <a href="#" class="list-group-item">Porta ac consectetur ac</a>

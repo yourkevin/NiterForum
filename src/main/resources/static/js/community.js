@@ -1,9 +1,14 @@
 function post() {
     var questionId = $("#question_id").val();
     var content = $("#comment_content").val();
-   // console.log(questionId);
-   // console.log(content);
-    comment2target(questionId, 1, content);
+    if(content.length>1024)
+        swal({
+            title: "回复超过1024个字长!",
+            text: "你的回复字数为:"+content.length+"，请精简您的发言!",
+            icon: "warning",
+            button: "确认",
+        });
+    else comment2target(questionId, 1, content);
 }
 
 function comment2target(targetId, type, content) {
@@ -99,7 +104,14 @@ function comment2target(targetId, type, content) {
 function comment(e) {
     var commentId = e.getAttribute("data-id");
     var content = $("#input-" + commentId).val();
-    comment2target(commentId, 2, content);
+    if(content.length>1024)
+        swal({
+            title: "回复超过1024个字长!",
+            text: "你的回复字数为:"+content.length+"，请精简您的发言!",
+            icon: "warning",
+            button: "确认",
+        });
+    else comment2target(commentId, 2, content);
 }
 
 /**

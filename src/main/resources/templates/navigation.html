@@ -44,6 +44,11 @@
                 <li th:if="${session.user!=null}">
                     <a href="/publish">发布</a>
                 </li>
+                <li th:if="${session.user!=null}">
+                    <a href="/profile/replies">通知
+                        <span th:if="${session.unreadCount!=0}" class="badge" th:text="${session.unreadCount}"></span>
+                    </a>
+                </li>
                 <li th:if="${session.user==null}">
                     <a href="https://github.com/login/oauth/authorize?client_id=b6ecb208ce93f679a75a&redirect_uri=http://localhost:8887/callback&scope=user&state=1">登录</a>
                 </li>

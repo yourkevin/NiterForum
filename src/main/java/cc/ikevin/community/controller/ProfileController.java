@@ -1,8 +1,8 @@
 package cc.ikevin.community.controller;
 
 import cc.ikevin.community.dto.PaginationDTO;
-import cc.ikevin.community.mapper.UserMapper;
 import cc.ikevin.community.model.User;
+import cc.ikevin.community.service.NotificationService;
 import cc.ikevin.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +16,12 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class ProfileController {
 
-    @Autowired
-    private UserMapper userMapper;
+
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @GetMapping("/profile/{action}")
     public String profile(HttpServletRequest request,
@@ -48,16 +50,18 @@ public class ProfileController {
         }
 
         if("questions".equals(action)){
-            model.addAttribute("section","questions");
-            model.addAttribute("sectionName","我的提问");
+            model.addAttribute("section", "questions");
+            model.addAttribute("sectionName", "我的提问");
+            PaginationDTO pagination = questionService.listByUserId(user.getId(), page, size);
+            model.addAttribute("pagination",pagination);
         }
         if("replies".equals(action)){
-            model.addAttribute("section","replies");
-            model.addAttribute("sectionName","最新回复");
+            PaginationDTO paginationDTO = notificationService.list(user.getId(), page, size);
+            model.addAttribute("section", "replies");
+            model.addAttribute("pagination", paginationDTO);
+            model.addAttribute("sectionName", "最新回复");
         }
 
-        PaginationDTO pagination = questionService.listByUserId(user.getId(), page, size);
-        model.addAttribute("pagination",pagination);
         return "profile";
     }
 }
