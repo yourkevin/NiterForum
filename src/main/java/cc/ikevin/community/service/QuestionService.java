@@ -2,6 +2,7 @@ package cc.ikevin.community.service;
 
 import cc.ikevin.community.dto.PaginationDTO;
 import cc.ikevin.community.dto.QuestionDTO;
+import cc.ikevin.community.dto.QuestionQueryDTO;
 import cc.ikevin.community.exception.CustomizeErrorCode;
 import cc.ikevin.community.exception.CustomizeException;
 import cc.ikevin.community.mapper.QuestionExtMapper;
@@ -30,10 +31,19 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO list(String search, Integer page, Integer size) {
+
+        if (StringUtils.isNotBlank(search)) {
+            String[] tags = StringUtils.split(search, " ");
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+
+
         //
         Integer totalPage;
-        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
         } else {
@@ -46,10 +56,10 @@ public class QuestionService {
             page = totalPage;
         }
 
-        Integer offset = size * (page-1);
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.setOrderByClause("gmt_modified desc");
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample,new RowBounds(offset,size));
+        Integer offset = page < 1 ? 0 : size * (page - 1);
+        questionQueryDTO.setSize(size);
+        questionQueryDTO.setOffset(offset);
+        List<Question> questions = questionExtMapper.selectBySearch(questionQueryDTO);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         PaginationDTO paginationDTO = new PaginationDTO();
         for (Question question : questions) {

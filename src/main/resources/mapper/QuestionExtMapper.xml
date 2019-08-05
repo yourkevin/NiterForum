@@ -30,12 +30,12 @@
     <select id="selectRelated" parameterType="cc.ikevin.community.model.Question" resultMap="BaseResultMap">
         select * from question where id != #{id} and tag regexp #{tag}
     </select>
-<!--
+
     <select id="countBySearch" parameterType="cc.ikevin.community.dto.QuestionQueryDTO"
             resultType="java.lang.Integer">
         select count(*) from question
         <where>
-            <if test="search != null">
+            <if test="search != null and search != ''">
                 and title regexp #{search}
             </if>
         </where>
@@ -45,11 +45,11 @@
             resultMap="BaseResultMap">
         select * from question
         <where>
-            <if test="search != null">
+            <if test="search != null and search != ''">
                 and title regexp #{search}
             </if>
         </where>
-        order by gmt_create desc limit #{page},#{size}
+        order by gmt_create desc limit #{offset},#{size}
     </select>
-    -->
+
 </mapper>
