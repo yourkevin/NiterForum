@@ -9,7 +9,6 @@
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="https://cdn.bootcss.com/sweetalert/2.1.2/sweetalert.min.js"></script>
 
-
     <!-- 可选的 Bootstrap 主题文件（一般不用引入）
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
      -->
@@ -20,8 +19,6 @@
 <body>
 
 <div th:insert="~{navigation :: nav}"></div>
-
-
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-xs-12">
@@ -38,12 +35,16 @@
             </div>
                 <br>
             <div class="form-group" id="question-editor">
-                    <label for="description">问题补充 (必填，请参照右侧提示):</label>
-                    <textarea name="description" id="description"
-                              class="form-control"
-                              cols="30"
-                              rows="10"
-                              th:text="${description}"></textarea>
+                <label for="description">问题补充 (必填，请参照右侧提示):</label>
+                <div id="editor">
+                    <p id="descriptionP" th:text="${description}"></p>
+                </div>
+                <textarea name="description" id="description"
+                          class="form-control"
+                          cols="30"
+                          rows="10"
+                          style="display:none;"
+                         ></textarea>
             </div>
             <div class="form-group" >
                     <label for="description">添加标签:</label>
@@ -87,6 +88,36 @@
         </div>
     </div>
 </div>
-
 </body>
+
+<script type="text/javascript" src="https://unpkg.com/wangeditor@3.1.1/release/wangEditor.min.js"></script>
+<script type="text/javascript">
+    var E = window.wangEditor
+    var editor = new E('#editor')
+    editor.customConfig.colors = [
+        '#000000',
+        '#eeece0',
+        '#1c487f',
+        '#4d80bf',
+        '#ff0000',
+        '#00FF00',
+        '#7b5ba1',
+        '#46acc8',
+        '#f9963b',
+        '#ffffff'
+    ]
+    editor.customConfig.uploadImgServer = '/file/upload'  // 上传图片到服务器
+    editor.customConfig.uploadFileName = 'myFile';//设置文件上传的参数名称
+    var $description = $('#description')
+    editor.customConfig.onchange = function (html) {
+        // 监控变化，同步更新到 textarea
+        $description.val(html)
+    }
+    editor.create()
+    // 初始化 textarea 的值
+    $description.val(editor.txt.html());
+    var obj = document.getElementById("descriptionP");
+    //alert(obj.innerText);//这样就自动解析了
+    obj.innerHTML = obj.innerText;//这样重新设置html代码为解析后的格式
+</script>
 </html>
