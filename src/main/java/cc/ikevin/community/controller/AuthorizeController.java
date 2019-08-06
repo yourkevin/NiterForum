@@ -5,6 +5,7 @@ import cc.ikevin.community.dto.GithubUser;
 import cc.ikevin.community.model.User;
 import cc.ikevin.community.provider.GithubProvider;
 import cc.ikevin.community.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -15,7 +16,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
-
+@Slf4j
 @Controller
 public class AuthorizeController {
     @Autowired
@@ -65,7 +66,8 @@ public class AuthorizeController {
             return "redirect:/";
         } else {
             // 登录失败，重新登录
-            return "redirect:/";
+           log.error("callback get github error,{}", githubUser);
+           return "redirect:/";
         }
        //return "index";
     }

@@ -64,10 +64,12 @@ public class QCloudProvider {
             String etag = putObjectResult.getETag();
             //System.out.println(etag);
         } catch (CosServiceException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            log.error("upload error,{}", key, e);
             throw new CustomizeException(CustomizeErrorCode.FILE_UPLOAD_FAIL);
         } catch (CosClientException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            log.error("upload error,{}", key, e);
             throw new CustomizeException(CustomizeErrorCode.FILE_UPLOAD_FAIL);
         }
 
