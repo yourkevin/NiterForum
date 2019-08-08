@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>出错啦~凯文社区</title>
-    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <head th:insert="~{import :: head}"></head>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/community.css">
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
-
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    -->
     <!-- 可选的 Bootstrap 主题文件（一般不用引入）
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
      -->
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="/js/bootstrap.min.js"></script>
+
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>

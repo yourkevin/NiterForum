@@ -5,7 +5,7 @@ body{
 
 .main{
     background-color: white;
-    margin: 30px;
+    margin: 20px;
 }
 
 .btnpublish{
@@ -127,4 +127,8 @@ body{
 .footer {
     padding: 10px 25%;
     color: #666;;
+}
+
+.w-e-item img{
+    height:25px;
 }

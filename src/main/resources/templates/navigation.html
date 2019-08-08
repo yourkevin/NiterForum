@@ -50,7 +50,8 @@
                     </a>
                 </li>
                 <li th:if="${session.user==null}">
-                    <a href="https://github.com/login/oauth/authorize?client_id=b6ecb208ce93f679a75a&redirect_uri=http://localhost:8887/callback&scope=user&state=1">登录</a>
+                    <a th:href="@{https://github.com/login/oauth/authorize(client_id='b6ecb208ce93f679a75a',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">登录
+                    </a>
                 </li>
                 <li class="dropdown" th:if="${session.user!=null}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">

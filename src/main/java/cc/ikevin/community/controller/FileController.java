@@ -54,8 +54,8 @@ public class FileController {
                 contentType = multipartFile.getContentType();
                 filename = getFileName(contentType);
                 contentLength = multipartFile.getSize();
-                System.out.println("原始名字"+multipartFile.getOriginalFilename()+"类型："+multipartFile.getContentType()+"名字："+user.getId()+"/"+filename);
-                String url = qCloudProvider.upload(inputStream,contentType,user.getId()+"/"+filename,contentLength);
+                System.out.println("原始名字"+multipartFile.getOriginalFilename()+"类型："+multipartFile.getContentType()+"名字："+"upload/user/"+user.getId()+"/"+filename);
+                String url = qCloudProvider.upload(inputStream,contentType,"upload/user/"+user.getId()+"/"+filename,contentLength);
                 data[count] = url;
                 count++;
             }

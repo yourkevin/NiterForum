@@ -1,13 +1,10 @@
 package cc.ikevin.community.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import javax.servlet.MultipartConfigElement;
 
 @Configuration
 //@EnableWebMvc
@@ -25,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
     }
-
+/*
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
         //  单个数据大小
@@ -33,6 +30,6 @@ public class WebConfig implements WebMvcConfigurer {
         /// 总上传数据大小
         factory.setMaxRequestSize("102400KB");
         return factory.createMultipartConfig();
-    }
+    }*/
 
 }

@@ -2,13 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>凯文社区</title>
-    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <head th:insert="~{import :: head}"></head>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/community.css">
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/sweetalert/2.1.2/sweetalert.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    -->
     <!--link href="https://cdn.bootcss.com/flat-ui/2.3.0/css/flat-ui.min.css" rel="stylesheet"-->
 
     <!-- 可选的 Bootstrap 主题文件（一般不用引入）
@@ -58,32 +61,32 @@
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         <li th:if="${pagination.showFirstPage}">
-                            <a th:href="@{/(page=1,search=${search})}"
+                            <a th:href="@{/(page=1,search=${search},tag=${tag})}"
                                aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
 
                         <li th:if="${pagination.showPrevious}">
-                            <a th:href="@{/(page=${pagination.page - 1},search=${search})}">
+                            <a th:href="@{/(page=${pagination.page - 1},search=${search},tag=${tag})}">
                                 <span aria-hidden="true">&lt;</span>
                             </a>
                         </li>
 
                         <li th:each="page : ${pagination.pages}"
                             th:class="${pagination.page == page}? 'active' : ''">
-                            <a th:href="@{/(page=${page},search=${search})}"
+                            <a th:href="@{/(page=${page},search=${search},tag=${tag})}"
                                th:text="${page}"></a>
                         </li>
 
                         <li th:if="${pagination.showNext}">
-                            <a th:href="@{/(page=${pagination.page +1 },search=${search})}">
+                            <a th:href="@{/(page=${pagination.page +1 },search=${search},tag=${tag})}">
                                 <span aria-hidden="true">&gt;</span>
                             </a>
                         </li>
 
                         <li th:if="${pagination.showEndPage}">
-                            <a th:href="@{/(page=${pagination.totalPage},search=${search})}"
+                            <a th:href="@{/(page=${pagination.totalPage},search=${search},tag=${tag})}"
                                aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
@@ -94,21 +97,20 @@
 
         </div>
         <div class="col-lg-3 col-md-12 col-xs-12">
-            <h4>热门话题</h4>
-            • 问题标题: 请用精简的语言描述您发布的问题，不超过25字 <br>
-            • 问题补充: 详细补充您的问题内容，并确保问题描述清晰直观, 并提供一些相关的资料<br>
-            • 选择标签: 选择一个或者多个合适的标签，用逗号隔开，每个标签不超过10个字<br>
+
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <hr>
                 <h4>站长微信</h4>
-                <img class="img-thumbnail question-wechat" src="/images/wechat.png">
+                <img class="img-thumbnail question-wechat" src="https://community-1251590924.cos.ap-hongkong.myqcloud.com/images/welcome.jpg">
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <hr>
                 <h4>热门话题</h4>
-                • 问题标题: 请用精简的语言描述您发布的问题，不超过25字 <br>
-                • 问题补充: 详细补充您的问题内容，并确保问题描述清晰直观, 并提供一些相关的资料<br>
-                • 选择标签: 选择一个或者多个合适的标签，用逗号隔开，每个标签不超过10个字<br>
+                <ul class="question-related">
+                    <li th:each="tag : ${tags}">
+                        <a th:href="@{/(page=1,search=${search},tag=${tag})}" th:text="${tag}"></a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

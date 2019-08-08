@@ -38,8 +38,7 @@ public class AuthorizeController {
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
                            @RequestParam(name = "state") String state,
-                           HttpServletResponse response,
-                           HttpServletRequest request) {
+                           HttpServletResponse response) {
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
 
         accessTokenDTO.setClient_id(clientId);
@@ -60,9 +59,11 @@ public class AuthorizeController {
 //            user.setGmtModified(user.getGmtCreate());
             user.setAvatarUrl(githubUser.getAvatarUrl());
             userService.createOrUpdate(user);
-            response.addCookie(new Cookie("token", token));
+           Cookie cookie = new Cookie("token", token);
+           cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
+           response.addCookie(cookie);
           // userMapper.insert(user);
-           request.getSession().setAttribute("user",githubUser);
+           //request.getSession().setAttribute("user",githubUser);
             return "redirect:/";
         } else {
             // 登录失败，重新登录
