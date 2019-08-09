@@ -36,6 +36,7 @@ public class IndexController {
         model.addAttribute("search", search);
         model.addAttribute("tag", tag);
         model.addAttribute("tags", tags);
+        model.addAttribute("navtype", "communitynav");
         return "index";
     }
 }

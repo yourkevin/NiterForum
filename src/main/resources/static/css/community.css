@@ -132,3 +132,11 @@ body{
 .w-e-item img{
     height:25px;
 }
+
+.video {
+    padding: 30px;
+}
+
+.video img {
+    width: 100%;
+}

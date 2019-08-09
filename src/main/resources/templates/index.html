@@ -108,7 +108,10 @@
                 <h4>热门话题</h4>
                 <ul class="question-related">
                     <li th:each="tag : ${tags}">
-                        <a th:href="@{/(page=1,search=${search},tag=${tag})}" th:text="${tag}"></a>
+                        <span class="glyphicon glyphicon-fire">
+                        <a th:href="@{/(page=1,search=${search},tag=${tag})}" th:text="${tag}">
+                        </a>
+                        </span>
                     </li>
                 </ul>
             </div>
