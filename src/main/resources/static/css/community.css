@@ -108,6 +108,10 @@ body{
     cursor: pointer;
 }
 
+.menu .comment-icon .likecount{
+   margin-left: -8px;
+}
+
 .menu .comment-icon :hover {
     color: #499ef3;
 }

@@ -114,6 +114,106 @@ function comment(e) {
     else comment2target(commentId, 2, content);
 }
 
+function like_comment(e) {
+    var commentId = e.getAttribute("data-id");
+    like2target(commentId, 2);
+}
+
+
+function like2target(targetId, type){
+    $.ajax({
+        type: "POST",
+        url: "/like/comment",
+        contentType: 'application/json',
+        data: JSON.stringify({
+            "targetId": targetId,
+            "type": type
+        }),
+        success: function (response) {
+            if (response.code == 200) {//点赞成功
+                swal({
+                    title: "成功!",
+                    text: "成功点赞，感谢您的支持!",
+                    icon: "success",
+                    button: "确认",
+                });
+                if(type==2){//点赞评论时
+                var thumbicon = $("#thumbicon-" + targetId);
+                thumbicon.addClass("new");
+                var likecount = $("#likecount-" + targetId);
+                likecount.html(parseInt(likecount.text())+1);//点赞+1
+                }
+            } else {
+                if (response.code == 2003) {
+
+                    swal({
+                        title: "错误："+response.code,
+                        text: response.message,
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                        .then((willDelete) => {
+                        if (willDelete) {
+                            window.open("https://github.com/login/oauth/authorize?client_id=b6ecb208ce93f679a75a&redirect_uri=" + document.location.origin + "/callback&scope=user&state=1");
+                            window.localStorage.setItem("closable", true);
+
+                            var interval = setInterval(function(){
+                                var loginState = window.localStorage.getItem("loginState");
+                                if (loginState == "true") {
+                                    window.localStorage.removeItem("loginState");
+                                    //  console.log("0");
+                                    clearInterval(interval);
+                                    // location.reload();
+                                    // $("#comment_content").val(content);
+                                    swal({
+                                        title: "登陆成功!",
+                                        text: "您可以点赞啦!",
+                                        icon: "success",
+                                        button: "好的",
+                                    });
+
+                                    //$("#navigation").load("#navigation");
+
+                                    return;
+                                }
+                                // console.log("1");
+                                // document.getElementById("comment_content").value=content;
+//do whatever here..
+                            }, 2000);
+
+
+                        } else {
+                            swal({
+                                     title: "已取消登录!",
+                                     text: "取消登陆后，无法成功回复!",
+                                     icon: "error",
+                                     button: "确认",
+                                 });
+                }
+                });
+                }
+                if (response.code == 2022) {
+                    if(type==2){//点赞评论时
+                    var thumbicon = $("#thumbicon-" + targetId);
+                    thumbicon.addClass("new");
+                    }
+                    swal({
+                        title: "点赞失败!",
+                        text: "请不要重复点赞哦!",
+                        icon: "error",
+                        button: "确认",
+                    });
+                }
+                else {
+                    sweetAlert("错误："+response.code, response.message, "error");
+                }
+            }
+        },
+        dataType: "json"
+    });
+}
+
 /**
  * 展开二级评论
  */

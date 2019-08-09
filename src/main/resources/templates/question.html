@@ -71,12 +71,14 @@
                             </h5>
                             <div th:text="${comment.content}"></div>
                             <div class="menu">
-                                <span class="glyphicon glyphicon-thumbs-up icon"></span>
+                                <span class="comment-icon" th:id="${'thumbicon-'+comment.id}" >
+                                  <span class="glyphicon glyphicon-thumbs-up icon" th:data-id="${comment.id}" onclick="like_comment(this)"></span>
+                                  <span th:id="${'likecount-'+comment.id}" th:text="${comment.likeCount}"  th:class="${comment.likeCount != 0}? 'new likecount' : 'likecount'"></span>
+                                </span>
                                 <span th:data-id="${comment.id}"
                                       onclick="collapseComments(this)" class="comment-icon">
                                     <span class="glyphicon glyphicon-comment"></span>
-                                  <span th:text="${comment.commentCount}"  th:class="${comment.commentCount != 0}? 'new' : ''"></span>
-
+                                    <span th:text="${comment.commentCount}"  th:class="${comment.commentCount != 0}? 'new' : ''"></span>
                                 </span>
                                 <span class="pull-right"
                                       th:text="${#dates.format(comment.gmtCreate,'yyyy-MM-dd  HH:mm')}"></span>
