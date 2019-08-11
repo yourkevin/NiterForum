@@ -61,6 +61,15 @@ public class CommentService {
             if (question == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
+            //给问题设置最后回复时间
+            question.setGmtLatestComment(System.currentTimeMillis());
+            QuestionExample example = new QuestionExample();
+            example.createCriteria()
+                    .andIdEqualTo(question.getId());
+            int updated = questionMapper.updateByExampleSelective(question, example);
+            if (updated != 1) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
 
             comment.setCommentCount(0);
             commentMapper.insert(comment);
@@ -78,6 +87,15 @@ public class CommentService {
             // 回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
             if (question == null) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
+            //给问题设置最后回复时间
+            question.setGmtLatestComment(System.currentTimeMillis());
+            QuestionExample example = new QuestionExample();
+            example.createCriteria()
+                    .andIdEqualTo(question.getId());
+            int updated = questionMapper.updateByExampleSelective(question, example);
+            if (updated != 1) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
             comment.setCommentCount(0);

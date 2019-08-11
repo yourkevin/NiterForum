@@ -45,7 +45,7 @@
                     <a href="/publish">发布</a>
                 </li>
                 <li th:if="${session.user!=null}" th:class="${'notifynav' == navtype}? 'active' : ''">
-                    <a href="/profile/replies">通知
+                    <a href="/profile/notifies">通知
                         <span th:if="${session.unreadCount!=0}" class="badge" th:text="${session.unreadCount}"></span>
                     </a>
                 </li>

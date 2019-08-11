@@ -49,6 +49,12 @@
                 <a class="community-menu" th:href="@{'/publish/'+${question.id}}" th:if="${session.user!=null&&session.user.id == question.creator}">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true">编辑</span>
                 </a>
+                <a class="community-menu" th:href="@{'/publish/'+${question.id}}" th:if="${session.user!=null&&session.user.id == 17}">
+                    <img src="/images/jiajing.png" alt="加精">加精
+                </a>
+                    <a class="community-menu" th:href="@{'/publish/'+${question.id}}" th:if="${session.user!=null&&session.user.id == 17}">
+                        <img src="/images/zhiding.png" alt="置顶">置顶
+                    </a>
                 </div><!--编辑-->
             </div><!--正文框-->
             <div class="col-lg-12 col-md-12 col-xs-12">

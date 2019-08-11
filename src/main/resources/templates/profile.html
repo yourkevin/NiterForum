@@ -83,7 +83,7 @@
                 </nav>
             </div>
             </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'replies'}">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'notifies'}">
                 <div class="media" th:each="notification : ${pagination.data}">
                     <div class="media-body">
                         <p class="media-heading">
@@ -107,10 +107,12 @@
                     我的提问
                     <span class="badge" th:text="${pagination.totalCount}"></span>
                 </a>
-                <a href="/profile/replies" th:class="${section=='replies'}?'list-group-item active':'list-group-item'">最新回复
+                <a href="/profile/notifies" th:class="${section=='notifies'}?'list-group-item active':'list-group-item'">最新通知
                     <span class="badge" th:text="${session.unreadCount}"></span>
                 </a>
-                <a href="#" class="list-group-item">Morbi leo risus</a>
+                <a href="" th:class="${section=='loves'}?'list-group-item active':'list-group-item'">我的收藏
+
+                </a>
                 <a href="#" class="list-group-item">Porta ac consectetur ac</a>
                 <a href="#" class="list-group-item">Vestibulum at eros</a>
             </div>

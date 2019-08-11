@@ -31,6 +31,10 @@
         select * from question where id != #{id} and tag regexp #{tag}
     </select>
 
+    <select id="selectTop" resultMap="BaseResultMap">
+        select * from question where (status=2 OR status =3)
+    </select>
+
     <select id="countBySearch" parameterType="cc.ikevin.community.dto.QuestionQueryDTO"
             resultType="java.lang.Integer">
         select count(*) from question
@@ -55,7 +59,7 @@
                 and tag regexp #{tag}
             </if>
         </where>
-        order by gmt_modified desc limit #{offset},#{size}
+        order by gmt_latest_comment desc limit #{offset},#{size}
     </select>
 
 </mapper>

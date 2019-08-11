@@ -39,7 +39,7 @@ public class LikeController {
         thumb.setGmtModified(System.currentTimeMillis());
         thumb.setGmtCreate(System.currentTimeMillis());
         thumb.setLiker(user.getId());
-        int result = likeService.insert(thumb);
+        int result = likeService.insert(thumb,user);
         if(result == 0)
         return ResultDTO.okOf("点赞成功！");
         if(result == 2022)

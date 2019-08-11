@@ -1,8 +1,9 @@
 package cc.ikevin.community.enums;
 
 public enum NotificationTypeEnum {
-    REPLY_QUESTION(1, "回复了问题"),
-    REPLY_COMMENT(2, "回复了评论");
+    REPLY_QUESTION(1, "回复了您的问题"),
+    REPLY_COMMENT(2, "回复了您的评论"),
+    LIKE_COMMENT(4, "点赞了您的评论");
     private int type;
     private String name;
 

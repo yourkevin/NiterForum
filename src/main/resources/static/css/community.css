@@ -70,6 +70,10 @@ body{
     font-size: 13px;
 }
 
+.community-menu img{
+    height: 13px;
+}
+
 .comment {
     margin: 10px 0;
 }

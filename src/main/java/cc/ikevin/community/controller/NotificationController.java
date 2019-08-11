@@ -2,6 +2,8 @@ package cc.ikevin.community.controller;
 
 import cc.ikevin.community.dto.NotificationDTO;
 import cc.ikevin.community.enums.NotificationTypeEnum;
+import cc.ikevin.community.exception.CustomizeErrorCode;
+import cc.ikevin.community.exception.CustomizeException;
 import cc.ikevin.community.model.User;
 import cc.ikevin.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +25,13 @@ public class NotificationController {
 
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
-            return "redirect:/";
+            throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
         NotificationDTO notificationDTO = notificationService.read(id, user);
 
         if (NotificationTypeEnum.REPLY_COMMENT.getType() == notificationDTO.getType()
-                || NotificationTypeEnum.REPLY_QUESTION.getType() == notificationDTO.getType()) {
+                || NotificationTypeEnum.REPLY_QUESTION.getType() == notificationDTO.getType()
+                || NotificationTypeEnum.LIKE_COMMENT.getType() == notificationDTO.getType()) {
             return "redirect:/question/" + notificationDTO.getOuterid();
         } else {
             return "redirect:/";
