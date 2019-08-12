@@ -6,6 +6,7 @@ import cc.ikevin.community.model.User;
 import cc.ikevin.community.provider.GithubProvider;
 import cc.ikevin.community.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -53,6 +54,9 @@ public class AuthorizeController {
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
+            /*if(githubUser.getName()==null)
+                user.setName(getUserName("Github"));
+            else */
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
 //            user.setGmtCreate(System.currentTimeMillis());
@@ -81,6 +85,13 @@ public class AuthorizeController {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         return "redirect:/";
+    }
+
+    public String getUserName(String authorizeSize) {
+        String str = RandomStringUtils.random(5,
+                "abcdefghijklmnopqrstuvwxyz1234567890");
+        String name = authorizeSize+"用户_"+str;
+        return name;
     }
 
 }
