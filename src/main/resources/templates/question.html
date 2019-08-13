@@ -36,7 +36,7 @@
                         <span th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></span> 更新
             </span>
             <hr>
-            <div class="col-lg-12 col-md-12 col-xs-12"  id="descriptionP" th:text="${question.description}">
+            <div class="col-lg-12 col-md-12 col-xs-12 image-light"  id="descriptionP" th:text="${question.description}">
             </div>
                 <div class="col-lg-12 col-md-12 col-xs-12">
                     <br>
@@ -109,7 +109,7 @@
             <div class="col-lg-12 col-md-12 col-xs-12" id="comment_section">
                 <hr>
                 <div class="media" >
-                    <div class="media-left media-middle">
+                    <div class="media-left media-middle avatar">
                         <a href="#">
                             <img class="media-object img-rounded"
                                  th:src="${session.user != null ? session.user.avatarUrl : '/images/default-avatar.png'}"
@@ -132,7 +132,7 @@
             <div class="col-lg-12 col-md-12 col-xs-12">
                 <h4>发起人</h4>
                 <div class="media" >
-                    <div class="media-left media-middle">
+                    <div class="media-left media-middle avatar">
                         <a href="#">
                             <img class="media-object img-rounded"
                                  th:src="${question.user.avatarUrl}"

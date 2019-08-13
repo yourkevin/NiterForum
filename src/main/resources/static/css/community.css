@@ -148,3 +148,61 @@ body{
 .video img {
     width: 100%;
 }
+
+.avatar img{
+
+    border: 1px solid #fff;
+    -webkit-transition: .8s;
+    -moz-transition: .8s;
+    -o-transition: .8s;
+    -ms-transition: .8s;
+}
+.avatar img:hover{
+    -moz-box-shadow:0 3px 10px #888;
+    -webkit-box-shadow:0 3px 10px #888;
+    transform:rotate(720deg);
+    -webkit-transform:rotate(720deg);
+    -moz-transform:rotate(720deg);
+    -o-transform:rotate(720deg);
+    -ms-transform:rotate(720deg);
+    border-radius:35px;
+}
+
+
+
+.image-light,.image-light > img{
+    display: block;
+}
+/*父容器*/
+.image-light{
+    overflow: hidden;
+    position: relative; /*设置为相对*/
+}
+/*图片*/
+
+/*流光（采用伪类实现，当然也可以是子元素）*/
+.image-light:after{
+    content: '';
+    position: absolute; /*相对父级绝对定位*/
+    width: 80px;
+    height: 100%;
+    top: 0;
+    left: -200px;  /*起始位置*/
+    overflow: hidden;
+    z-index:9;
+    /*背景渐变（兼容性写法）*/
+    background: -moz-linear-gradient(left,rgba(255,255,255,0) 0,rgba(255,255,255,.3) 50%,rgba(255,255,255,0) 100%);
+    background: -webkit-gradient(linear,left top,right top,color-stop(0%,rgba(255,255,255,0)),color-stop(50%,rgba(255,255,255,.3)),color-stop(100%,rgba(255,255,255,0)));
+    background: -webkit-linear-gradient(left,rgba(255,255,255,0) 0,rgba(255,255,255,.3) 50%,rgba(255,255,255,0) 100%);
+    background: -o-linear-gradient(left,rgba(255,255,255,0) 0,rgba(255,255,255,.3)50%,rgba(255,255,255,0) 100%);
+    background: linear-gradient(left,rgba(255,255,255,0) 0,rgba(255,255,255,.3) 50%,rgba(255,255,255,0) 100%);
+    -webkit-transform: skewX(-25deg);/*倾斜*/
+    -moz-transform: skewX(-25deg);
+    transform: skewX(-25deg);
+}
+/*鼠标滑过*/
+.image-light:hover:after{
+    -webkit-transition: left 1s ease-in-out; /*过渡*/
+    transition: left 1s ease-in-out;
+    left:120%; /*结束位置*/
+}

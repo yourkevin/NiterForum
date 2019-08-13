@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>凯文社区</title>
     <head th:insert="~{import :: head}"></head>
+    <script src="/js/click.js"></script>
     <!-- 最新版本的 Bootstrap 核心 CSS 文件
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/community.css">
@@ -42,7 +43,7 @@
             <hr>
             <div class="media" th:each="question : ${pagination.data}" style="overflow: visible">
                 <div th:if="${question.status==2||question.status==3}">
-                    <div class="media-left media-middle">
+                    <div class="media-left media-middle avatar">
                         <a href="#">
                             <img class="media-object img-rounded"
                                  th:src="${question.user.avatarUrl}"
@@ -65,7 +66,7 @@
             </div>
             <div class="media" th:each="question : ${pagination.data}" style="overflow: visible">
                 <div th:if="${question.status==0||question.status==1}">
-                    <div class="media-left media-middle">
+                    <div class="media-left media-middle avatar">
                         <a href="#">
                             <img class="media-object img-rounded"
                                  th:src="${question.user.avatarUrl}"
