@@ -137,6 +137,13 @@ body{
     color: #666;;
 }
 
+.red {
+    color: red !important;
+}
+
+
+
+
 .w-e-item img{
     height:25px;
 }
