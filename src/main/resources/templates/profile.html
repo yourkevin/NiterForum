@@ -23,7 +23,7 @@
         <div class="col-lg-9 col-md-12 col-xs-12">
             <h2><span class="glyphicon glyphicon-list" th:text="${sectionName}" aria-hidden="true"></span></h2>
             <hr>
-            <div class="col-lg-12 col-md-12 col-xs-12" th:if="${section == 'questions'}">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'questions'}">
              <div class="media" th:each="question : ${pagination.data}">
                 <div class="media-left media-middle">
                     <a href="#">
@@ -44,7 +44,24 @@
                     </span>
                 </div>
             </div>
-             <div><!-- 分页展示 -->
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'notifies'}">
+                <div class="media" th:each="notification : ${pagination.data}">
+                    <div class="media-body">
+                        <p class="media-heading">
+                            <span th:text="${notification.notifierName +' 于 ' }"></span>
+                            <span th:text="${#dates.format(notification.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+                            <span th:text="${notification.typeName + ' '}"></span>
+                            <a th:href="@{'/notification/'+ ${notification.id}}"
+                               th:text="${notification.outerTitle}">
+                            </a>
+                            <span class="label label-success" th:if="${notification.status == 1}">已读</span>
+                            <span class="label label-danger" th:if="${notification.status == 0}">未读</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div><!-- 分页展示 -->
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         <li th:if="${pagination.showFirstPage}">
@@ -81,24 +98,6 @@
                     </ul>
                 </nav>
             </div>
-            </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'notifies'}">
-                <div class="media" th:each="notification : ${pagination.data}">
-                    <div class="media-body">
-                        <p class="media-heading">
-                            <span th:text="${notification.notifierName +' 于 ' }"></span>
-                            <span th:text="${#dates.format(notification.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
-                            <span th:text="${notification.typeName + ' '}"></span>
-                            <a th:href="@{'/notification/'+ ${notification.id}}"
-                               th:text="${notification.outerTitle}">
-                            </a>
-                            <span class="label label-success" th:if="${notification.status == 1}">已读</span>
-                            <span class="label label-danger" th:if="${notification.status == 0}">未读</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
         </div>
         <div class="col-lg-3 col-md-12 col-xs-12">
             <div class="list-group section">

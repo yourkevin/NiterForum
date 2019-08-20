@@ -2,6 +2,7 @@ package cc.ikevin.community.controller;
 
 import cc.ikevin.community.cache.HotTagCache;
 import cc.ikevin.community.dto.PaginationDTO;
+import cc.ikevin.community.dto.QuestionDTO;
 import cc.ikevin.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,7 +31,7 @@ public class IndexController {
                         @RequestParam(name = "tag", required = false) String tag,
                         @RequestParam(name = "sort", required = false) String sort) {
 
-
+        List<QuestionDTO> topQuestions = questionService.listTop(search, tag, sort);
         PaginationDTO pagination = questionService.list(search, tag, sort, page,size);
         List<String> tags = hotTagCache.getHots();
         model.addAttribute("pagination",pagination);
@@ -38,6 +39,7 @@ public class IndexController {
         model.addAttribute("tag", tag);
         model.addAttribute("tags", tags);
         model.addAttribute("sort", sort);
+        model.addAttribute("topQuestions", topQuestions);
         model.addAttribute("navtype", "communitynav");
         return "index";
     }

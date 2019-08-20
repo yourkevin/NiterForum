@@ -31,14 +31,11 @@
         select * from question where id != #{id} and tag regexp #{tag}
     </select>
 
-    <select id="selectTop" resultMap="BaseResultMap">
-        select * from question where (status=2 OR status =3)
-    </select>
-
     <select id="countBySearch" parameterType="cc.ikevin.community.dto.QuestionQueryDTO"
             resultType="java.lang.Integer">
         select count(*) from question
         <where>
+            (status=0 OR status =1)
             <if test="search != null and search != ''">
                 and title regexp #{search}
             </if>
@@ -47,6 +44,9 @@
             </if>
             <if test="sort != null and sort != '' and sort == 'no'">
                 and comment_count = 0
+            </if>
+            <if test="sort != null and sort != '' and sort == 'good'">
+                and status = 1
             </if>
             <if test="time != null and time != ''">
                 and gmt_create > #{time}
@@ -58,6 +58,7 @@
             resultMap="BaseResultMap">
         select * from question
         <where>
+            (status=0 OR status =1)
             <if test="search != null and search != ''">
                 and title regexp #{search}
             </if>
@@ -67,18 +68,24 @@
             <if test="sort != null and sort != '' and sort == 'no'">
                 and comment_count = 0
             </if>
+            <if test="sort != null and sort != '' and sort == 'good'">
+                and status = 1
+            </if>
             <if test="time != null and time != ''">
                 and gmt_create > #{time}
             </if>
         </where>
         <if test="sort == null or sort == ''">
-            order by gmt_create desc
+            order by gmt_latest_comment desc
         </if>
         <if test="sort != null and sort != '' and sort == 'new'">
-            order by gmt_create desc
+            order by gmt_latest_comment desc
         </if>
         <if test="sort != null and sort != '' and sort == 'no'">
-            order by gmt_create desc
+            order by gmt_latest_comment desc
+        </if>
+        <if test="sort != null and sort != '' and sort == 'good'">
+            order by gmt_latest_comment desc
         </if>
         <if test="sort != null and sort != '' and (sort == 'hot' || sort == 'hot7' || sort == 'hot30')">
             order by comment_count desc
@@ -86,4 +93,41 @@
         limit #{offset},#{size}
     </select>
 
+    <select id="selectTop" parameterType="cc.ikevin.community.dto.QuestionQueryDTO"
+            resultMap="BaseResultMap">
+        select * from question
+        <where>
+            (status=2 OR status =3)
+            <if test="search != null and search != ''">
+                and title regexp #{search}
+            </if>
+            <if test="tag != null and tag != ''">
+                and tag regexp #{tag}
+            </if>
+            <if test="sort != null and sort != '' and sort == 'no'">
+                and comment_count = 0
+            </if>
+            <if test="sort != null and sort != '' and sort == 'good'">
+                and status = 3
+            </if>
+            <if test="sort != null and sort != '' and sort == 'good'">
+                order by gmt_latest_comment desc
+            </if>
+            <if test="time != null and time != ''">
+                and gmt_create > #{time}
+            </if>
+        </where>
+        <if test="sort == null or sort == ''">
+            order by gmt_latest_comment desc
+        </if>
+        <if test="sort != null and sort != '' and sort == 'new'">
+            order by gmt_latest_comment desc
+        </if>
+        <if test="sort != null and sort != '' and sort == 'no'">
+            order by gmt_latest_comment desc
+        </if>
+        <if test="sort != null and sort != '' and (sort == 'hot' || sort == 'hot7' || sort == 'hot30')">
+            order by comment_count desc
+        </if>
+    </select>
 </mapper>

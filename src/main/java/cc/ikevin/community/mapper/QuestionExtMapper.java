@@ -12,7 +12,7 @@ public interface QuestionExtMapper {
 
     List<Question> selectRelated(Question question);
 
-    List<Question> selectTop();
+    List<Question> selectTop(QuestionQueryDTO questionQueryDTO);
 
 
     Integer countBySearch(QuestionQueryDTO questionQueryDTO);

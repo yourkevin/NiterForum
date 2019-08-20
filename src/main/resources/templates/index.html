@@ -44,6 +44,9 @@
                 <li role="presentation" th:class="${sort == 'new' || sort == null ? 'active':''}">
                     <a th:href="@{/(sort='new')}">最新</a>
                 </li>
+                <li role="presentation" th:class="${sort == 'good' ? 'active':''}">
+                    <a th:href="@{/(sort='good')}" class="red">精华帖</a>
+                </li>
                 <li role="presentation" th:class="${sort == 'hot30' ? 'active':''}">
                     <a th:href="@{/(sort='hot30')}">30天最热</a>
                 </li>
@@ -54,11 +57,10 @@
                     <a th:href="@{/(sort='hot')}">最热</a>
                 </li>
                 <li role="presentation" th:class="${sort == 'no' ? 'active':''}">
-                    <a th:href="@{/(sort='no')}" class="red">消灭零回复</a>
+                    <a th:href="@{/(sort='no')}" >消灭零回复</a>
                 </li>
             </ul>
-            <div class="media" th:each="question : ${pagination.data}" style="overflow: visible">
-                <div th:if="${question.status==2||question.status==3}">
+            <div class="media" th:each="question : ${topQuestions}" style="overflow: visible">
                     <div class="media-left media-middle avatar">
                         <a href="#">
                             <img class="media-object img-rounded"
@@ -78,8 +80,8 @@
                         <span th:text="${#dates.format(question.gmtLatestComment,'yyyy-MM-dd HH:mm')}"></span>
                     </span>
                     </div>
-                </div>
             </div>
+            <hr>
             <div class="media" th:each="question : ${pagination.data}" style="overflow: visible">
                 <div th:if="${question.status==0||question.status==1}">
                     <div class="media-left media-middle avatar">

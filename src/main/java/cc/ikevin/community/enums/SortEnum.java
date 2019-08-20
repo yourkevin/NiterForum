@@ -5,5 +5,6 @@ public enum SortEnum {
     HOT30,
     HOT7,
     NO,
-    NEW;
+    NEW,
+    GOOD;
 }
