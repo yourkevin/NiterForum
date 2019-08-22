@@ -2,9 +2,37 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>wangEditor demo</title>
+    <title>测试</title>
+    <head th:insert="~{import :: head}"></head>
 </head>
 <body>
-<iframe height=498 width=510 src='http://player.youku.com/embed/XNDI4NTkxNDQ3Mg==' frameborder=0 'allowfullscreen'></iframe>
+<div style="text-align: center">
+    <button class="btn btn-warning">
+        <span class="glyphicon glyphicon-heart-empty">收藏</span>
+    </button>
+    <div class="btn btn-success bshare-custom icon-medium">
+        <span class="glyphicon glyphicon-share">分享到</span>
+        <a title="分享到QQ空间" class="bshare-qzone"></a>
+        <a title="分享到新浪微博" class="bshare-sinaminiblog"></a>
+        <a title="分享到微信" class="bshare-weixin"></a>
+        <a title="分享到QQ好友" class="bshare-qqim"></a>
+        <a title="分享到有道笔记" class="bshare-youdaonote"></a>
+    </div>
+</div>
+
+
+
+<div class="bshare-custom icon-medium">
+    <span class="glyphicon glyphicon-share">分享到</span>
+    <a title="分享到QQ空间" class="bshare-qzone"></a>
+    <a title="分享到新浪微博" class="bshare-sinaminiblog"></a>
+    <a title="分享到微信" class="bshare-weixin"></a>
+    <a title="分享到QQ好友" class="bshare-qqim"></a>
+    <a title="分享到有道笔记" class="bshare-youdaonote"></a>
+</div>
+<script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/button.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script>
+<a class="bshareDiv" onclick="javascript:return false;"></a>
+<script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+
 </body>
 </html>

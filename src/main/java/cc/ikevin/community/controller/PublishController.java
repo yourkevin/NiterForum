@@ -50,7 +50,7 @@ public class PublishController {
             return "publish";
         }
 
-        if (title == null || "".equals(title)) {
+        if (StringUtils.isBlank(title)) {
             model.addAttribute("error", "标题不能为空");
             return "publish";
         }
@@ -58,7 +58,7 @@ public class PublishController {
             model.addAttribute("error", "问题补充不能为空");
             return "publish";
         }
-        if (tag == null || "".equals(tag)) {
+        if (StringUtils.isBlank(tag)) {
             model.addAttribute("error", "标签不能为空");
             return "publish";
         }

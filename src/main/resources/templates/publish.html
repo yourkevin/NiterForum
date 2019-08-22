@@ -5,6 +5,7 @@
 
     <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link href="https://cdn.bootcss.com/bootflat/2.0.4/css/bootflat.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/community.css">
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/sweetalert/2.1.2/sweetalert.min.js"></script>
@@ -23,7 +24,7 @@
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-xs-12">
-            <h2><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 发起</h2>
+            <h3><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> 发起</h3>
             <hr>
             <form action="/publish" method="post">
                 <input type="hidden" name="id" th:value="${id}">
