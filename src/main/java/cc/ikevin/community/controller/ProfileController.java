@@ -65,13 +65,13 @@ public class ProfileController {
             model.addAttribute("sectionName", "最新通知");
             model.addAttribute("navtype", "notifynav");
         }
-       /* if("likes".equals(action)){
-            PaginationDTO paginationDTO = notificationService.list(user.getId(), page, size,"likes");
+       if("likes".equals(action)){
+            PaginationDTO paginationDTO = questionService.listByExample(user.getId(), page, size,"likes");
             model.addAttribute("section", "likes");
             model.addAttribute("pagination", paginationDTO);
-            model.addAttribute("sectionName", "最新点赞");
-            model.addAttribute("navtype", "notifynav");
-        }*/
+            model.addAttribute("sectionName", "我的收藏");
+            model.addAttribute("navtype", "communitynav");
+        }
 
         return "profile";
     }

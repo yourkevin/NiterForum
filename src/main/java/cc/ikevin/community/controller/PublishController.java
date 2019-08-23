@@ -37,6 +37,7 @@ public class PublishController {
             HttpServletRequest request,
             Model model
     ){
+        String defaultDescription = "<p id=\"descriptionP\"></p><p><br></p>";
         title = title.trim();
         tag = tag.trim();
         model.addAttribute("title",title);
@@ -44,7 +45,7 @@ public class PublishController {
         model.addAttribute("tag",tag);
         model.addAttribute("tags", TagCache.get());
         User user = (User)request.getSession().getAttribute("user");
-       // System.out.println("标题|"+title+"|");
+      // System.out.println("正文|"+description+"|"+"相同="+defaultDescription.equals(description));
         if(user==null) {
             model.addAttribute("error","用户未登陆");
             return "publish";
@@ -54,7 +55,7 @@ public class PublishController {
             model.addAttribute("error", "标题不能为空");
             return "publish";
         }
-        if (description == null || "".equals(description)) {
+        if (description == null || defaultDescription.equals(description)) {
             model.addAttribute("error", "问题补充不能为空");
             return "publish";
         }

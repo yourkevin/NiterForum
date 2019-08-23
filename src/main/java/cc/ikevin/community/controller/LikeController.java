@@ -22,7 +22,7 @@ public class LikeController {
     private LikeService likeService;
 
     @ResponseBody//@ResponseBody返回json格式的数据
-    @RequestMapping(value = "/like/comment", method = RequestMethod.POST)
+    @RequestMapping(value = "/like", method = RequestMethod.POST)
     public Object like(@RequestBody ThumbCreateDTO thumbCreateDTO,//@RequestBody接受json格式的数据
                        HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
@@ -33,6 +33,7 @@ public class LikeController {
             return ResultDTO.errorOf(CustomizeErrorCode.CAN_NOT_LIKE);
         }
 
+
         Thumb thumb = new Thumb();
         thumb.setTargetId(thumbCreateDTO.getTargetId());
         thumb.setType(thumbCreateDTO.getType());
@@ -40,10 +41,18 @@ public class LikeController {
         thumb.setGmtCreate(System.currentTimeMillis());
         thumb.setLiker(user.getId());
         int result = likeService.insert(thumb,user);
-        if(result == 0)
+      //System.out.println(thumb+"r"+result);
+        if(result == 0&&thumbCreateDTO.getType()==2)
         return ResultDTO.okOf("点赞成功！");
-        if(result == 2022)
+        if(result == 0&&thumbCreateDTO.getType()==1)
+            return ResultDTO.okOf("收藏成功！");
+        if(result == 2022||thumbCreateDTO.getType()==2)
         return ResultDTO.errorOf(CustomizeErrorCode.CAN_NOT_LIKE_AGAIN);
+        if(result == 2023||thumbCreateDTO.getType()==1)
+            return ResultDTO.errorOf(CustomizeErrorCode.CAN_NOT_LIKE_QUESTION_AGAIN);
+
+
+
 
         return ResultDTO.errorOf(CustomizeErrorCode.CAN_NOT_LIKE);
     }

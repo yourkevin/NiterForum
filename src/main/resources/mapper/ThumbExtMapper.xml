@@ -22,4 +22,11 @@
     where id = #{id}
     </update>
 
+    <update id="incQuestionLikeCount" parameterType="cc.ikevin.community.model.Question">
+    update question
+    set
+    LIKE_COUNT = LIKE_COUNT + #{likeCount,jdbcType=INTEGER}
+    where id = #{id}
+    </update>
+
 </mapper>

@@ -8,10 +8,9 @@ import cc.ikevin.community.exception.CustomizeErrorCode;
 import cc.ikevin.community.exception.CustomizeException;
 import cc.ikevin.community.mapper.QuestionExtMapper;
 import cc.ikevin.community.mapper.QuestionMapper;
+import cc.ikevin.community.mapper.ThumbMapper;
 import cc.ikevin.community.mapper.UserMapper;
-import cc.ikevin.community.model.Question;
-import cc.ikevin.community.model.QuestionExample;
-import cc.ikevin.community.model.User;
+import cc.ikevin.community.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
@@ -31,6 +30,8 @@ public class QuestionService {
     private QuestionMapper questionMapper;
     @Autowired
     private QuestionExtMapper questionExtMapper;
+    @Autowired
+    private ThumbMapper thumbMapper;
 
     public PaginationDTO list(String search, String tag, String sort,Integer page, Integer size) {
 
@@ -175,6 +176,67 @@ public class QuestionService {
         return questionDTOList;
     }
 
+    public PaginationDTO listByExample(Long userId, Integer page, Integer size, String likes) {
+        Integer totalPage;
+        ThumbExample thumbExample = new ThumbExample();
+        thumbExample.createCriteria()
+                .andLikerEqualTo(userId)
+                .andTypeEqualTo(1);
+        Integer totalCount = (int)thumbMapper.countByExample(thumbExample);
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
+
+        if (page > totalPage) {
+            page = totalPage;
+        }
+
+        if (page < 1) {
+            page = 1;
+        }
+
+
+        Integer offset = size * (page-1);
+
+        thumbExample.setOrderByClause("gmt_modified desc");
+        List<Thumb> thumbs = thumbMapper.selectByExampleWithRowbounds(thumbExample,new RowBounds(offset, size));
+        List<Question> questionList = new ArrayList<>();
+        PaginationDTO paginationDTO = new PaginationDTO();
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+       // Question question = new Question();
+        for (Thumb thumb : thumbs) {
+            questionList.add(questionMapper.selectByPrimaryKey(thumb.getTargetId()));
+        }
+        for (Question question : questionList) {
+            User user = userMapper.selectByPrimaryKey(question.getCreator());
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(question,questionDTO);
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+
+     /*   QuestionExample example = new QuestionExample();
+        example.createCriteria()
+                .andCreatorEqualTo(userId);
+        example.setOrderByClause("gmt_modified desc");
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+        PaginationDTO paginationDTO = new PaginationDTO();*/
+       /* for (Question question : questions) {
+            User user = userMapper.selectByPrimaryKey(question.getCreator());
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(question,questionDTO);
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }*/
+        paginationDTO.setData(questionDTOList);
+        paginationDTO.setTotalCount(totalCount);
+        paginationDTO.setPagination(totalPage,page);
+        return paginationDTO;
+    }
+
     public PaginationDTO listByUserId(Long userId, Integer page, Integer size) {
 
         Integer totalPage;
@@ -297,6 +359,7 @@ public class QuestionService {
         }).collect(Collectors.toList());
         return questionDTOS;
     }
+
 
 
 }

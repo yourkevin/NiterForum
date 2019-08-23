@@ -4,8 +4,37 @@
     <meta charset="UTF-8">
     <title>测试</title>
     <head th:insert="~{import :: head}"></head>
+    <script src="https://cdn.bootcss.com/clipboard.js/2.0.4/clipboard.js"></script>
 </head>
 <body>
+<!-- 1. Define some markup -->
+<button class="btn btn-success copyshare">分享</button>
+
+<!-- 2. Include library -->
+<script src="../dist/clipboard.min.js"></script>
+
+<!-- 3. Instantiate clipboard -->
+<script>
+
+    var con = '我在凯文社区找到一篇好文章《'+document.title+'》，快来戳后面的链接来围观吧！---'+this.location.href;
+    var clipboard = new ClipboardJS('.copyshare', {
+        text: function() {
+       //     var con = '我在凯文社区找到一篇好文章《'+document.title+'》，快来围观吧！---'+this.location.href;
+            //alert("进来了"+document.title+this.location.href);
+            return ''+con;
+        }
+    });
+
+    clipboard.on('success', function(e) {
+        console.log(e);
+    });
+
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
+</script>
+
+
 <div style="text-align: center">
     <button class="btn btn-warning">
         <span class="glyphicon glyphicon-heart-empty">收藏</span>

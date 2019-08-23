@@ -13,8 +13,9 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     NOTIFICATION_NOT_FOUND(2009, "消息莫非是不翼而飞了？"),
     FILE_UPLOAD_FAIL(2010, "图片上传失败"),
     CAN_NOT_EDIT_QUESTION(2020, "您无法编辑此问题"),
-    CAN_NOT_LIKE(2021, "点赞异常"),
+    CAN_NOT_LIKE(2021, "点赞/收藏异常"),
     CAN_NOT_LIKE_AGAIN(2022, "不要重复点赞哦"),
+    CAN_NOT_LIKE_QUESTION_AGAIN(2023, "不要重复点赞哦"),
     ;
 
     private Integer code;

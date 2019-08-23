@@ -66,10 +66,33 @@ public class LikeService {
             // 创建通知
             createNotify(thumb, dbComment.getCommentator(), user.getName(), dbComment.getContent(), NotificationTypeEnum.LIKE_COMMENT, question.getId());
             }
-        else {
+        else  if (thumb.getType() == LikeTypeEnum.QUESTION.getType()){
             //点赞问题（待实现）
+            Question question = questionMapper.selectByPrimaryKey(thumb.getTargetId());
+            if (question == null) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
+            ThumbExample thumbExample = new ThumbExample();
+            thumbExample.createCriteria()
+                    .andTargetIdEqualTo(thumb.getTargetId())
+                    .andTypeEqualTo(thumb.getType())
+                    .andLikerEqualTo(thumb.getLiker());
+            List<Thumb> thumbs = thumbMapper.selectByExample(thumbExample);
+            if(thumbs.size()>=1) return 2023;
+            thumbMapper.insert(thumb);
+
+
+            // 增加点赞数
+            question.setId(thumb.getTargetId());
+            question.setLikeCount(1);
+            thumbExtMapper.incQuestionLikeCount(question);
+
+            // 创建通知
+            createNotify(thumb, question.getCreator(), user.getName(), question.getTitle(), NotificationTypeEnum.LIKE_QUESTION, question.getId());
 
         }
+
+
            return 0;
             }
 

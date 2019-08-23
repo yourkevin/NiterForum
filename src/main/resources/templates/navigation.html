@@ -3,7 +3,7 @@
 
 <body>
 <div th:fragment="nav">
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -46,7 +46,7 @@
                 </li>
                 <li th:if="${session.user!=null}" th:class="${'notifynav' == navtype}? 'active' : ''">
                     <a href="/profile/notifies" class="glyphicon glyphicon-bell">
-                        <span th:if="${session.unreadCount!=0}" class="badge" th:text="${session.unreadCount}"></span>
+                        <span th:if="${session.unreadCount!=0}" class="badge" th:text="${session.unreadCount}" style="margin-bottom: 5px;margin-left: -5px;"></span>
                     </a>
                 </li>
                 <li th:if="${session.user==null}">
@@ -64,7 +64,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="/profile/questions">我的问题</a></li>
-                        <li><a href="#">Another action</a></li>
+                        <li><a href="/profile/likes">我的收藏</a></li>
                         <li><a href="#">Something else here</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="/logout">退出登录</a></li>
