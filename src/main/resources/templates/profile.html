@@ -37,6 +37,7 @@
                     <span class="text-desc">
                         <span th:text="${question.commentCount}"></span> 个回复 •
                         <span th:text="${question.viewCount}"></span> 次浏览 •
+                        <span th:text="${question.LikeCount}"></span> 人收藏 •
                         <span th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></span> 更新 •
                         <a class="community-menu" th:href="@{'/publish/'+${question.id}}" th:if="${session.user!=null&&session.user.id == question.creator}">
                            <span class="glyphicon glyphicon-edit" aria-hidden="true">编辑</span>
@@ -59,6 +60,7 @@
                         <span class="text-desc">
                         <span th:text="${question.commentCount}"></span> 个回复 •
                         <span th:text="${question.viewCount}"></span> 次浏览 •
+                        <span th:text="${question.LikeCount}"></span> 人收藏 •
                         <span th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></span> 更新 •
                         <a class="community-menu" th:href="@{'/publish/'+${question.id}}" th:if="${session.user!=null&&session.user.id == question.creator}">
                            <span class="glyphicon glyphicon-edit" aria-hidden="true">编辑</span>
