@@ -1,37 +1,56 @@
 package cc.ikevin.community.controller;
 
+import cc.ikevin.community.exception.CustomizeErrorCode;
+import cc.ikevin.community.exception.CustomizeException;
+import cc.ikevin.community.model.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Controller
-public class HelloController {
+public class ChatController {
 
-    @GetMapping("/hello")
-    public String hello(HttpServletRequest request) {
-       /* User user = (User) request.getSession().getAttribute("user");
+    @Value("${xianliao.sso.key}")
+    private String sso_key;
+
+
+    @GetMapping("/chat")
+    public String hello(HttpServletRequest request, Model model) {
+        User user = (User) request.getSession().getAttribute("user");
+        if(user==null){
+            throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+        }
         String xlm_wid ="14875";
         String xlm_url="https://www.xianliao.me/";
         String xlm_uid = ""+user.getId();
         String xlm_name = user.getName();
         String xlm_avatar = ""+user.getAvatarUrl();
         String xlm_time = ""+(int)(System.currentTimeMillis()/1000);
-        String sso_key = "dsAjGKCiCleHmWoSfqH3MuthGlkf2kGB";
+
         String xlm_name_encode = URLEncoder.encode(xlm_name);
         String xlm_avatar_encode = URLEncoder.encode(xlm_avatar);
         String s = xlm_wid+"_"+xlm_uid+"_"+xlm_time+"_"+sso_key;
-        String xlm_hash = SHA(s, "SHA-512");*/
-       // String go = "https://xianliao.me/s/14875?mobile=1&uid="+xlm_uid+"&username="+xlm_name_encode+"&avatar="+xlm_avatar_encode+"&ts="+xlm_time+"&token="+xlm_hash;
-       // System.out.println(xlm_name_encode);
-       // System.out.println(user.getId()+user.getName()+user.getAvatarUrl());
-       // System.out.println(s);
-       // System.out.println(xlm_hash);
-        return "hello";
-      //  return "redirect:"+go;
+        String xlm_hash = SHA(s, "SHA-512");
+        String go = "https://xianliao.me/s/14875?mobile=1&uid="+xlm_uid+"&username="+xlm_name_encode+"&avatar="+xlm_avatar_encode+"&ts="+xlm_time+"&token="+xlm_hash;
+        String go2 = "hello?mobile=1&uid="+xlm_uid+"&username="+xlm_name_encode+"&avatar="+xlm_avatar_encode+"&ts="+xlm_time+"&token="+xlm_hash;
+        model.addAttribute("xlm_uid",xlm_uid);
+        model.addAttribute("xlm_name",xlm_name);
+        model.addAttribute("xlm_avatar",xlm_avatar_encode);
+        model.addAttribute("xlm_time",xlm_time);
+        model.addAttribute("xlm_hash",xlm_hash);
+        model.addAttribute("navtype", "chatnav");
+        return "chat";
     }
+
+
+
+
 
 
     private String SHA(final String strText, final String strType)
@@ -75,5 +94,4 @@ public class HelloController {
 
         return strResult;
     }
-
 }

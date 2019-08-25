@@ -21,6 +21,7 @@
             <ul class="nav navbar-nav">
                 <li th:class="${'communitynav' == navtype}? 'active' : ''"><a href="/">论坛<span class="sr-only">(current)</span></a></li>
                 <li th:class="${'videonav' == navtype}? 'active' : ''"><a href="/videos">视频<span class="sr-only">(current)</span></a></li>
+                <li th:class="${'chatnav' == navtype}? 'active' : ''"><a href="/chat" target="_blank">聊天室<span class="sr-only">(current)</span></a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Dropdown <span class="caret"></span></a>
                     <ul class="dropdown-menu">

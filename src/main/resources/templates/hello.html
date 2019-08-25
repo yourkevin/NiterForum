@@ -3,14 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>测试</title>
-    <head th:insert="~{import :: head}"></head>
-    <script src="https://cdn.bootcss.com/clipboard.js/2.0.4/clipboard.js"></script>
+    <!--head th:insert="~{import :: head}"></head-->
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
 </head>
 <body>
+<script>
+    var url = location.search; //获取url中"?"符后的字串
+
+    if (url.indexOf("?") != -1) {
+        var str = url.substr(1);
+        strs = str.split("&");
 
 
-<script type="text/javascript" src="https://api.lli.cx/clock/clock.js"></script>
-<p id="logInfo"></p>
+    var xlm_wid='14875';
+    var xlm_url='https://www.xianliao.me/';
+    var xlm_uid=decodeURIComponent(strs[1].replace("uid=","")); //登录用户的ID，游客使用0
+     alert(xlm_uid)
+   // var xlm_name=$.getUrlParam('username'); //登录用户的用户名，游客使用空字符
+   // var xlm_avatar=$.getUrlParam('avatar');//登录用户的头像URL，游客使用空字符
+   // var xlm_time=$.getUrlParam('ts'); //现在服务器的Linux timestamp, 如：1481673726
+  //  var xlm_hash=$.getUrlParam('token');; //为保障用户的登录安全，xlm_hash须在后台生成，见下附的xlm_hash的生成方法
+
+</script>
+<script type='text/javascript' charset='UTF-8' src='https://www.xianliao.me/embed.js'></script>
 
 </body>
 </html>

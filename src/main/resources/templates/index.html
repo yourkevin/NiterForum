@@ -73,6 +73,7 @@
                             <span th:if="${question.status==2||question.status==3}" class="label label-warning">置顶</span>
                             <span th:if="${question.status==1||question.status==3}" class="label label-danger">精华</span>
                             <a th:href="@{'/question/'+ ${question.id}}" th:text="${question.title}"></a>
+                            <span th:if="${question.viewCount>100}" class="glyphicon glyphicon-fire active"></span>
                         </h4>
                         <span class="text-desc">
                         <span th:text="${question.commentCount}"></span> 个回复 •
@@ -97,6 +98,7 @@
                             <span th:if="${question.status==2||question.status==3}" class="label label-warning">置顶</span>
                             <span th:if="${question.status==1||question.status==3}" class="label label-danger">精华</span>
                             <a th:href="@{'/question/'+ ${question.id}}" th:text="${question.title}"></a>
+                            <span th:if="${question.viewCount>100}" class="glyphicon glyphicon-fire active"></span>
                         </h4>
                         <span class="text-desc">
                         <span th:text="${question.commentCount}"></span> 个回复 •
