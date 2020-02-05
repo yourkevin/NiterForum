@@ -18,7 +18,8 @@
 12. OAuth2授权登入（QQ、微博、百度、Github）
 
 ## 主要功能
-####帖子相关
+
+###帖子相关
 1. 发帖
 2. 编辑
 3. 点赞
@@ -29,7 +30,7 @@
 8. 帖子分类
 9. 话题标签
 10. [图片水印](https://niter.cn/p/33 "图片水印")
-####用户相关
+###用户相关
 1. 登录
 2. 注册
 3. [账号体系(绑定账户)](https://niter.cn/p/83 "账号体系")（手机号、邮箱号、QQ、微博、百度、Github六合一）
@@ -39,7 +40,7 @@
 7. 会员特权
 8. 消息通知
 9. 个人主页
-####更多功能
+###更多功能
 1. 搜索
 2. 排序
 3. 聊天室
@@ -48,9 +49,9 @@
 1. 安装必备工具  
 JDK，Maven
 2. 克隆代码到本地  
-3. 将[resources](/blob/master/src/main/resources/ "resources")目录下的[niter.sql](/blob/master/src/main/resources/niter.sql "niter.sql")导入新创建的数据库。
-4. 根据提示，编辑[resources](/blob/master/src/main/resources/ "resources")目录下的[application.properties](/blob/master/src/main/resources/application.properties "application.properties")文件。
-5. 编辑[resources](/blob/master/src/main/resources/ "resources")目录下的[generatorConfig.xml](/blob/master/src/main/resources/generatorConfig.xml "generatorConfig.xml")文件，配置数据库相关信息。
+3. 将[resources](/master/src/main/resources/ "resources")目录下的[niter.sql](/master/src/main/resources/niter.sql "niter.sql")导入新创建的数据库。
+4. 根据提示，编辑[resources](/master/src/main/resources/ "resources")目录下的[application.properties](/master/src/main/resources/application.properties "application.properties")文件。
+5. 编辑[resources](/master/src/main/resources/ "resources")目录下的[generatorConfig.xml](/master/src/main/resources/generatorConfig.xml "generatorConfig.xml")文件，配置数据库相关信息。
 6. 运行打包命令
    ```sh 
    mvn clean package
@@ -66,13 +67,14 @@ JDK，Maven
    ```
 
 ##项目演示
-[![首页演示](https://kevin-10058670.cos.ap-shanghai.myqcloud.com/niter/demo/001.png "首页演示")](https://niter.cn/ "首页演示")
+[![首页演示](images/001.png "首页演示")](https://niter.cn/ "首页演示")
 
-[![帖子页面](https://kevin-10058670.cos.ap-shanghai.myqcloud.com/niter/demo/002.png "帖子页面")](https://niter.cn/p/37 "帖子页面")
+[![积分策略](images/003.png "积分策略")](https://niter.cn/p/78 "积分策略")
 
-[![积分策略](https://kevin-10058670.cos.ap-shanghai.myqcloud.com/niter/demo/003.png "积分策略")](https://niter.cn/p/78 "积分策略")
+[![账户中心](images/005.png "账户中心")](https://niter.cn/p/83 "账户中心")
 
-[![账户中心](https://kevin-10058670.cos.ap-shanghai.myqcloud.com/niter/demo/005.png "账户中心")](https://niter.cn/p/83 "账户中心")
+更多演示，请移步：[https://niter.cn/](https://niter.cn/) 
+
 ## 目录结构
    ```
        ├─cn.niter.forum         应用目录
@@ -90,13 +92,16 @@ JDK，Maven
        │__├─config             配置类
    ``` 
      
+
 ##更多链接
+
 ###联系我们
 尼特社区官方交流群：[955295791](https://jq.qq.com/?_wv=1027&k=5uPXrY2 "欢迎加入")
 
 官方交流社区：[https://niter.cn/](https://niter.cn/ "欢迎交流")
 
 更新日志：[https://niter.cn/p/26](https://niter.cn/p/26/ "欢迎订阅")
+
 ### 资料
 [Spring 文档](https://spring.io/guides)    
 [Spring Web](https://spring.io/guides/gs/serving-web-content/)   
