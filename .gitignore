@@ -39,7 +39,7 @@ build/
 hello.html
 video.html
 videos.html
-src/main/resources/application.properties
+#src/main/resources/application.properties
 src/main/resources/generatorConfig.xml
 header.html
 footer.html
