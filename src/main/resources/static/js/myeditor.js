@@ -25,7 +25,151 @@ editor.customConfig.customAlert = function (info) {
 }
 editor.customConfig.emotions =[
     {
-        'title': '抖音',
+        // tab 的标题
+        title: '贴吧',
+        // type -> 'emoji' / 'image'
+        type: 'image',
+        // content -> 数组
+        content: [
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/1.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/2.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/3.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/4.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/5.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/6.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/7.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/8.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/9.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/10.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/11.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/12.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/13.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/14.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/15.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/16.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/17.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/18.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/19.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/20.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/21.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/22.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/23.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/24.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/25.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/26.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/27.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/28.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/29.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/30.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/31.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/32.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/33.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/34.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/35.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/36.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/37.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/38.jpg'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/39.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/40.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/41.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/42.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/43.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/44.png'
+            },
+            {
+                'src': 'http://qs.niter.cn/static/img/smile/tieba/45.png'
+            }
+        ]
+    },
+    {
+        'title': '抖音（大表情）',
         'type': 'image',
         'content': [
             {
@@ -465,6 +609,7 @@ editor.customConfig.onchange = function (html) {
 editor.create();
 // 初始化 textarea 的值
 $description.val(editor.txt.html());
+//var objeditor = document.getElementById("editor");
 var obj = document.getElementById("descriptionP");
 //alert(obj.innerText);//这样就自动解析了
 obj.innerHTML = obj.innerText;//这样重新设置html代码为解析后的格式

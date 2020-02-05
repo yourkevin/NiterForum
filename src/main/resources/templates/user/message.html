@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${'我的消息'+@environment.getProperty('site.main.titleInfo')}"></title>
+  <th:block th:insert="~{common/header :: head}"></th:block>
+  <script src="/js/community.js" type="application/javascript"></script>
+  <script src="/js/moment.js" type="application/javascript"></script>
+</head>
+<body>
+
+<div th:insert="~{common/header :: nav}"></div>
+
+<div class="layui-container fly-marginTop fly-user-main">
+  <th:block th:insert="~{common/sider :: user}"></th:block>
+
+
+  <div class="site-tree-mobile layui-hide">
+    <i class="layui-icon">&#xe602;</i>
+  </div>
+  <div class="site-mobile-shade"></div>
+  
+  <div class="site-tree-mobile layui-hide">
+    <i class="layui-icon">&#xe602;</i>
+  </div>
+  <div class="site-mobile-shade"></div>
+  
+  
+  <div class="fly-panel fly-panel-user" pad20>
+	  <div class="layui-tab layui-tab-brief" lay-filter="user" id="LAY_msg" style="margin-top: 15px;">
+        <button class="layui-btn" id="LAY_readallmsg">一键已读</button>
+        <button class="layui-btn layui-btn-danger" id="LAY_delallmsg">清空全部消息</button>
+        <div  id="LAY_minemsg" style="margin-top: 10px;">
+        <!--<div class="fly-none">您暂时没有最新消息</div>-->
+        <ul class="mine-msg" th:each="notification : ${pagination.data}">
+          <li data-id="123">
+            <blockquote class="layui-elem-quote">
+              <a href="/" target="_blank"><cite th:text="${notification.notifierName}">Absolutely</cite></a><a th:text="${notification.typeName + ' '}"></a><a target="_blank" th:href="@{'/notification/'+ ${notification.id}}"><cite th:text="${notification.outerTitle}">layui后台框架</cite></a>
+              <span th:if="${notification.status == 1}" class="layui-badge layui-bg-green">已读</span>
+              <span th:if="${notification.status == 0}" class="layui-badge layui-bg-red">未读</span>
+            </blockquote>
+            <p><span th:text="${#dates.format(notification.gmtCreate,'yyyy-MM-dd HH:mm')}">1小时前</span><a href="javascript:;" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a></p>
+          </li>
+        </ul>
+      </div>
+	  </div>
+      <div style="text-align: center">
+      <div class="laypage-main"  ><!-- 分页展示 -->
+        <a th:if="${pagination.showFirstPage}" th:href="@{/user/message(page=1)}"
+           aria-label="Previous">
+          &laquo;
+        </a>
+        <a th:if="${pagination.showPrevious}" th:href="@{/user/message(page=${pagination.page - 1})}">
+          &lt;
+        </a>
+        <th:block th:each="page : ${pagination.pages}" >
+          <a th:if="${pagination.page != page}"
+             th:href="@{/user/message(page=${page})}"
+             th:text="${page}"></a>
+          <span th:if="${pagination.page == page}"
+                th:href="@{/user/message(page=${page})}"
+                th:text="${page}"
+                class="laypage-curr"></span>
+        </th:block>
+        <a th:if="${pagination.showNext}" th:href="@{/user/message(page=${pagination.page +1 })}">
+          &gt;
+        </a>
+        <a th:if="${pagination.showEndPage}" th:href="@{/user/message(page=${pagination.totalPage})}"
+           aria-label="Next">
+          &raquo;
+        </a>
+
+      </div>
+    </div>
+	</div>
+
+
+
+</div>
+
+
+
+<script src="/layui/layui.js"></script>
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+<script>
+layui.cache.page = 'user';
+layui.cache.user = {
+  username: '游客'
+  ,uid: -1
+  ,avatar: '/images/avatar/00.jpg'
+  ,experience: 83
+  ,sex: '男'
+};
+layui.config({
+  version: "3.0.0"
+  ,base: '/mods/'
+}).extend({
+  fly: 'index'
+}).use('fly');
+</script>
+
+</body>
+</html>

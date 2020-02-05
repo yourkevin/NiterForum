@@ -75,6 +75,26 @@ body{
     height: 13px;
 }
 
+.community-tag:hover {
+    background-color: #339dff;
+    color: #fff !important;
+    text-decoration-line: none;
+}
+
+.community-tag {
+    text-decoration-line: none;
+    cursor: pointer;
+    display: inline-block;
+    height: 20px;
+    line-height: 16px;
+    padding: 2px 5px;
+    background-color: #99cfff;
+    font-size: 12px;
+    color: #fff !important;
+    border-radius: 4px;
+    margin: 4px;
+}
+
 .comment {
     margin: 10px 0;
 }
@@ -158,15 +178,15 @@ body{
 }
 
 
-.avatar img{
+.niter-avatar img{
 
-    border: 1px solid #fff;
+   /* border: 1px solid #fff;*/
     -webkit-transition: .8s;
     -moz-transition: .8s;
     -o-transition: .8s;
     -ms-transition: .8s;
 }
-.avatar img:hover{
+.niter-avatar img:hover{
     -moz-box-shadow:0 3px 10px #888;
     -webkit-box-shadow:0 3px 10px #888;
     transform:rotate(720deg);
@@ -214,4 +234,29 @@ body{
     -webkit-transition: left 1s ease-in-out; /*过渡*/
     transition: left 1s ease-in-out;
     left:120%; /*结束位置*/
+}
+
+.chat{ width:50px;
+    height:50px;
+    position:fixed;
+    right:0;
+    bottom:0;}
+
+.icon20{
+    width:20px;
+    height:20px;
+}
+
+.icon128{
+    width:128px;
+    height:128px;
+}
+
+.icon64{
+    width:64px;
+    height:64px;
+}
+
+.loginIcon{
+    margin: 5px 10px;
 }

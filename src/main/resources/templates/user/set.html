@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${'账号设置'+@environment.getProperty('site.main.titleInfo')}"></title>
+  <th:block th:insert="~{common/header :: head}"></th:block>
+  <script src="/js/community.js" type="application/javascript"></script>
+</head>
+<body>
+<div th:insert="~{common/header :: nav}"></div>
+
+<div class="layui-container fly-marginTop fly-user-main">
+  <th:block th:insert="~{common/sider :: user}"></th:block>
+
+  <div class="site-tree-mobile layui-hide">
+    <i class="layui-icon">&#xe602;</i>
+  </div>
+  <div class="site-mobile-shade"></div>
+
+  <div class="site-tree-mobile layui-hide">
+    <i class="layui-icon">&#xe602;</i>
+  </div>
+  <div class="site-mobile-shade"></div>
+  
+  
+  <div class="fly-panel fly-panel-user" pad20>
+    <div class="layui-tab layui-tab-brief" lay-filter="user">
+      <ul class="layui-tab-title" id="LAY_mine">
+        <li class="layui-this"  lay-id="info">我的资料</li>
+        <li lay-id="score">积分</li>
+        <li lay-id="userGroup">用户组</li>
+        <li lay-id="avatar">头像</li>
+        <li lay-id="pass">密码</li>
+
+      </ul>
+      <div class="layui-tab-content" style="padding: 20px 0;">
+        <div class="layui-form layui-form-pane layui-tab-item layui-show">
+          <form method="post">
+            <div class="layui-form-item">
+              <label for="L_email" class="layui-form-label">邮箱</label>
+              <div class="layui-input-inline">
+                <input type="text" id="L_email" name="email" required lay-verify="email" autocomplete="off" value="" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">如果您在邮箱已激活的情况下，变更了邮箱，需<a href="activate.html" style="font-size: 12px; color: #4f99cf;">重新验证邮箱</a>。</div>
+            </div>
+            <div class="layui-form-item">
+              <label for="L_username" class="layui-form-label">昵称</label>
+              <div class="layui-input-inline">
+                <input type="text" id="L_username" name="username" required lay-verify="required" autocomplete="off" value="" class="layui-input">
+              </div>
+              <div class="layui-inline">
+                <div class="layui-input-inline">
+                  <input type="radio" name="sex" value="0" checked title="男">
+                  <input type="radio" name="sex" value="1" title="女">
+                </div>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label for="L_city" class="layui-form-label">城市</label>
+              <div class="layui-input-inline">
+                <input type="text" id="L_city" name="city" autocomplete="off" value="" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+              <label for="L_sign" class="layui-form-label">签名</label>
+              <div class="layui-input-block">
+                <textarea placeholder="随便写些什么刷下存在感" id="L_sign"  name="sign" autocomplete="off" class="layui-textarea" style="height: 80px;"></textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit>确认修改</button>
+            </div>
+        </div>
+
+        <div class="layui-form layui-form-pane layui-tab-item">
+          <blockquote class="layui-elem-quote"
+                      th:text="${'我的积分：总'+@environment.getProperty('user.score.name')+'：'+session.userAccount.score
+                      +'|'+@environment.getProperty('user.score1.name')+'：'+session.userAccount.score1
+                      +'|'+@environment.getProperty('user.score2.name')+'：'+session.userAccount.score2
+                      +'|'+@environment.getProperty('user.score3.name')+'：'+session.userAccount.score3
+                      }"></blockquote>
+          <blockquote class="layui-elem-quote"
+                      th:text="${'积分公式：总'+@environment.getProperty('user.score.name')+'='
+                      +@environment.getProperty('user.score1.name')+'*'+@environment.getProperty('user.score1.priorities')
+                      +'+'+@environment.getProperty('user.score2.name')+'*'+@environment.getProperty('user.score2.priorities')
+                      +'+'+@environment.getProperty('user.score3.name')+'*'+@environment.getProperty('user.score3.priorities')
+                      +'。尼丸作为消耗积分，可用于购买虚拟物品，不计入总积分公式。'}">
+
+          </blockquote>
+          <blockquote class="layui-elem-quote">积分规则：进行以下事件动作，会得到积分奖励。不过，在一个周期内，您最多得到的奖励次数有限制。</blockquote>
+          <table lay-even class="layui-table">
+            <colgroup>
+              <col width="150">
+              <col width="200">
+              <col>
+            </colgroup>
+            <thead>
+            <tr>
+              <th>动作名称</th>
+              <th>每周上限</th>
+              <th th:text="${@environment.getProperty('user.score1.name')}"></th>
+              <th th:text="${@environment.getProperty('user.score2.name')}"></th>
+              <th th:text="${@environment.getProperty('user.score3.name')}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>发帖</td>
+              <td>不限次数</td>
+              <td th:text="${@environment.getProperty('score1.publish.inc')}"></td>
+              <td th:text="${@environment.getProperty('score2.publish.inc')}"></td>
+              <td th:text="${@environment.getProperty('score3.publish.inc')}"></td>
+            </tr>
+            <tr>
+              <td>评论</td>
+              <td>不限次数</td>
+              <td th:text="${@environment.getProperty('score1.comment.inc')}"></td>
+              <td th:text="${@environment.getProperty('score2.comment.inc')}"></td>
+              <td th:text="${@environment.getProperty('score3.comment.inc')}"></td>
+            </tr>
+            <tr>
+              <td>被他人回复</td>
+              <td>不限次数</td>
+              <td th:text="${@environment.getProperty('score1.commented.inc')}"></td>
+              <td th:text="${@environment.getProperty('score2.commented.inc')}"></td>
+              <td th:text="${@environment.getProperty('score3.commented.inc')}"></td>
+            </tr>
+            </tbody>
+          </table>
+          <blockquote class="layui-elem-quote" style="color: red">积分特权：会员尊享双倍<th:block th:text="${@environment.getProperty('user.score1.name')+'与'+@environment.getProperty('user.score2.name')}"></th:block>，详见<a href="/vip" target="_blank">会员官网</a>。</blockquote>
+        </div>
+
+        <div class="layui-form layui-form-pane layui-tab-item">
+          <blockquote class="layui-elem-quote"
+                      th:text="${'我的用户组：'+@environment.getProperty('user.group.r'+session.userAccount.groupId)}"></blockquote>
+          <blockquote class="layui-elem-quote">用户组详情：以下列出了用户组晋升规则及权限。如需快速提升用户组等级请了解<a class="fly-link" href="/user/set/info#score" target="_blank">积分规则</a></blockquote>
+          <table lay-even class="layui-table">
+            <colgroup>
+              <col width="150">
+              <col width="200">
+              <col>
+            </colgroup>
+            <thead>
+            <tr>
+              <th>用户组名称</th>
+              <th th:text="${@environment.getProperty('user.group.r1')}"></th>
+              <th th:text="${@environment.getProperty('user.group.r2')}"></th>
+              <th th:text="${@environment.getProperty('user.group.r3')}"></th>
+              <th th:text="${@environment.getProperty('user.group.r4')}"></th>
+              <th th:text="${@environment.getProperty('user.group.r5')}"></th>
+              <th th:text="${@environment.getProperty('user.group.r6')}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>积分范围</td>
+              <td th:text="${'[0,'+@environment.getProperty('user.group.r1.max')+']'}"></td>
+              <td th:text="${'('+@environment.getProperty('user.group.r1.max')+','+@environment.getProperty('user.group.r2.max')+']'}"></td>
+              <td th:text="${'('+@environment.getProperty('user.group.r2.max')+','+@environment.getProperty('user.group.r3.max')+']'}"></td>
+              <td th:text="${'('+@environment.getProperty('user.group.r3.max')+','+@environment.getProperty('user.group.r4.max')+']'}"></td>
+              <td th:text="${'('+@environment.getProperty('user.group.r4.max')+','+@environment.getProperty('user.group.r5.max')+']'}"></td>
+              <td th:text="${'('+@environment.getProperty('user.group.r5.max')+',+∞)'}"></td>
+
+            </tr>
+            <tr>
+              <td>阅读权限</td>
+              <td colspan="6" style="text-align:center;vertical-align:middle;">发帖者可以设置帖子的阅读权限，更高等级拥有更高的阅读权限</td>
+            </tr>
+            </tbody>
+          </table>
+          <blockquote class="layui-elem-quote" style="color: red">用户组特权：会员尊享双倍<th:block th:text="${@environment.getProperty('user.score1.name')+'与'+@environment.getProperty('user.score2.name')}"></th:block>，可快速提升用户组等级，同时会员尊享70阅读权限，畅享绝大部分内容，详见<a href="/vip" target="_blank">会员官网</a>。</blockquote>
+        </div>
+
+
+
+        <div class="layui-form layui-form-pane layui-tab-item">
+            <div class="layui-form-item">
+              <div class="avatar-add">
+                <p>像素必须大于168*168，支持jpg、png、gif，最大不能超过1000KB</p>
+                <button type="button" class="layui-btn upload-img">
+                  <i class="layui-icon">&#xe67c;</i>上传头像
+                </button>
+                <button type="button" class="layui-btn upload-img">
+                  <i class="layui-icon">&#xe67c;</i>上传头像
+                </button>
+                <img th:src="${session.user.avatarUrl}" src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
+                <span class="loading"></span>
+              </div>
+            </div>
+          </div>
+          
+        <div class="layui-form layui-form-pane layui-tab-item">
+            <form action="/user/repass" method="post">
+              <div class="layui-form-item">
+                <label for="L_nowpass" class="layui-form-label">当前密码</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_nowpass" name="nowpass" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label">新密码</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_pass" name="pass" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+              </div>
+              <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">确认密码</label>
+                <div class="layui-input-inline">
+                  <input type="password" id="L_repass" name="repass" required lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit>确认修改</button>
+              </div>
+            </form>
+          </div>
+          
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+
+<script>
+layui.cache.page = 'user';
+layui.cache.user = {
+  username: '游客'
+  ,uid: -1
+  ,avatar: '/images/avatar/00.jpg'
+  ,experience: 83
+  ,sex: '男'
+};
+layui.config({
+  version: "2.0.0"
+  ,base: '/mods/'
+}).extend({
+  fly: 'index'
+}).use('fly');
+</script>
+
+</body>
+</html>

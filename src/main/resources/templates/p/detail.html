@@ -1,0 +1,355 @@
+ 
+ 
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${question.title+@environment.getProperty('site.main.titleInfo')}"></title>
+  <th:block th:insert="~{common/header :: head}"></th:block>
+  <script src="/js/community.js" type="application/javascript"></script>
+  <script src="/js/moment.js" type="application/javascript"></script>
+</head>
+<body>
+
+<div th:insert="~{common/header :: nav}"></div>
+
+<div th:insert="~{common/header :: sub_nav}"></div>
+
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md8 content detail">
+      <div class="fly-panel detail-box">
+        <h1 th:text="${question.title}"></h1>
+        <div class="fly-detail-info">
+          <!-- <span class="layui-badge">审核中</span> -->
+          <a class="layui-badge layui-bg-green" th:if="${question.column2==1}">提问</a>
+          <a class="layui-badge layui-bg-green" th:if="${question.column2==2}">分享</a>
+          <a class="layui-badge layui-bg-green" th:if="${question.column2==3}">建议</a>
+          <a class="layui-badge layui-bg-green" th:if="${question.column2==4}">讨论</a>
+          <a class="layui-badge layui-bg-green" th:if="${question.column2==5}">公告</a>
+          <a class="layui-badge layui-bg-green" th:if="${question.column2==6}">动态</a>
+          <a class="layui-badge layui-bg-green" th:if="${question.column2==9}">其它</a>
+          <span class="layui-badge" style="background-color: #999;">未结</span>
+          <!-- <span class="layui-badge" style="background-color: #5FB878;">已结</span> -->
+          
+          <span th:if="${question.status==2||question.status==3}" class="layui-badge layui-bg-orange">置顶</span>
+          <span th:if="${question.status==1||question.status==3}" class="layui-badge layui-bg-red">精帖</span>
+          
+          <div class="fly-admin-box" data-id="123" th:if="${session.user!=null&&question.user.id==session.user.id}">
+            <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
+            
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span> 
+            <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span> -->
+            
+            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1">加精</span> 
+            <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;">取消加精</span> -->
+          </div>
+          <span class="fly-list-nums"> 
+            <a href="#comment"><i class="iconfont" title="回复">&#xe60c;</i><span th:text="${question.commentCount}"></span></a>
+            <i class="iconfont" title="浏览">&#xe60b;</i><span th:text="${question.viewCount}"></span>
+          </span>
+        </div>
+        <div class="detail-about">
+          <a class="fly-avatar niter-avatar" th:href="${'/user/'+question.user.id}">
+            <img th:src="${question.user.avatarUrl}"
+                 th:alt="${question.user.name}">
+          </a>
+          <div class="fly-detail-user">
+            <a th:href="${'/user/'+question.user.id}" class="fly-link" target="_blank">
+              <i th:if="${question.userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
+              <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
+              <i class="layui-badge fly-badge-vip layui-bg-gray" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
+            </a>
+            <span th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></span>更新
+          </div>
+          <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
+            <span style="padding-right: 10px; color: #FF7200" >点击群号免费加入尼特社区交流群：<a target="_blank" th:href="${@environment.getProperty('site.info.contactQunUrl')}" th:text="${@environment.getProperty('site.info.contactQun')}"></a>。</span>
+            <span th:if="${session.user!=null&&session.user.id == question.creator}" class="layui-btn layui-btn-xs jie-admin" type="edit"><a th:href="@{'/p/publish/'+${question.id}}" style="margin-left: -5px;"><i class="layui-icon">&#xe642;</i>编辑</a></span>
+            <span th:data-id="${question.id}" onclick="like_question(this)" class="layui-btn layui-btn-xs layui-btn-warm"><i class="layui-icon">&#xe600;</i>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span>
+          </div>
+        </div>
+        <div style="margin-top: 20px;margin-bottom: 20px" class="layui-text video photos" id="descriptionP" th:text="${question.description}">
+        </div>
+        <div style="margin-top: 10px">
+          相关标签：
+          <span class="layui-badge-rim" th:each="tag : ${question.tag.split(',')}">
+                        <a th:href="@{/(page=1,tag=${tag})}"
+                           th:text="${tag}" class="community-tag"></a>
+          </span>
+        </div><!--标签-->
+      </div>
+
+      <div class="fly-panel detail-box" id="flyReply">
+        <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
+          <legend th:text="${question.commentCount+'个回复'}"></legend>
+
+        </fieldset>
+
+        <ul class="jieda" id="jieda" th:each="comment : ${comments}">
+          <li th:id="${'comment-body-'+comment.id}" class="jieda-daan">
+            <a name="item-1111111111"></a>
+            <div class="detail-about detail-about-reply">
+              <a class="fly-avatar niter-avatar" th:href="${'/user/'+comment.user.id}">
+                <img th:src="${comment.user.avatarUrl}"
+                     th:alt="${comment.user.name}">
+              </a>
+              <div class="fly-detail-user">
+                <a th:href="${'/user/'+comment.user.id}" class="fly-link" target="_blank">
+                  <i th:if="${comment.userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
+                  <cite th:class="${comment.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${comment.user.name}"></cite>
+                  <i class="layui-badge fly-badge-vip layui-bg-gray" th:text="${@environment.getProperty('user.group.r'+comment.userAccount.groupId)}"></i>
+                </a>
+                <span th:if="${question.user.id == comment.user.id}">(楼主)</span>
+                <!--
+                <span style="color:#5FB878">(管理员)</span>
+                <span style="color:#FF9E3F">（社区之光）</span>
+                <span style="color:#999">（该号已被封）</span>
+                -->
+              </div>
+
+              <div class="detail-hits">
+                <span th:text="${#dates.format(comment.gmtCreate,'yyyy-MM-dd  HH:mm')}"></span>
+              </div>
+
+              <!--i class="iconfont icon-caina" title="该贴已被管理员推荐"></i-->
+            </div>
+            <div class="detail-body jieda-body photos" th:text="${comment.content}">
+            </div>
+            <div class="jieda-reply">
+              <span class="jieda-zan"  th:id="${'thumbicon-'+comment.id}">
+                <i class="iconfont icon-zan" th:data-id="${comment.id}" onclick="like_comment(this)"></i>
+                <em th:id="${'likecount-'+comment.id}" th:text="${comment.likeCount}" th:class="${comment.likeCount != 0}? 'zanok' : ''"></em>
+              </span>
+              <span th:data-id="${comment.id}" onclick="collapseComments(this)">
+                <i class="iconfont icon-svgmoban53"></i>
+               <em th:text="${comment.commentCount}" th:class="${comment.commentCount != 0}? 'zanok' : ''"></em>
+              </span>
+              <div class="jieda-admin" th:if="${session.user!=null}">
+                <span type="edit" th:if="${question.user.id==session.user.id}">编辑</span>
+                <span type="del" th:if="${question.user.id==session.user.id}">删除</span>
+                <span class="jieda-accept" type="accept" th:if="${session.user!=null&&session.user.id == 17}">采纳</span>
+              </div>
+            </div>
+            <!--二级评论-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 layui-colla-content sub-comments"
+                 th:id="${'comment-'+comment.id}" lay-filter="sub-comments">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <input type="text" class="form-control layui-input" placeholder=""
+                       th:id="${'input-'+comment.id}">
+                <button th:id="${'btn-'+comment.id}" type="button" class="layui-btn  rightbtn" onclick="comment(this)"
+                        th:data-id="${comment.id}" data-type= 2 >评论
+                </button>
+              </div>
+            </div>
+          </li>
+
+        </ul>
+        <!-- 无数据时 -->
+        <ul class="jieda">
+        <li th:if="${question.commentCount==0}" class="fly-none">消灭零回复</li>
+        </ul>
+        
+        <div class="layui-form layui-form-pane">
+          <!--form action="/jie/reply/" method="post"-->
+          <input type="hidden" id="question_id" th:value="${question.id}">
+            <div class="layui-form-item layui-form-text">
+              <a name="comment"></a>
+              <div class="layui-input-block">
+                <textarea id="comment_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <input type="hidden" name="jid" value="123">
+              <button class="layui-btn" lay-filter="*"  onclick="commentQ()">回复</button>
+            </div>
+          <div id="commentQBtn" style="width: 100px;height: 36px;">
+            <div class="vaptcha-init-main">
+              <div class="vaptcha-init-loading">
+                <a href="/" target="_blank">
+                  <img src="https://r.vaptcha.com/public/img/vaptcha-loading.gif" />
+                </a>
+                <span class="vaptcha-text">Vaptcha启动中...</span>
+              </div>
+            </div>
+          </div>
+          <!--/form-->
+        </div>
+      </div>
+    </div>
+    <div class="layui-col-md4">
+      <dl class="fly-panel fly-list-one">
+        <dt class="fly-panel-title">相关帖子</dt>
+        <dd th:each="related : ${relatedQuestions}">
+          <a th:href="@{'/p/'+ ${related.id}}" th:text="${related.title}">基于 layui 的极简社区页面模版</a>
+          <span><i class="iconfont icon-pinglun1"></i> <span th:text="${related.commentCount}"></span></span>
+        </dd>
+
+        <div th:if="${relatedQuestions==null}" class="fly-none">没有相关数据</div>
+
+      </dl>
+
+      <div class="fly-panel">
+        <div class="fly-panel-title">
+          广告招募哦~
+        </div>
+        <div class="fly-panel-main">
+          <a href="#" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">NiterForum 2.0 - 尼特网 旗舰之作</a>
+        </div>
+      </div>
+
+      <div class="fly-panel" style="">
+        <div class="fly-panel-title">
+          点击图片或者QQ扫码加入尼特社区官方交流群
+        </div>
+        <div class="fly-panel-main">
+          <a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank">
+            <img src="/images/qunQrcode.jpg" style="max-width: 100%;" alt="layui"></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+
+<script type="text/javascript">
+  var obj = document.getElementById("descriptionP");
+  //alert(obj.innerText);//这样就自动解析了
+  obj.innerHTML = obj.innerText;//这样重新设置html代码为解析后的格式
+</script>
+
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+
+<script>
+layui.cache.page = 'jie';
+layui.cache.user = {
+  username: '匿名用户'
+  ,uid: -1
+  ,avatar: '/images/avatar/00.jpg'
+  ,experience: 83
+  ,sex: '男'
+};
+layui.config({
+  version: "3.0.0"
+  ,base: '/mods/'
+}).extend({
+  fly: 'index'
+}).use(['fly', 'face'], function(){
+  var $ = layui.$
+  ,fly = layui.fly;
+  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+
+  $('.detail-body').each(function(){
+    var othis = $(this), html = othis.html();
+    othis.html(fly.content(html));
+  });
+
+});
+</script>
+<script>
+  layui.use(['element', 'layer','code'], function(){
+    var element = layui.element;
+    var layer = layui.layer;
+    layui.code({
+      elem: 'pre', //默认值为.layui-code
+      height:500,
+      about: false,
+    }); //引用code方法
+
+
+    //监听折叠
+    element.on('collapse(sub-comments)', function(data){
+      layer.msg('展开状态：'+ data.show);
+    });
+  });
+</script>
+<script src="https://v.vaptcha.com/v3.js"></script>
+<script type="text/javascript">
+  token = '';
+  userIp='';
+  function commentQ() {
+    if(token == '') {
+      swal({
+        title: "哎哟...",
+        text: "请先完成人机验证再提交哦~",
+        icon: "error",
+        button: "确认",
+      });
+    }else{
+      post();
+    }
+  }
+
+  vaptcha({
+    //配置参数
+    vid: '5ddff34a3f11e776a4947f39', // 验证单元id
+    type: 'click', // 展现类型 点击式
+    container: '#commentQBtn', // 按钮容器，可为Element 或者 selector
+    scene:2,               //场景值02，即评论
+    offline_server: '/validateOffline' //离线模式服务端地址
+  }).then(function (vaptchaObj) {
+    //  obj2=vaptchaObj;
+    //vaptchaObj.render()// 调用验证实例 vpObj 的 render 方法加载验证按钮
+    vaptchaObj.listen('pass', function() {
+      // 验证成功， 进行登录操作
+      // console.log(vaptchaObj.getToken());
+      //getCode();
+      $.ajax({
+        type: "get",
+        url: "/getIp",
+        ContentType: "application/json",
+        CacheControl: "no-cache",
+        //  dataType: "json",
+        success: function(data) {
+         // userIp=data;
+          $.ajax({
+            type: "post",
+            url: "/validate",
+            ContentType: "application/json",
+            CacheControl: "no-cache",
+            data:{
+              scene:2,
+              token:vaptchaObj.getToken(),
+              ip:data
+            },
+            //  dataType: "json",
+            success: function(data) {
+              if(data.success==1){
+                //成功
+                token = vaptchaObj.getToken();
+                //console.log(token);
+              }
+              else if(data.success==0){
+                swal({
+                  title: ""+data.msg,
+                  text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
+                  icon: "error",
+                  button: "确认",
+                });
+                //vaptchaObj.reset();
+              }
+            },
+            error: function(msg) {
+              console.log(msg)
+            }
+          })
+        },
+        error: function(msg) {
+          console.log(msg)
+        }})
+
+
+
+    })
+    vaptchaObj.listen('close', function() {
+      //验证弹窗关闭触发
+      swal({
+        title: "哎哟...",
+        text: "您关闭了验证哦",
+        icon: "error",
+        button: "确认",
+      });
+    })
+    vaptchaObj.render()// 调用验证实例 vaptchaObj 的 render 方法加载验证按钮
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${user.getName() + '的主页'+@environment.getProperty('site.main.titleInfo')}"></title>
+  <th:block th:insert="~{common/header :: head}"></th:block>
+  <script src="/js/community.js" type="application/javascript"></script>
+  <script src="https://community-1251590924.cos.ap-hongkong.myqcloud.com/js/moment.js" type="application/javascript"></script>
+</head>
+<body style="margin-top: 65px;">
+
+<div th:insert="~{common/header :: nav}"></div>
+
+
+<div class="fly-home fly-panel" style="background-image: url('https://api.lli.cx/bing/api.php');">
+  <img th:src="${user.getAvatarUrl()}" th:alt="${user.getName()}" >
+  <i class="iconfont icon-renzheng" title="Fly社区认证"></i>
+  <h1>
+    <i th:if="${userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
+    <span  th:text="${user.getName()}"></span>
+
+    <i class="iconfont icon-nan"></i>
+    <!-- <i class="iconfont icon-nv"></i>  -->
+    <i class="layui-badge fly-badge-vip" th:text="${@environment.getProperty('user.group.r'+userAccount.groupId)}">VIP3</i>
+    <!--
+    <span style="color:#c00;">（管理员）</span>
+    <span style="color:#5FB878;">（社区之光）</span>
+    <span>（该号已被封）</span>
+    -->
+  </h1>
+
+  <p style="padding: 10px 0; color: #5FB878;">认证信息：尼特社区用户</p>
+
+  <p class="fly-home-info">
+    <i class="iconfont icon-kiss" title="总积分"></i><span style="color: #FF7200;" th:text="${userAccount.score}"></span>
+    <i class="iconfont icon-shijian"></i><span th:text="${#dates.format(user.gmtCreate,'yyyy-MM-dd HH:mm')+' 加入'}"></span>
+    <i class="iconfont icon-chengshi"></i><span>来自杭州</span>
+  </p>
+
+  <p class="fly-home-sign">（人生仿若一场修行）</p>
+
+  <div class="fly-sns" data-user="">
+    <a href="javascript:;" class="layui-btn layui-btn-primary fly-imActive" data-type="addFriend">加为好友</a>
+    <a href="javascript:;" class="layui-btn layui-btn-normal fly-imActive" data-type="chat">发起会话</a>
+  </div>
+
+</div>
+
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md6 fly-home-jie">
+      <div class="fly-panel">
+        <h3 class="fly-panel-title" th:text="${user.getName()+' 发表了 '+paginationDto.totalCount+' 个帖子'}"></h3>
+        <ul class="jie-row" >
+          <th:block th:each="question : ${paginationDto.data}">
+          <li>
+            <span th:if="${question.status==1||question.status==3}" class="fly-jing">精</span>
+            <a th:href="'/p/' + ${question.getId()}" th:text="${question.getTitle()}" class="jie-title"></a>
+            <i th:text="${'于 '+#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></i>
+            <!--em class="layui-hide-xs" th:text="${question.commentCount+'个回复 •'+question.viewCount+'次浏览 •'+question.LikeCount+'人收藏'}"></em-->
+          </li>
+          </th:block>
+        </ul>
+        <div th:if="${paginationDto.totalPage} == 0" class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><i style="font-size:14px;">该用户还没有发表任何帖子</i></div>
+        <div style="text-align: center">
+          <div class="laypage-main"  ><!-- 分页展示 -->
+            <a th:if="${paginationDto.showFirstPage}" th:href="@{'/user/'+${user.id}(page=1)}"
+               aria-label="Previous">
+              &laquo;
+            </a>
+            <a th:if="${paginationDto.showPrevious}" th:href="@{'/user/'+${user.id}(page=${paginationDto.page - 1})}">
+              &lt;
+            </a>
+            <th:block th:each="page : ${paginationDto.pages}" >
+              <a th:if="${paginationDto.page != page}"
+                 th:href="@{'/user/'+${user.id}(page=${page})}"
+                 th:text="${page}"></a>
+              <span th:if="${paginationDto.page == page}"
+                    th:href="@{'/user/'+${user.id}(page=${page})}"
+                    th:text="${page}"
+                    class="laypage-curr"></span>
+            </th:block>
+            <a th:if="${paginationDto.showNext}" th:href="@{'/user/'+${user.id}(page=${paginationDto.page +1 })}">
+              &gt;
+            </a>
+            <a th:if="${paginationDto.showEndPage}" th:href="@{'/user/'+${user.id}(page=${paginationDto.totalPage})}"
+               aria-label="Next">
+              &raquo;
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="layui-col-md6 fly-home-da">
+      <div class="fly-panel">
+        <h3 class="fly-panel-title">贤心 最近的回答</h3>
+        <ul class="home-jieda">
+          <li>
+          <p>
+          <span>1分钟前</span>
+          在<a href="" target="_blank">tips能同时渲染多个吗?</a>中回答：
+          </p>
+          <div class="home-dacontent">
+            尝试给layer.photos加上这个属性试试：
+<pre>
+full: true         
+</pre>
+            文档没有提及
+          </div>
+        </li>
+        <li>
+          <p>
+          <span>5分钟前</span>
+          在<a href="" target="_blank">在Fly社区用的是什么系统啊?</a>中回答：
+          </p>
+          <div class="home-dacontent">
+            Fly社区采用的是NodeJS。分享出来的只是前端模版
+          </div>
+        </li>
+        
+          <!-- <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><span>没有回答任何问题</span></div> -->
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+<script>
+layui.cache.page = 'user';
+layui.cache.user = {
+  username: '游客'
+  ,uid: -1
+  ,avatar: '/images/avatar/00.jpg'
+  ,experience: 83
+  ,sex: '男'
+};
+layui.config({
+  version: "3.0.0"
+  ,base: '/mods/'
+}).extend({
+  fly: 'index'
+}).use('fly');
+</script>
+
+</body>
+</html>

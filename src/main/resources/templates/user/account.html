@@ -1,0 +1,568 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${'我的账号'+@environment.getProperty('site.main.titleInfo')}"></title>
+    <th:block th:insert="~{common/header :: head}"></th:block>
+    <script src="/js/community.js" type="application/javascript"></script>
+</head>
+<body>
+<div th:insert="~{common/header :: nav}"></div>
+
+<div class="layui-container fly-marginTop fly-user-main">
+    <th:block th:insert="~{common/sider :: user}"></th:block>
+
+    <div class="site-tree-mobile layui-hide">
+        <i class="layui-icon">&#xe602;</i>
+    </div>
+    <div class="site-mobile-shade"></div>
+
+    <div class="site-tree-mobile layui-hide">
+        <i class="layui-icon">&#xe602;</i>
+    </div>
+    <div class="site-mobile-shade"></div>
+
+
+    <div class="fly-panel fly-panel-user" pad20>
+        <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <ul class="layui-tab-title" id="LAY_mine">
+                <li class="layui-this"  lay-id="phone">我的手机</li>
+                <li lay-id="email">我的邮箱</li>
+                <li lay-id="bind">第三方账号</li>
+            </ul>
+            <div class="layui-tab-content" style="padding: 20px 0;">
+                <input type="hidden" name="id" id="id" th:value="${session.user.id}">
+
+                <div class="layui-form layui-form-pane layui-tab-item layui-show">
+
+                        <div class="layui-form-item">
+                            <label for="L_username" class="layui-form-label">用户名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="L_username" name="L_username" required lay-verify="required" autocomplete="off" disabled="disabled" th:value="${session.user.name}" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="phone" class="layui-form-label">手机号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="phone" name="phone" placeholder="请输入您需要绑定的手机号" th:value="${session.user.phone}" required lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">
+                                11位大陆地区手机号，可修改换绑
+                            </div>
+                        </div>
+                    <div class="layui-form-item">
+                    <div id="getPhoneCodeBtn" style="width: 300px;height: 40px;">
+                        <div class="vaptcha-init-main">
+                            <div class="vaptcha-init-loading">
+                                <a href="/" target="_blank">
+                                    <img src="https://r.vaptcha.com/public/img/vaptcha-loading.gif" />
+                                </a>
+                                <span class="vaptcha-text">验证码加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="layui-form-item">
+                            <label for="verifyPhoneCode" class="layui-form-label">验证码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="verifyPhoneCode" name="repass" required lay-verify="required" autocomplete="off" placeholder="请人机验证后点击右侧按钮" class="layui-input">
+                            </div>
+                        <button type="submit" class="layui-btn" id="btnSendPhoneCode" name="btnSendPhoneCode" onclick="getPhoneCode()">获取验证码</button>
+
+                    </div>
+                        <div class="layui-form-item">
+                            <button class="layui-btn" key="set-mine" onclick="submitPhone()">提交</button>
+                        </div>
+
+                </div>
+
+                <div class="layui-form layui-form-pane layui-tab-item">
+
+                    <div class="layui-form-item">
+                        <label for="L2_username" class="layui-form-label">用户名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L2_username" name="L2_username" required lay-verify="required" autocomplete="off" disabled="disabled" th:value="${session.user.name}" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="mail" class="layui-form-label">邮箱号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="mail" name="mail" placeholder="请输入您需要绑定的邮箱号" th:value="${session.user.email}" required lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">
+                            请输入正确的邮箱号，可修改换绑
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div id="getCodeBtn" style="width: 300px;height: 40px;">
+                            <div class="vaptcha-init-main">
+                                <div class="vaptcha-init-loading">
+                                    <a href="/" target="_blank">
+                                        <img src="https://r.vaptcha.com/public/img/vaptcha-loading.gif" />
+                                    </a>
+                                    <span class="vaptcha-text">验证码加载中...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="verifyCode" class="layui-form-label">验证码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="verifyCode" name="verifyCode" required lay-verify="required" autocomplete="off" placeholder="请人机验证后点击右侧按钮" class="layui-input">
+                        </div>
+                        <button type="submit" class="layui-btn" id="btnSendCode" name="btnSendCode" onclick="getCode()">获取验证码</button>
+
+                    </div>
+                    <div class="layui-form-item">
+                        <button class="layui-btn" key="set-mine" onclick="submitMail()">提交</button>
+                    </div>
+
+                </div>
+
+                <div class="layui-form layui-form-pane layui-tab-item">
+                    <ul class="app-bind">
+                        <li th:class="${session.user.qqAccountId!=null}?'fly-msg app-havebind':'fly-msg'">
+                            <i class="iconfont icon-qq"></i>
+                            <th:block th:if="${session.user.qqAccountId!=null}">
+                                <span>已成功绑定，您可以使用QQ帐号直接登录尼特社区，当然，您也可以</span>
+                                <a th:href="${'https://graph.qq.com/oauth2.0/authorize?client_id='+@environment.getProperty('qq.client.id')+'&redirect_uri='+@environment.getProperty('qq.redirect.uri')+'&response_type=code&state=1'}" class="">更换绑定</a>
+                            </th:block>
+                            <th:block th:if="${session.user.qqAccountId==null}">
+                                <a th:href="${'https://graph.qq.com/oauth2.0/authorize?client_id='+@environment.getProperty('qq.client.id')+'&redirect_uri='+@environment.getProperty('qq.redirect.uri')+'&response_type=code&state=1'}" onclick="layer.msg('正在绑定QQ', {icon:16, shade: 0.1, time:0})" class="acc-bind" type="qq_id">立即绑定</a>
+                                <span>，即可使用QQ帐号登录尼特社区</span>
+                            </th:block>
+                        </li>
+                        <li th:class="${session.user.weiboAccountId!=null}?'fly-msg app-havebind':'fly-msg'">
+                            <i class="iconfont icon-weibo"></i>
+                            <th:block th:if="${session.user.weiboAccountId!=null}">
+                                <span>已成功绑定，您可以使用微博账号直接登录尼特社区，当然，您也可以</span>
+                                <a th:href="${'https://api.weibo.com/oauth2/authorize?client_id='+@environment.getProperty('weibo.client.id')+'&redirect_uri='+@environment.getProperty('weibo.redirect.uri')+'&response_type=code&state=1&scope=all'}" >更换绑定</a>
+                            </th:block>
+                            <th:block th:if="${session.user.weiboAccountId==null}">
+                                <a th:href="${'https://api.weibo.com/oauth2/authorize?client_id='+@environment.getProperty('weibo.client.id')+'&redirect_uri='+@environment.getProperty('weibo.redirect.uri')+'&response_type=code&state=1&scope=all'}" class="acc-weibo" type="weibo_id"  onclick="layer.msg('正在绑定微博', {icon:16, shade: 0.1, time:0})" >立即绑定</a>
+                                <span>，即可使用微博帐号登录尼特社区</span>
+                            </th:block>
+                        </li>
+                        <li th:class="${session.user.baiduAccountId!=null}?'fly-msg app-havebind':'fly-msg'">
+                            <th:block th:if="${session.user.baiduAccountId!=null}">
+                                <i><img src="/images/baidu120c.png" style="height: 28px"></i>
+                                <span>已成功绑定，您可以使用百度账号直接登录尼特社区，当然，您也可以</span>
+                                <a th:href="${'https://openapi.baidu.com/oauth/2.0/authorize?client_id='+@environment.getProperty('baidu.client.id')+'&redirect_uri='+@environment.getProperty('baidu.redirect.uri')+'&response_type=code&state=1'}" >更换绑定</a>
+                            </th:block>
+                            <th:block th:if="${session.user.baiduAccountId==null}">
+                                <i><img src="/images/baidu120.png" style="height: 28px"></i>
+                                <a th:href="${'https://openapi.baidu.com/oauth/2.0/authorize?client_id='+@environment.getProperty('baidu.client.id')+'&redirect_uri='+@environment.getProperty('baidu.redirect.uri')+'&response_type=code&state=1'}" class="acc-weibo" type="weibo_id"  onclick="layer.msg('正在绑定百度', {icon:16, shade: 0.1, time:0})" >立即绑定</a>
+                                <span>，即可使用百度帐号登录尼特社区</span>
+                            </th:block>
+                        </li>
+                        <li th:class="${session.user.accountId!=null}?'fly-msg app-havebind':'fly-msg'">
+                            <th:block th:if="${session.user.accountId!=null}">
+                                <i><img src="/images/github120c.png" style="height: 28px"></i>
+                                <span>已成功绑定，您可以使用Github账号直接登录尼特社区，当然，您也可以</span>
+                                <a th:href="${'https://github.com/login/oauth/authorize?client_id='+@environment.getProperty('github.client.id')+'&redirect_uri='+@environment.getProperty('github.redirect.uri')+'&scope=user&state=1'}">更换绑定</a>
+                            </th:block>
+                            <th:block th:if="${session.user.accountId==null}">
+                                <i><img src="/images/github120.png" style="height: 28px"></i>
+                                <a th:href="${'https://github.com/login/oauth/authorize?client_id='+@environment.getProperty('github.client.id')+'&redirect_uri='+@environment.getProperty('github.redirect.uri')+'&scope=user&state=1'}" class="acc-weibo" type="weibo_id"  onclick="layer.msg('正在绑定Github', {icon:16, shade: 0.1, time:0})" >立即绑定</a>
+                                <span>，即可使用Github帐号登录尼特社区</span>
+                            </th:block>
+                        </li>
+                    </ul>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+
+<script>
+    layui.cache.page = 'user';
+    layui.cache.user = {
+        username: '游客'
+        ,uid: -1
+        ,avatar: '/images/avatar/00.jpg'
+        ,experience: 83
+        ,sex: '男'
+    };
+    layui.config({
+        version: "2.0.0"
+        ,base: '/mods/'
+    }).extend({
+        fly: 'index'
+    }).use('fly');
+</script>
+<script src="https://v.vaptcha.com/v3.js"></script>
+<script type="text/javascript">
+    token = '';
+    userIp='';
+    isValid=0;//是否可以发送验证码
+    var InterValObj; //timer变量，控制时间
+    var count = 60; //间隔函数，1秒执行
+    var curCount;//当前剩余秒数
+    function getCode() {
+        if (isValid == 0) {
+            swal({
+                title: "哎哟...",
+                text: "请先完成人机验证再提交哦~",
+                icon: "error",
+                button: "确认",
+            });
+        } else {
+            isValid == 0
+            curCount = count;
+            $("#btnSendCode").attr("disabled", "true");
+            $("#btnSendCode").text(curCount + "秒后重新发送");
+            $("#btnSendCode").removeAttr("onclick");
+            InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+
+            //  console.log(obj2.getToken());
+            var username = $("#username").val();
+            var mail = $("#mail").val();
+//if(phone.length!=11) {sweetAlert("哎哟...", "手机号长度不合法！请重新输入!", "error");return;}
+            $.getJSON(
+                "/mail/getMailCode",
+                "mail=" + mail + "&&username=" + username,
+                function (result) {
+                    if (result.code == 2030) {
+                        swal({
+                            title: "哎哟...",
+                            text: "" + result.message,
+                            icon: "error",
+                            button: "确认",
+                        });
+                        //vaptchaObj.reset();
+                    } else {
+                        code = result.message;
+                        sweetAlert("请耐心等待", "验证码已发送成功!", "info");
+                        $('#mail').attr("disabled", "disabled");
+
+                    }
+                },
+                "text"//xml,json,text或不写
+            );
+            // alert(phone+"1111"+username);
+        }
+    }
+
+    function SetRemainTime() {
+        if (curCount == 1) {
+            isValid == 1
+            window.clearInterval(InterValObj);//停止计时器
+            $("#btnSendCode").removeAttr("disabled");//启用按钮
+            $("#btnSendCode").attr("onclick","getCode();");
+            $("#btnSendCode").text("获取验证码");
+        }
+        else {
+            curCount--;
+            $("#btnSendCode").text(curCount + "秒后重新发送");
+        }
+    }
+
+    function submitMail(){
+        var verifyCode = $("#verifyCode").val();
+        var id = $("#id").val();
+        var mail = $("#mail").val();
+//alert(verifyCode+"----"+code);
+        if(verifyCode==code){
+            $.getJSON(
+                "/mail/submitMail",
+                "mail="+mail+"&&id="+id,
+                function(result){
+                    if(result.code==200){
+
+                        swal({
+                            title: "绑定成功!",
+                            text: "邮箱绑定成功，刷新后可查看绑定状态!",
+                            icon: "success",
+                            button: "好的!",
+                        }).then((value) => {
+                            window.location.href='/user/set/account#email';
+                    });
+                        // alert("手机号绑定成功，将为您跳转至首页");
+                        // window.location.href='../index.jsp';
+                    }
+
+                    else   {
+                        sweetAlert("哎哟...", "绑定失败，可能该号码已在其他账号上绑定。请刷新后重试！", "error");
+                        swal({
+                            title: "绑定失败!",
+                            text: ""+result.message,
+                            icon: "error",
+                            button: "确认",
+                        });
+                    }
+                },
+                "text"//xml,json,text或不写
+            ); }
+        else
+            swal({
+                title: "验证失败!",
+                text: "验证码不匹配,请重新输入！",
+                icon: "error",
+                button: "确认",
+            });
+    }
+
+    vaptcha({
+        //配置参数
+        vid: '5ddff34a3f11e776a4947f39', // 验证单元id
+        type: 'click', // 展现类型 点击式
+        container: '#getCodeBtn', // 按钮容器，可为Element 或者 selector
+        scene:1,                //场景值01，即邮箱注册
+        offline_server: '/validateOffline' //离线模式服务端地址
+    }).then(function (vaptchaObj) {
+        // obj2=vaptchaObj;
+        vaptchaObj.listen('pass', function() {
+            // 验证成功， 进行登录操作
+            // console.log(vaptchaObj.getToken());
+            //getCode();
+            $.ajax({
+                type: "get",
+                url: "/getIp",
+                ContentType: "application/json",
+                CacheControl: "no-cache",
+                //  dataType: "json",
+                success: function(data) {
+                    // userIp=data;
+                    $.ajax({
+                        type: "post",
+                        url: "/validate",
+                        ContentType: "application/json",
+                        CacheControl: "no-cache",
+                        data:{
+                            scene:1,
+                            token:vaptchaObj.getToken(),
+                            ip:data
+                        },
+                        //  dataType: "json",
+                        success: function(data) {
+                            if(data.success==1){
+                                //成功
+                                isValid=1;
+                            }
+                            else if(data.success==0){
+                                swal({
+                                    title: ""+data.msg,
+                                    text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
+                                    icon: "error",
+                                    button: "确认",
+                                });
+                                //vaptchaObj.reset();
+                            }
+                        },
+                        error: function(msg) {
+                            console.log(msg)
+                        }
+                    })
+                },
+                error: function(msg) {
+                    console.log(msg)
+                }})
+        })
+        vaptchaObj.listen('close', function() {
+            //验证弹窗关闭触发
+            swal({
+                title: "哎哟...",
+                text: "您关闭了验证哦",
+                icon: "error",
+                button: "确认",
+            });
+        })
+        vaptchaObj.render()// 调用验证实例 vaptchaObj 的 render 方法加载验证按钮
+    })
+</script>
+<!--script src="/js/vaptcha.js" type="application/javascript"></script-->
+<script type="text/javascript">
+    isValid=0;//是否可以发送验证码
+    var InterValObj; //timer变量，控制时间
+    var count = 60; //间隔函数，1秒执行
+    var curCount;//当前剩余秒数
+    function getPhoneCode() {
+        var phone = $("#phone").val();{
+            if(phone.length!=11){
+                swal({
+                    title: "哎哟...",
+                    text: "长度不合法，手机号是11位呀~",
+                    icon: "error",
+                    button: "确认",
+                });
+                return;
+            }
+        }
+        if (isValid == 0) {
+            swal({
+                title: "哎哟...",
+                text: "请先完成人机验证再提交哦~",
+                icon: "error",
+                button: "确认",
+            });
+        } else {
+            isValid == 0
+            curCount = count;
+            $("#btnSendPhoneCode").attr("disabled", "true");
+            $("#btnSendPhoneCode").text(curCount + "秒后重新发送");
+            $("#btnSendPhoneCode").removeAttr("onclick");
+            InterValObj = window.setInterval(SetRemainTimeforPhone, 1000); //启动计时器，1秒执行一次
+
+            //  console.log(obj2.getToken());
+            // var username = $("#username").val();
+//if(phone.length!=11) {sweetAlert("哎哟...", "手机号长度不合法！请重新输入!", "error");return;}
+            $.getJSON(
+                "/phone/getPhoneCode",
+                "phone=" + phone,
+                function (result) {
+                    if (result.code == 5000) {
+                        swal({
+                            title: "哎哟，验证码发送失败",
+                            text: "" + result.message,
+                            icon: "error",
+                            button: "确认",
+                        });
+                        //vaptchaObj.reset();
+                    } else {
+                        msg_id = result.message;
+                        sweetAlert("请耐心等待", "验证码已发送成功!", "info");
+                        $('#phone').attr("disabled", "disabled");
+
+                    }
+                },
+                "text"//xml,json,text或不写
+            );
+            // alert(phone+"1111"+username);
+        }
+    }
+
+    function SetRemainTimeforPhone() {
+        if (curCount == 1) {
+            isValid == 1
+            window.clearInterval(InterValObj);//停止计时器
+            $("#btnSendPhoneCode").removeAttr("disabled");//启用按钮
+            $("#btnSendPhoneCode").attr("onclick","getPhoneCode();");
+            $("#btnSendPhoneCode").text("获取验证码");
+        }
+        else {
+            curCount--;
+            $("#btnSendPhoneCode").text(curCount + "秒后重新发送");
+        }
+    }
+
+    function submitPhone(){
+        var verifyPhoneCode = $("#verifyPhoneCode").val();
+        var id = $("#id").val();
+        var phone = $("#phone").val();
+
+        if(verifyPhoneCode.length!=6){
+            swal({
+                title: "哎哟...",
+                text: "长度不合法，验证码是6位呀~",
+                icon: "error",
+                button: "确认",
+            });
+            return;
+        }else{
+            $.getJSON(
+                "/phone/ValidCode",
+                "msg_id=" + msg_id+"&&code="+verifyPhoneCode+"&&phone="+phone+"&&state=1",//1即绑定
+                function (result) {
+                    if (result.code !=200) {
+                        swal({
+                            title: "哎哟，绑定失败",
+                            text: "" + result.message,
+                            icon: "error",
+                            button: "确认",
+                        });
+                        //vaptchaObj.reset();
+                    } else if(result.code == 200){
+                        //开始写入数据库
+                        swal({
+                            title: "绑定成功!",
+                            text: "手机号绑定成功，刷新后可查看绑定状态!",
+                            icon: "success",
+                            button: "好的!",
+                        }).then((value) => {
+                            window.location.href='/user/set/account#phone';
+                    });
+                    }
+                },
+                "text"//xml,json,text或不写
+            );
+        }
+
+    }
+
+    vaptcha({
+        //配置参数
+        vid: '5ddff34a3f11e776a4947f39', // 验证单元id
+        type: 'click', // 展现类型 点击式
+        container: '#getPhoneCodeBtn', // 按钮容器，可为Element 或者 selector
+        scene:4,              //场景值04，即手机
+        offline_server: '/validateOffline' //离线模式服务端地址
+    }).then(function (vaptchaObj) {
+        // obj2=vaptchaObj;
+        vaptchaObj.listen('pass', function() {
+            // 验证成功， 进行登录操作
+            // console.log(vaptchaObj.getToken());
+            //getCode();
+            $.ajax({
+                type: "get",
+                url: "/getIp",
+                ContentType: "application/json",
+                CacheControl: "no-cache",
+                //  dataType: "json",
+                success: function(data) {
+                   // userIp=data;
+                    $.ajax({
+                        type: "post",
+                        url: "/validate",
+                        ContentType: "application/json",
+                        CacheControl: "no-cache",
+                        data:{
+                            scene:4,
+                            token:vaptchaObj.getToken(),
+                            ip:data
+                        },
+                        //  dataType: "json",
+                        success: function(data) {
+                            if(data.success==1){
+                                //成功
+                                isValid=1;
+                            }
+                            else if(data.success==0){
+                                swal({
+                                    title: ""+data.msg,
+                                    text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
+                                    icon: "error",
+                                    button: "确认",
+                                });
+                                //vaptchaObj.reset();
+                            }
+                        },
+                        error: function(msg) {
+                            console.log(msg)
+                        }
+                    })
+                },
+                error: function(msg) {
+                    console.log(msg)
+                }})
+
+
+        })
+        vaptchaObj.listen('close', function() {
+            //验证弹窗关闭触发
+            swal({
+                title: "哎哟...",
+                text: "您关闭了验证哦",
+                icon: "error",
+                button: "确认",
+            });
+        })
+        vaptchaObj.render()// 调用验证实例 vaptchaObj 的 render 方法加载验证按钮
+    })
+</script>
+</body>
+</html>

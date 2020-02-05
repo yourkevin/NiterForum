@@ -1,0 +1,88 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<ul th:fragment="user" class="layui-nav layui-nav-tree layui-inline" lay-filter="user">
+    <li class="layui-nav-item">
+        <a th:href="${'/user/'+session.user.id}" target="_blank">
+            <i class="layui-icon">&#xe609;</i>
+            我的主页
+        </a>
+    </li>
+    <li th:class="${section=='account'}?'layui-nav-item layui-this':'layui-nav-item'">
+        <a href="/user/set/account">
+            <i class="layui-icon">&#xe612;</i>
+            账户中心
+        </a>
+    </li>
+    <li th:class="${section=='message'}?'layui-nav-item layui-this':'layui-nav-item'" >
+        <a href="/user/message">
+            <i class="layui-icon">&#xe611;</i>
+            我的消息
+        </a>
+    </li>
+    <li th:class="${section=='myPosts'||section=='likes'}?'layui-nav-item layui-this':'layui-nav-item'">
+        <a href="/user/p/myPosts">
+            <i class="layui-icon">&#xe62a;</i>
+            帖子管理
+        </a>
+    </li>
+    <li th:class="${section=='info'||section=='avatar'}?'layui-nav-item layui-this':'layui-nav-item'">
+        <a href="/user/set/info">
+            <i class="layui-icon">&#xe620;</i>
+            基本设置
+        </a>
+    </li>
+</ul>
+
+<div th:fragment="index" class="layui-col-md4">
+
+    <div class="fly-panel">
+        <div class="fly-panel-title">
+            热门话题
+        </div>
+        <div class="fly-panel-main">
+            <a th:each="tag : ${tags}" th:href="@{/(page=1,search=${search},tag=${tag},sort=${sort})}"
+               th:text="${tag}" class="community-tag"></a>
+        </div>
+    </div>
+
+
+
+
+    <div class="fly-panel fly-rank fly-rank-reply" id="LAY_replyRank">
+        <h3 class="fly-panel-title">最近访客</h3>
+        <dl>
+            <!--<i class="layui-icon fly-loading">&#xe63d;</i>-->
+            <dd th:each="loginUser : ${loginUsers}">
+                <a th:href="${'/user/'+loginUser.id}" class="niter-avatar">
+                    <img th:src="${loginUser.avatarUrl}" th:alt="${loginUser.name}"><cite th:text="${loginUser.name}"></cite><i th:text="${#dates.format(loginUser.gmtModified,'MM-dd HH:mm')}">106次回答</i>
+                </a>
+            </dd>
+        </dl>
+    </div>
+
+
+
+    <div class="fly-panel">
+        <div class="fly-panel-title">
+            广告招募哦~
+        </div>
+        <div class="fly-panel-main">
+            <a href="#" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">NiterForum 2.0 - 尼特网 旗舰之作</a>
+        </div>
+    </div>
+
+    <div class="fly-panel fly-link">
+        <h3 class="fly-panel-title">友情链接</h3>
+        <dl class="fly-panel-main">
+            <dd><a th:href="${'http://'+@environment.getProperty('site.main.domain')}" target="_blank" th:text="${@environment.getProperty('site.main.title')}"></a><dd>
+            <dd><a href="https://niter.cn/" target="_blank">NiterForum</a><dd>
+            <dd><a href="http://layer.layui.com/" target="_blank">layer</a><dd>
+            <dd><a href="http://www.layui.com/laydate/" target="_blank">layDate</a><dd>
+            <dd><a href="mailto:xianxin@layui-inc.com?subject=%E7%94%B3%E8%AF%B7Fly%E7%A4%BE%E5%8C%BA%E5%8F%8B%E9%93%BE" class="fly-link">申请友链</a><dd>
+        </dl>
+    </div>
+
+</div>
+
+
+</html>

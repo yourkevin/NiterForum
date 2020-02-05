@@ -1,0 +1,36 @@
+.fly-list-like{color: #FF5722;}
+.icon-like{font-size: 18px;}
+.rightbtn{
+    float: right;
+    margin: 10px;
+}
+
+.layui-form-selectup dl {
+    top: 42px;
+    bottom: unset;
+}
+
+.video iframe{
+    width: 100%;
+    height: 460px;
+}
+
+
+.niter-avatar img{
+
+    /* border: 1px solid #fff;*/
+    -webkit-transition: .8s;
+    -moz-transition: .8s;
+    -o-transition: .8s;
+    -ms-transition: .8s;
+}
+.niter-avatar img:hover{
+    -moz-box-shadow:0 3px 10px #888;
+    -webkit-box-shadow:0 3px 10px #888;
+    transform:rotate(720deg);
+    -webkit-transform:rotate(720deg);
+    -moz-transform:rotate(720deg);
+    -o-transform:rotate(720deg);
+    -ms-transform:rotate(720deg);
+    border-radius:35px;
+}

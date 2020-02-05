@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.niter.forum.mapper.UserAccountExtMapper">
+    <resultMap id="BaseResultMap" type="cn.niter.forum.model.UserAccount">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="group_id" jdbcType="INTEGER" property="groupId" />
+        <result column="vip_rank" jdbcType="INTEGER" property="vipRank" />
+        <result column="score" jdbcType="INTEGER" property="score" />
+        <result column="score1" jdbcType="INTEGER" property="score1" />
+        <result column="score2" jdbcType="INTEGER" property="score2" />
+        <result column="score3" jdbcType="INTEGER" property="score3" />
+    </resultMap>
+
+    <update id="incScore" parameterType="cn.niter.forum.model.UserAccount">
+    update user_account
+    set
+    SCORE1 = SCORE1 + #{score1,jdbcType=INTEGER},
+    SCORE2 = SCORE2 + #{score2,jdbcType=INTEGER},
+    SCORE3 = SCORE3 + #{score3,jdbcType=INTEGER},
+    SCORE = SCORE + #{score,jdbcType=INTEGER}
+    where user_id = #{userId}
+    </update>
+
+</mapper>

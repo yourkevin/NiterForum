@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="${'帖子管理'+@environment.getProperty('site.main.titleInfo')}"></title>
+  <th:block th:insert="~{common/header :: head}"></th:block>
+  <script src="/js/community.js" type="application/javascript"></script>
+  <script src="/js/moment.js" type="application/javascript"></script>
+</head>
+<body>
+<div th:insert="~{common/header :: nav}"></div>
+
+<div class="layui-container fly-marginTop fly-user-main">
+  <th:block th:insert="~{common/sider :: user}"></th:block>
+  <div class="site-tree-mobile layui-hide">
+    <i class="layui-icon">&#xe602;</i>
+  </div>
+  <div class="site-mobile-shade"></div>
+  
+  <div class="site-tree-mobile layui-hide">
+    <i class="layui-icon">&#xe602;</i>
+  </div>
+  <div class="site-mobile-shade"></div>
+  
+  
+  <div class="fly-panel fly-panel-user" pad20>
+    <!--
+    <div class="fly-msg" style="margin-top: 15px;">
+      您的邮箱尚未验证，这比较影响您的帐号安全，<a href="activate.html">立即去激活？</a>
+    </div>
+    -->
+    <div class="layui-tab layui-tab-brief" lay-filter="user">
+      <ul class="layui-tab-title" id="LAY_mine">
+        <li  th:class="${section=='myPosts'}?'layui-this':''" ><a href="myPosts">我发的帖<span th:if="${section == 'myPosts'}" th:text="'('+${pagination.totalCount}+')'"></span></a></li>
+        <li  th:class="${section=='likes'}?'layui-this':''"><a href="likes">收藏的帖<span th:if="${section == 'likes'}" th:text="'('+${pagination.totalCount}+')'"></span></a></li>
+      </ul>
+      <div class="layui-tab-content" style="padding: 20px 0;">
+        <div th:class="${section=='myPosts'}?'layui-tab-item layui-show':'layui-tab-item'" >
+          <ul th:each="question : ${pagination.data}" class="mine-view jie-row">
+            <li>
+              <a class="jie-title" th:href="@{'/p/'+ ${question.id}}" th:text="${question.title}" target="_blank"></a>
+              <i th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></i>
+              <a class="mine-edit" th:href="@{'/p/publish/'+${question.id}}">编辑</a>
+              <em th:text="${question.commentCount+'个回复 •'+question.viewCount+'次浏览 •'+question.LikeCount+'人收藏'}"></em>
+            </li>
+
+          </ul>
+          <div id="LAY_page"></div>
+        </div>
+        <div th:class="${section=='likes'}?'layui-tab-item layui-show':'layui-tab-item'">
+          <ul th:each="question : ${pagination.data}" class="mine-view jie-row">
+            <li>
+              <a class="jie-title" th:href="@{'/p/'+ ${question.id}}" th:text="${question.title}"></a>
+              <i th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></i>
+              <a th:if="${session.user!=null&&session.user.id == question.creator}" class="mine-edit" th:href="@{'/p/publish/'+${question.id}}">编辑</a>
+              <a style="margin-left:10px; padding:0 6px; background-color: #ff6200; color:#fff; font-size:12px;">取消</a>
+              <em th:text="${question.commentCount+'个回复 •'+question.viewCount+'次浏览 •'+question.LikeCount+'人收藏'}"></em>
+            </li>
+          </ul>
+          <div id="LAY_page1"></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align: center">
+      <div class="laypage-main"  ><!-- 分页展示 -->
+        <a th:if="${pagination.showFirstPage}" th:href="@{'/user/p/'+${section}(page=1)}"
+           aria-label="Previous">
+          &laquo;
+        </a>
+        <a th:if="${pagination.showPrevious}" th:href="@{'/user/p/'+${section}(page=${pagination.page - 1})}">
+          &lt;
+        </a>
+        <th:block th:each="page : ${pagination.pages}" >
+          <a th:if="${pagination.page != page}"
+             th:href="@{'/user/p/'+${section}(page=${page})}"
+             th:text="${page}"></a>
+          <span th:if="${pagination.page == page}"
+                th:href="@{'/user/p/'+${section}(page=${page})}"
+                th:text="${page}"
+                class="laypage-curr"></span>
+        </th:block>
+        <a th:if="${pagination.showNext}" th:href="@{'/user/p/'+${section}(page=${pagination.page +1 })}">
+          &gt;
+        </a>
+        <a th:if="${pagination.showEndPage}" th:href="@{'/user/p/'+${section}(page=${pagination.totalPage})}"
+           aria-label="Next">
+          &raquo;
+        </a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+<script>
+layui.cache.page = 'user';
+layui.cache.user = {
+  username: '游客'
+  ,uid: -1
+  ,avatar: '/images/avatar/00.jpg'
+  ,experience: 83
+  ,sex: '男'
+};
+layui.config({
+  version: "3.0.0"
+  ,base: '/mods/'
+}).extend({
+  fly: 'index'
+}).use('fly');
+</script>
+
+</body>
+</html>

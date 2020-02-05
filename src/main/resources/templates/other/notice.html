@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:insert="~{common/header :: head}"></th:block>
+  <title th:text="${noticeTitle+@environment.getProperty('site.main.titleInfo')}">${@environment.getProperty('clientId')}</title>
+  <meta http-equiv="refresh" content="5;url=/">
+  <style>
+  .notice{width: 600px; margin: 30px auto; padding: 30px 15px; border-top: 5px solid #009688; line-height: 30px;  text-align: center; font-size: 16px; font-weight: 300; background-color: #f2f2f2;}
+  
+  @media screen and (max-width: 750px) {
+    html body{margin-top: 0;}
+    .notice{width: auto; margin: 20px 15px; padding: 30px 0;}
+  }
+  </style>
+</head>
+
+<body>
+<div th:insert="~{common/header :: nav}"></div>
+
+<div class="fly-none" style="min-height: 0; padding: 0;">
+  <i class="iconfont icon-tishilian"></i>
+</div>
+
+<div class="notice layui-text">
+	<th:block th:text="${noticeMessage}"></th:block>我们将在<a href="/" style="color: red">5S后</a>自动带您回到首页 <br> <a href="/">返回首页</a> <span style="padding:0 5px;"></span> <a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank">联系我们</a> <span style="padding:0 5px;"></span>
+</div>
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+
+</body>
+
+</html>

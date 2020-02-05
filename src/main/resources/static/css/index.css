@@ -1,0 +1,40 @@
+.issue-right {
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-right-color: #efefef;
+}
+.issuse-question-class {
+    background-color: #efefef;
+    color: black;
+    border-right: solid 1em #efefef;
+    border-left: solid 1em #efefef;       
+    border-radius: 10px;
+}
+.issuse-question-class:hover {
+    background-color: #dedede;
+    text-decoration:none;
+    color: white;
+    border-right: solid 1em #dedede;
+    border-left: solid 1em #dedede;       
+    border-radius: 10px;
+    border-radius: 10px;
+}
+.issuse-question-people {
+    color: #c6c5c1;
+    margin-right: 1em;
+    margin-left: 1em;
+}
+.issuse-question-people:hover {
+    text-decoration:none;
+    color: #a5a5a5;
+}
+.issuse-question-span {
+    color: #989898;
+}
+.link-to-text {
+    color: #155faa;
+}
+.link-to-text:hover {
+    color: #499ef3;
+    text-decoration:none;
+}

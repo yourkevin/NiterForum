@@ -1,0 +1,44 @@
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:insert="~{common/header :: head}"></th:block>
+  <title th:text="${rsTitle+@environment.getProperty('site.main.titleInfo')}">${@environment.getProperty('clientId')}</title>
+  <meta http-equiv="refresh" content="3;url=/">
+</head>
+<body>
+
+<div th:insert="~{common/header :: nav}"></div>
+
+<div class="layui-container fly-marginTop">
+	<div class="fly-panel">
+	  <div class="fly-none">
+	    <h2><i class="layui-icon " style="text-align: center; line-height: 300px; font-size: 300px;">&#xe664;</i></h2>
+      <p th:text="${rsMessage}"></p>
+      <p>迷路了？没关系，<a href="/" style="color: red">3S后</a>将自动带您回到首页，您也可以<a href="/">点击此处</a>直接回到首页</p>
+      </div>
+	</div>
+</div>
+
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+
+<script>
+layui.cache.page = '';
+layui.cache.user = {
+  username: '游客'
+  ,uid: -1
+  ,avatar: '/images/avatar/00.jpg'
+  ,experience: 83
+  ,sex: '男'
+};
+layui.config({
+  version: "3.0.0"
+  ,base: '/mods/'
+}).extend({
+  fly: 'index'
+}).use('fly');
+</script>
+
+</body>
+</html>

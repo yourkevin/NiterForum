@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cc.ikevin.community.mapper.QuestionExtMapper">
-    <resultMap id="BaseResultMap" type="cc.ikevin.community.model.Question">
+<mapper namespace="cn.niter.forum.mapper.QuestionExtMapper">
+    <resultMap id="BaseResultMap" type="cn.niter.forum.model.Question">
         <id column="ID" jdbcType="INTEGER" property="id"/>
         <result column="TITLE" jdbcType="VARCHAR" property="title"/>
         <result column="GMT_CREATE" jdbcType="BIGINT" property="gmtCreate"/>
@@ -13,25 +13,25 @@
         <result column="TAG" jdbcType="VARCHAR" property="tag"/>
     </resultMap>
 
-    <update id="incView" parameterType="cc.ikevin.community.model.Question">
+    <update id="incView" parameterType="cn.niter.forum.model.Question">
     update question
     set
     VIEW_COUNT = VIEW_COUNT + #{viewCount,jdbcType=INTEGER}
     where id = #{id}
     </update>
 
-    <update id="incCommentCount" parameterType="cc.ikevin.community.model.Question">
+    <update id="incCommentCount" parameterType="cn.niter.forum.model.Question">
     update question
     set
     COMMENT_COUNT = COMMENT_COUNT + #{commentCount,jdbcType=INTEGER}
     where id = #{id}
     </update>
 
-    <select id="selectRelated" parameterType="cc.ikevin.community.model.Question" resultMap="BaseResultMap">
-        select * from question where id != #{id} and tag regexp #{tag}
+    <select id="selectRelated" parameterType="cn.niter.forum.model.Question" resultMap="BaseResultMap">
+        select * from question where id != #{id} and tag regexp #{tag} order by gmt_latest_comment desc limit 0,10
     </select>
 
-    <select id="countBySearch" parameterType="cc.ikevin.community.dto.QuestionQueryDTO"
+    <select id="countBySearch" parameterType="cn.niter.forum.dto.QuestionQueryDTO"
             resultType="java.lang.Integer">
         select count(*) from question
         <where>
@@ -41,6 +41,9 @@
             </if>
             <if test="tag != null and tag != ''">
                 and tag regexp #{tag}
+            </if>
+            <if test="column2 != null and column2 != 0 ">
+                and column2 = #{column2}
             </if>
             <if test="sort != null and sort != '' and sort == 'no'">
                 and comment_count = 0
@@ -54,7 +57,7 @@
         </where>
     </select>
 
-    <select id="selectBySearch" parameterType="cc.ikevin.community.dto.QuestionQueryDTO"
+    <select id="selectBySearch" parameterType="cn.niter.forum.dto.QuestionQueryDTO"
             resultMap="BaseResultMap">
         select * from question
         <where>
@@ -64,6 +67,9 @@
             </if>
             <if test="tag != null and tag != ''">
                 and tag regexp #{tag}
+            </if>
+            <if test="column2 != null and column2 != 0 ">
+                and column2 = #{column2}
             </if>
             <if test="sort != null and sort != '' and sort == 'no'">
                 and comment_count = 0
@@ -93,7 +99,7 @@
         limit #{offset},#{size}
     </select>
 
-    <select id="selectTop" parameterType="cc.ikevin.community.dto.QuestionQueryDTO"
+    <select id="selectTop" parameterType="cn.niter.forum.dto.QuestionQueryDTO"
             resultMap="BaseResultMap">
         select * from question
         <where>
@@ -103,6 +109,9 @@
             </if>
             <if test="tag != null and tag != ''">
                 and tag regexp #{tag}
+            </if>
+            <if test="column2 != null and column2 != 0 ">
+                and column2 = #{column2}
             </if>
             <if test="sort != null and sort != '' and sort == 'no'">
                 and comment_count = 0

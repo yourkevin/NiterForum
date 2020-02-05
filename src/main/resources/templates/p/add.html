@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+  <title th:text="${'发布帖子 '+@environment.getProperty('site.main.titleInfo')}">${@environment.getProperty('clientId')}</title>
+  <link rel="stylesheet" href="/css/community.css">
+  <th:block th:insert="~{common/header :: head}"></th:block>
+  <script src="/js/community.js" type="application/javascript"></script>
+  <script src="/js/moment.js" type="application/javascript"></script>
+</head>
+<body>
+
+<div th:insert="~{common/header :: nav}"></div>
+
+<div class="layui-container fly-marginTop">
+  <div class="fly-panel" pad20 style="padding-top: 5px;">
+    <!--<div class="fly-none">没有权限</div>-->
+    <div class="layui-form layui-form-pane">
+      <div class="layui-tab layui-tab-brief" lay-filter="user">
+        <ul class="layui-tab-title">
+          <li class="layui-this">发表新帖<!-- 编辑帖子 --></li>
+        </ul>
+        <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
+          <div class="layui-tab-item layui-show">
+            <form action="/p/publish" method="post">
+              <div class="layui-row layui-col-space15 layui-form-item">
+                <input type="hidden" name="id" th:value="${id}">
+
+                <div class="">
+                  <label for="title" class="layui-form-label">标题</label>
+                  <div class="layui-input-block">
+                    <input type="text" id="title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" th:value="${title}">
+                    <!-- <input type="hidden" name="id" value="{{d.edit.id}}"> -->
+                  </div>
+                </div>
+              </div>
+              <div class="layui-row layui-col-space15 layui-form-item layui-hide" id="LAY_quiz">
+                <div class="layui-col-md3">
+                  <label class="layui-form-label">所属产品</label>
+                  <div class="layui-input-block">
+                    <select name="project">
+                      <option></option>
+                      <option value="layui">layui</option>
+                      <option value="独立版layer">独立版layer</option>
+                      <option value="独立版layDate">独立版layDate</option>
+                      <option value="LayIM">LayIM</option>
+                      <option value="Fly社区模板">Fly社区模板</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="layui-col-md3">
+                  <label class="layui-form-label" for="L_version">版本号</label>
+                  <div class="layui-input-block">
+                    <input type="text" id="L_version" value="" name="version" autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+                <div class="layui-col-md6">
+                  <label class="layui-form-label" for="L_browser">浏览器</label>
+                  <div class="layui-input-block">
+                    <input type="text" id="L_browser"  value="" name="browser" placeholder="浏览器名称及版本，如：IE 11" autocomplete="off" class="layui-input">
+                  </div>
+                </div>
+              </div>
+              <div class="layui-form-item layui-form-text">
+                <div id="editor">
+                  <p id="descriptionP" th:text="${description}" class="video"></p>
+                </div>
+                <textarea name="description" id="description"
+                          class="form-control"
+                          cols="30"
+                          rows="10"
+                          style="display:none;"
+                ></textarea>
+              </div>
+
+              <div class="layui-form-item ">
+                <div class="form-group" >
+                  <label for="description">添加标签:</label>
+                  <input type="text" name="tag" id="tag" class="form-control layui-input"
+                         placeholder="输入标签，以英文逗号,分割" aria-describedby="sizing-addon1"
+                         th:value="${tag}" autocomplete="off" required
+                         onclick="showSelectTag()">
+                  <div id="select-tag" class="layui-tab publish-tag-tab">
+                    <ul class="layui-tab-title" role="tablist">
+                      <li role="presentation" th:each="selectCategory,selectCategoryStat: ${tags}"
+                          th:class="${selectCategoryStat.first ? 'layui-this':''}">
+                        <a th:href="${'#'+selectCategory.categoryName}" aria-controls="home" role="tab"
+                           data-toggle="tab" th:text="${selectCategory.categoryName}"></a>
+                      </li>
+                    </ul>
+                    <div class="layui-tab-content" >
+                      <div role="tabpanel" th:id="${selectCategory.categoryName}"
+                           th:each="selectCategory: ${tags}"
+                           th:class="${selectCategoryStat.first ? 'layui-tab-item layui-show':'layui-tab-item'}">
+<th:block  th:each="selectTag: ${selectCategory.tags}">
+                                    <span class="community-tag" onclick="selectTag(this)"
+                                          th:data-tag="${selectTag}"
+                                          th:text="${' '+selectTag}">
+                                    </span>
+</th:block>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="layui-form-item" >
+                <label class="layui-form-label">所在专栏</label>
+                <div class="layui-input-block" style="width: 190px;">
+                  <select lay-verify="required" id="column2" name="column2" lay-filter="column" >
+                    <option></option>
+                    <option value="1" th:selected="${column2==1}">提问</option>
+                    <option value="2" th:selected="${column2==2}" >分享</option>
+                    <option value="3" th:selected="${column2==3}">建议</option>
+                    <option value="4" th:selected="${column2==4}">讨论</option>
+                    <option th:if="${session.userAccount!=null&&session.userAccount.groupId==21}" th:selected="${column2==5}" value="5">公告</option>
+                    <option value="6" th:selected="${column2==6}">动态</option>
+                    <option value="9" th:selected="${column2==9}">其它</option>
+                  </select>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <div class="layui-inline">
+                  <label class="layui-form-label">阅读权限</label>
+                  <div class="layui-input-inline" style="width: 190px;">
+                    <select lay-verify="required" id="permission" name="permission">
+                      <option value="0" selected>默认，所有用户可见</option>
+                      <option value="1">LV1及以上用户可见</option>
+                      <option value="2">LV2及以上用户可见</option>
+                      <option value="3">LV3及以上用户可见</option>
+                      <option value="4">LV4及以上用户可见</option>
+                      <option value="5">LV5及以上用户可见</option>
+                      <option value="6">LV6及以上用户可见</option>
+                      <option value="10">会员专享</option>
+                      <option value="19">管理员可见</option>
+                    </select>
+                  </div>
+                  <div class="layui-form-mid layui-word-aux">除非有重要信息，不然建议设置所有用户可见，这样不会影响您帖子的人气，点击查看<a class="fly-link" target="_blank" href="/user/set/info#userGroup">用户组权限</a></div>
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <button class="layui-btn"  lay-submit>立即发布</button>
+                <span class="layui-bg-red" th:if="${error!=null}" th:text="${error}" id="error"></span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+
+<script type="text/javascript" src="/js/wangEditor.min.js"></script>
+<script src="/js/myeditor.js"></script>
+<script src="/layui/layui.js"></script>
+<script>
+layui.cache.page = 'jie';
+layui.cache.user = {
+  username: '游客'
+  ,uid: -1
+  ,avatar: '/images/avatar/00.jpg'
+  ,experience: 83
+  ,sex: '男'
+};
+layui.config({
+  version: "3.0.0"
+  ,base: '/mods/'
+}).extend({
+  fly: 'index'
+}).use('fly');
+</script>
+</body>
+</html>

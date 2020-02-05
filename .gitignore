@@ -5,6 +5,8 @@ target/
 !**/src/main/**
 !**/src/test/**
 logs/
+
+
 ### STS ###
 .apt_generated
 .classpath
@@ -30,3 +32,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+### NiterForum ###
+*.jks
+hello.html
+video.html
+videos.html
+src/main/resources/application.properties
+src/main/resources/generatorConfig.xml
+header.html
+footer.html
