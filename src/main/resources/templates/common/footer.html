@@ -1,0 +1,51 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="foot">
+<div class="fly-footer">
+  <p> Copyright &copy; 2019-2020<a href="/" target="_blank" th:text="${@environment.getProperty('site.main.title')+'('+@environment.getProperty('site.main.domain')+')'}"></a><!--请勿修改此处的Powered，谢谢支持！-->Powered by<a href="https://niter.cn" target="_blank">NiterForum2.0</a></p>
+  <p>
+    <a href="https://niter.cn/p/26" target="_blank">更新日志</a>
+    <a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank">联系我们</a>
+    <a href="http://www.beian.miit.gov.cn/" target="_blank" th:text="${@environment.getProperty('site.main.beian')}"></a>
+    <!--script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? "https://" : "http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1278590300'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "v1.cnzz.com/z_stat.php%3Fid%3D1278590300%26online%3D2' type='text/javascript'%3E%3C/script%3E"));</script-->
+  </p>
+</div>
+<script src="/layui/layui.js"></script>
+  <!--script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script-->
+  <!--script>
+    (function(){
+      var src = "https://jspassport.ssl.qhimg.com/11.0.1.js?d182b3f28525f2db83acfaaf6e696dba";
+      document.write('<script src="' + src + '" id="sozz"><\/script>');
+    })();
+  </script-->
+</th:block>
+<script>
+layui.cache.page = '';
+layui.cache.user = {
+  username: '游客'
+  ,uid: -1
+  ,avatar: '/images/avatar/00.jpg'
+  ,experience: 83
+  ,sex: '男'
+};
+layui.config({
+  version: "3.0.0"
+  ,base: '/mods/'  //这里实际使用时，建议改成绝对路径
+}).extend({
+  fly: 'index'
+}).use('fly');
+</script>
+
+</html>

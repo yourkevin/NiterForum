@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/niter"
+                        userId="***"
+                        password="***">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="cn.niter.forum.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="cn.niter.forum.mapper"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <table tableName="user" domainObjectName="User"></table>
+        <table tableName="question" domainObjectName="Question"></table>
+        <table tableName="comment" domainObjectName="Comment"></table>
+        <table tableName="notification" domainObjectName="Notification"></table>
+        <table tableName="thumb" domainObjectName="Thumb"></table>
+        <table tableName="ad" domainObjectName="Ad"></table>
+        <table tableName="user_info" domainObjectName="UserInfo"></table>
+        <table tableName="user_account" domainObjectName="UserAccount"></table>
+
+    </context>
+</generatorConfiguration>
