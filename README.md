@@ -1,28 +1,103 @@
-## 尼特社区NiterForum
+# 尼特社区-NiterForum
+
+## 在线体验
+[https://niter.cn/](https://niter.cn/ "https://niter.cn/")
+
+## 技术栈
+1. SpringBoot框架。
+2. Thymeleaf模板引擎。
+3. 数据访问层：Mybatis，mybatis generator。
+4. 数据库：MySql。
+5. 服务器：内置Tomcat。
+6. 前端相关:Jquery,Bootstrap，Ajax，Layer等。
+7. 前端模板：LayUI_fly社区模板。
+8. 文件上传：腾讯云COS对象存储。
+9. 短信验证：极光短信。
+10. 邮箱验证：腾讯企业邮箱。
+11. 富文本编辑器：WangEditor。
+12. OAuth2授权登入（QQ、微博、百度、Github）
+
+## 主要功能
+####帖子相关
+1. 发帖
+2. 编辑
+3. 点赞
+4. 收藏
+5. 回复[（支持楼中楼回复）](https://niter.cn/p/80 "支持楼中楼回复")
+6. [视频帖](https://niter.cn/p/98 "视频帖")
+7. [阅读权限](https://niter.cn/p/102 "阅读权限")
+8. 帖子分类
+9. 话题标签
+10. [图片水印](https://niter.cn/p/33 "图片水印")
+####用户相关
+1. 登录
+2. 注册
+3. [账号体系(绑定账户)](https://niter.cn/p/83 "账号体系")（手机号、邮箱号、QQ、微博、百度、Github六合一）
+4. 上传头像[(支持人脸自动定位)](https://niter.cn/p/107 "支持人脸自动定位")
+5. [积分策略](https://niter.cn/p/78 "积分策略")
+6. [用户组晋升](https://niter.cn/p/83 "用户组晋升")
+7. 会员特权
+8. 消息通知
+9. 个人主页
+####更多功能
+1. 搜索
+2. 排序
+3. 聊天室
 
 ## 快速运行
 1. 安装必备工具  
 JDK，Maven
 2. 克隆代码到本地  
-3. 运行命令创建数据库脚本
-```sh
-mvn flyway:migrate
-```
-4. 运行打包命令
-```sh
-mvn package
-```
-5. 运行项目  
-```sh
-java -jar target/community-0.0.1-SNAPSHOT.jar
-```
-6. 访问项目
-```
-http://localhost:8887
-```
+3. 将[resources](/blob/master/src/main/resources/ "resources")目录下的[niter.sql](/blob/master/src/main/resources/niter.sql "niter.sql")导入新创建的数据库。
+4. 根据提示，编辑[resources](/blob/master/src/main/resources/ "resources")目录下的[application.properties](/blob/master/src/main/resources/application.properties "application.properties")文件。
+5. 编辑[resources](/blob/master/src/main/resources/ "resources")目录下的[generatorConfig.xml](/blob/master/src/main/resources/generatorConfig.xml "generatorConfig.xml")文件，配置数据库相关信息。
+6. 运行打包命令
+   ```sh 
+   mvn clean package
+   ```
+ 
+7. 部署到服务器并运行项目  
+   ```sh
+    nohup java -jar NiterForum-2.0.1-SNAPSHOT.jar >temp.txt &   
+    ```
+8. 访问项目
+   ```
+   https://yourdomain
+   ```
 
+##项目演示
+[![首页演示](https://kevin-10058670.cos.ap-shanghai.myqcloud.com/niter/demo/001.png "首页演示")](https://niter.cn/ "首页演示")
 
-## 资料
+[![帖子页面](https://kevin-10058670.cos.ap-shanghai.myqcloud.com/niter/demo/002.png "帖子页面")](https://niter.cn/p/37 "帖子页面")
+
+[![积分策略](https://kevin-10058670.cos.ap-shanghai.myqcloud.com/niter/demo/003.png "积分策略")](https://niter.cn/p/78 "积分策略")
+
+[![账户中心](https://kevin-10058670.cos.ap-shanghai.myqcloud.com/niter/demo/005.png "账户中心")](https://niter.cn/p/83 "账户中心")
+## 目录结构
+   ```
+       ├─cn.niter.forum         应用目录
+       │  ├─controller         控制器目录
+       │  ├─modal              映射数据库实体类
+       │  ├─dto                数据传输层
+       │  ├─intercepter        拦截器
+       │  ├─enums              枚举类
+       │  ├─provider           提供类
+       │  ├─service            业务逻辑层
+       │  ├─advice             异常处理
+       │  ├─exception          自定义异常
+       │  ├─dao                数据访问层
+       │  ├─utils              工具类
+       │__├─config             配置类
+   ``` 
+     
+##更多链接
+###联系我们
+尼特社区官方交流群：[955295791](https://jq.qq.com/?_wv=1027&k=5uPXrY2 "欢迎加入")
+
+官方交流社区：[https://niter.cn/](https://niter.cn/ "欢迎交流")
+
+更新日志：[https://niter.cn/p/26](https://niter.cn/p/26/ "欢迎订阅")
+### 资料
 [Spring 文档](https://spring.io/guides)    
 [Spring Web](https://spring.io/guides/gs/serving-web-content/)   
 [es](https://elasticsearch.cn/explore)    
@@ -38,7 +113,7 @@ http://localhost:8887
 [UFfile SDK](https://github.com/ucloud/ufile-sdk-java)  
 [Count(*) VS Count(1)](https://mp.weixin.qq.com/s/Rwpke4BHu7Fz7KOpE2d3Lw)  
 
-## 工具
+### 工具
 [Git](https://git-scm.com/download)   
 [Visual Paradigm](https://www.visual-paradigm.com)    
 [Flyway](https://flywaydb.org/getstarted/firststeps/maven)  
@@ -49,18 +124,13 @@ http://localhost:8887
 [Live Reload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei/related)  
 [Postman](https://chrome.google.com/webstore/detail/coohjcphdfgbiolnekdpbcijmhambjff)
 
-## 脚本
-```sql
-CREATE TABLE USER
-(
-    ID int AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    ACCOUNT_ID VARCHAR(100),
-    NAME VARCHAR(50),
-    TOKEN VARCHAR(36),
-    GMT_CREATE BIGINT,
-    GMT_MODIFIED BIGINT
-);
-```
+### 特别感谢
+[NiterForum](https://niter.cn/) 
+[码问](http://www.mawen.co/) 
+[LayUI](https://fly.layui.com/) 
+
+
+## 其它
 ```bash
 mvn flyway:migrate
 mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
