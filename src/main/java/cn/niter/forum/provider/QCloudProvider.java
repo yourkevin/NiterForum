@@ -60,7 +60,7 @@ public class QCloudProvider {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        initUrl = initUrl+"?watermark/2/text/"+watermark+"/fill/IzNEM0QzRA/fontsize/16/dissolve/60/gravity/SouthEast/dx/20/dy/10/";
+        initUrl = initUrl+"?watermark/2/text/"+watermark+"/fill/IzNEM0QzRA/fontsize/18/dissolve/80/gravity/SouthEast/dx/20/dy/10/";
         System.out.println(initUrl);
         imgUrl=uploadUrltoBucket(initUrl,"img",contentType,user,fileName);
 
