@@ -245,15 +245,15 @@ layui.config({
 });
 </script>
 <script>
-  layui.use(['element', 'layer','code'], function(){
+  layui.use(['element', 'layer'], function(){
     var element = layui.element;
     var layer = layui.layer;
-    layui.code({
+  /*  layui.code({
       elem: 'pre', //默认值为.layui-code
       height:500,
       about: false,
     }); //引用code方法
-
+*/
 
     //监听折叠
     element.on('collapse(sub-comments)', function(data){
