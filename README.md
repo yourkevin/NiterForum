@@ -1,5 +1,5 @@
 # 尼特社区-NiterForum
-
+供初学者，学习、交流使用，喜欢的话，恳请给个star(*❦ω❦)
 ## 在线体验
 [https://niter.cn/](https://niter.cn/ "https://niter.cn/")
 
