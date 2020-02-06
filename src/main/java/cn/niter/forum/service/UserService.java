@@ -106,7 +106,7 @@ public class UserService {
                 updateUser.setName(getUserName("微博"));
             updateUser.setGmtModified(System.currentTimeMillis());
             updateUser.setToken(user.getToken());
-            updateUser.setAvatarUrl(user.getAvatarUrl());
+            //updateUser.setAvatarUrl(user.getAvatarUrl());
             UserExample example = new UserExample();
             example.createCriteria()
                     .andIdEqualTo(dbUser.getId());
@@ -158,7 +158,7 @@ public class UserService {
                 updateUser.setName(getUserName("Baidu"));
             updateUser.setGmtModified(System.currentTimeMillis());
             updateUser.setToken(user.getToken());
-            updateUser.setAvatarUrl(user.getAvatarUrl());
+           // updateUser.setAvatarUrl(user.getAvatarUrl());
             UserExample example = new UserExample();
             example.createCriteria()
                     .andIdEqualTo(dbUser.getId());
@@ -415,7 +415,7 @@ public class UserService {
                 updateUser.setName(getUserName("QQ"));
             updateUser.setGmtModified(System.currentTimeMillis());
             updateUser.setToken(user.getToken());
-            updateUser.setAvatarUrl(user.getAvatarUrl());
+            //updateUser.setAvatarUrl(user.getAvatarUrl());
             UserExample example = new UserExample();
             example.createCriteria()
                     .andIdEqualTo(dbUser.getId());
