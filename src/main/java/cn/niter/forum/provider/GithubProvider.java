@@ -33,9 +33,19 @@ public class GithubProvider {
 
     public GithubUser getUser(String accessToken) {
         OkHttpClient client = new OkHttpClient();
+        /*
+        *使用参数的方式明文传输，并不推荐，即将被Github废弃
         Request request = new Request.Builder()
                 .url("https://api.github.com/user?access_token=" + accessToken)
                 .build();
+        */
+
+        //作为header中的参数传输，强烈推荐
+        Request request = new Request.Builder()
+                .url("https://api.github.com/user")
+                .header("Authorization","token "+accessToken)
+                .build();
+
         try {
             Response response = client.newCall(request).execute();
             String string = response.body().string();
@@ -46,7 +56,5 @@ public class GithubProvider {
         }
         return null;
     }
-
-
 
 }

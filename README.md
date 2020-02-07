@@ -55,7 +55,7 @@ JDK，Maven
 2. 克隆代码到本地  
 3. 将[resources](/src/main/resources/ "resources")目录下的[niter.sql](/src/main/resources/niter.sql "niter.sql")导入新创建的数据库。
 4. 根据提示，编辑[resources](/src/main/resources/ "resources")目录下的[application.properties](/src/main/resources/application.properties "application.properties")文件。
-5. 编辑[resources](/src/main/resources/ "resources")目录下的[generatorConfig.xml](/src/main/resources/generatorConfig.xml "generatorConfig.xml")文件，配置数据库相关信息。
+5. 编辑[resources](/src/main/resources/ "resources")目录下的[generatorConfig.xml](/src/main/resources/generatorConfig.xml "generatorConfig.xml")文件，配置数据库相关信息（只需修改数据库链接、用户名、密码）。
 6. 运行打包命令
    ```sh 
    mvn clean package
