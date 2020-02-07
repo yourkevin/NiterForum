@@ -74,10 +74,10 @@
     <div class="fly-panel fly-link">
         <h3 class="fly-panel-title">友情链接</h3>
         <dl class="fly-panel-main">
-            <dd><a th:href="${'http://'+@environment.getProperty('site.main.domain')}" target="_blank" th:text="${@environment.getProperty('site.main.title')}"></a><dd>
-            <dd><a href="https://niter.cn/" target="_blank">NiterForum</a><dd>
-            <dd><a href="http://layer.layui.com/" target="_blank">layer</a><dd>
-            <dd><a href="http://www.layui.com/laydate/" target="_blank">layDate</a><dd>
+            <dd><a href="#" th:text="${@environment.getProperty('site.main.title')}"></a><dd>
+            <!--留个友链嘛，(* ￣3)(ε￣ *)--><dd><a href="https://niter.cn/" target="_blank">NiterForum</a><dd>
+            <dd><a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank">官方Q群</a><dd>
+            <dd><a href="https://github.com/yourkevin/NiterForum/" target="_blank">社区源码</a><dd>
             <dd><a href="mailto:xianxin@layui-inc.com?subject=%E7%94%B3%E8%AF%B7Fly%E7%A4%BE%E5%8C%BA%E5%8F%8B%E9%93%BE" class="fly-link">申请友链</a><dd>
         </dl>
     </div>
