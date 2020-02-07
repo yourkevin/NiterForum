@@ -98,7 +98,7 @@
                 <a class="layui-badge" th:if="${question.column2==6}">动态</a>
                 <a class="layui-badge" th:if="${question.column2==9}">其它</a>
                 <a th:if="${question.permission==10}" class="fly-list-like layui-hide-xs" title="会员尊享"><i class="layui-icon">&#xe735</i></a>
-                <a th:href="@{'/p/'+ ${question.id}}" th:text="${question.title}" th:title="${question.title}" target="_blank" th:style="${question.permission==10? 'color:red':''}"></a>
+                <a th:href="@{'/p/'+ ${question.id}}" th:text="${question.title}" th:title="${question.title}" th:style="${question.permission==10? 'color:red':''}"></a>
               <a th:if="${question.viewCount>100}" class="fly-list-like layui-hide-xs" title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
             </h2>
             <div class="fly-list-info">
