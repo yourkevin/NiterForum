@@ -52,6 +52,7 @@ public class QCloudProvider {
 
         String initUrl = uploadtoBucket(fileStream,"img",contentType,user,fileName,contentLength);
         String imgUrl=initUrl;
+        System.out.println(initUrl);
         //开始处理水印，若不处理请忽略
         String watermark = "@"+user.getName()+" "+domain;
         try {
@@ -81,18 +82,27 @@ public class QCloudProvider {
     private String uploadUrltoBucket(String initUrl, String fileType, String contentType, User user, String fileName)  {
         URL url = null;
         String finalUrl=null;
+        InputStream fileStream=null;
         try {
             url = new URL(initUrl);
             URLConnection con = url.openConnection();
             //设置请求超时为5s
             con.setConnectTimeout(5*1000);
             // 输入流
-            InputStream fileStream = con.getInputStream();
+            fileStream = con.getInputStream();
             finalUrl = uploadtoBucket(fileStream,fileType,contentType,user,fileName, Long.valueOf(con.getContentLength()));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {//解决流资源未释放的问题
+            if(fileStream!=null){
+                try {
+                    fileStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         return finalUrl;
