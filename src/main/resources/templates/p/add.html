@@ -64,7 +64,7 @@
               </div>
               <div class="layui-form-item layui-form-text">
                 <div id="editor">
-                  <p id="descriptionP" th:text="${description}" class="video"></p>
+                  <p id="descriptionP" th:text="${description}"></p>
                 </div>
                 <textarea name="description" id="description"
                           class="form-control"
@@ -170,6 +170,13 @@ layui.config({
 }).extend({
   fly: 'index'
 }).use('fly');
+layui.use('code', function(){ //加载code模块
+  layui.code({
+    elem: 'pre', //默认值为.layui-code
+    height:500,
+    about: false,
+  }); //引用code方法
+});
 </script>
 </body>
 </html>
