@@ -85,7 +85,9 @@ public class MailController {
         model.addAttribute("rsTitle", "成功啦！！！");
         model.addAttribute("rsMessage", "您已成功注册/登陆本站！");
         Cookie cookie = new Cookie("token", token);
-        cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
+        cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
+        cookie.setHttpOnly(true);//通过js脚本是无法获取到cookie的信息的。防止XSS攻击。
+        cookie.setMaxAge(60 * 60 * 24 * 3 * 1);//三天
         response.addCookie(cookie);
         return "result";
     }

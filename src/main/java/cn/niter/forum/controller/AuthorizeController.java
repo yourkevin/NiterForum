@@ -108,8 +108,11 @@ public class AuthorizeController {
 //            user.setGmtModified(user.getGmtCreate());
             user.setAvatarUrl(githubUser.getAvatarUrl());
             userService.createOrUpdate(user);
-           Cookie cookie = new Cookie("token", token);
-           cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
+         /*  Cookie cookie = new Cookie("token", token);
+           cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
+           cookie.setHttpOnly(true);//通过js脚本是无法获取到cookie的信息的。防止XSS攻击。
+           cookie.setMaxAge(60 * 60 * 24 * 30 * 6);*/
+           Cookie cookie=getCookie(token);
            response.addCookie(cookie);
           // userMapper.insert(user);
            //request.getSession().setAttribute("user",githubUser);
@@ -170,8 +173,7 @@ public class AuthorizeController {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用百度账号成功登陆本站！");
             }
-            Cookie cookie = new Cookie("token", token);
-            cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
+            Cookie cookie=getCookie(token);
             response.addCookie(cookie);
             return "result";
 
@@ -226,8 +228,7 @@ public class AuthorizeController {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用QQ账号成功登陆本站！");
             }
-            Cookie cookie = new Cookie("token", token);
-            cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
+            Cookie cookie=getCookie(token);
             response.addCookie(cookie);
             return "result";
 
@@ -282,8 +283,7 @@ public class AuthorizeController {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用微博账号成功登陆本站！");
             }
-            Cookie cookie = new Cookie("token", token);
-            cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
+            Cookie cookie=getCookie(token);
             response.addCookie(cookie);
             return "result";
 
@@ -327,6 +327,14 @@ public class AuthorizeController {
                 "abcdefghijklmnopqrstuvwxyz1234567890");
         String name = authorizeSize+"用户_"+str;
         return name;
+    }
+
+    public Cookie getCookie(String token){
+        Cookie cookie = new Cookie("token", token);
+        cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
+        cookie.setHttpOnly(true);//通过js脚本是无法获取到cookie的信息的。防止XSS攻击。
+        cookie.setMaxAge(60 * 60 * 24 * 3 * 1);//缩短为三天
+        return cookie;
     }
 
 }
