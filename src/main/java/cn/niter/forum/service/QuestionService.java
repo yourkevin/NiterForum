@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,7 +75,7 @@ public class QuestionService {
       //  ColumnEnum columnEnum = ColumnEnum.
 
         for (SortEnum sortEnum : SortEnum.values()) {
-            if (sortEnum.name().toLowerCase().equals(sort)) {
+            if (sortEnum.name().toLowerCase(Locale.ENGLISH).equals(sort)) {
                 questionQueryDTO.setSort(sort);
 
                 if (sortEnum == SortEnum.HOT7) {
@@ -152,7 +153,7 @@ public class QuestionService {
 
 
         for (SortEnum sortEnum : SortEnum.values()) {
-            if (sortEnum.name().toLowerCase().equals(sort)) {
+            if (sortEnum.name().toLowerCase(Locale.ENGLISH).equals(sort)) {
                 questionQueryDTO.setSort(sort);
 
                 if (sortEnum == SortEnum.HOT7) {
@@ -223,7 +224,7 @@ public class QuestionService {
 
 
         for (SortEnum sortEnum : SortEnum.values()) {
-            if (sortEnum.name().toLowerCase().equals(sort)) {
+            if (sortEnum.name().toLowerCase(Locale.ENGLISH).equals(sort)) {
                 questionQueryDTO.setSort(sort);
 
                 if (sortEnum == SortEnum.HOT7) {
@@ -277,7 +278,7 @@ public class QuestionService {
 
 
         for (SortEnum sortEnum : SortEnum.values()) {
-            if (sortEnum.name().toLowerCase().equals(sort)) {
+            if (sortEnum.name().toLowerCase(Locale.ENGLISH).equals(sort)) {
                 questionQueryDTO.setSort(sort);
 
                 if (sortEnum == SortEnum.HOT7) {
