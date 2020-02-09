@@ -39,7 +39,7 @@ public class QqProvider {
         try {
             Response response = client.newCall(request).execute();
             String string = response.body().string();
-            String jsonString = string.split(" ")[1].split(" ")[0];;
+            String jsonString = string.split(" ")[1].split(" ")[0];
             System.out.println(jsonString);
             JSONObject obj = JSONObject.parseObject(jsonString);
             String openid = obj.getString("openid");
