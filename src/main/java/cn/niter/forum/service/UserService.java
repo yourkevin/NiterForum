@@ -316,7 +316,6 @@ public class UserService {
             updateUser.setName(getUserName("手机"));
             updateUser.setToken(token);
             double random = Math.random();
-            int i = (int)random*12;
             updateUser.setAvatarUrl("/images/avatar/"+(int)(Math.random()*11)+".jpg");
             updateUser.setGmtCreate(System.currentTimeMillis());
             updateUser.setGmtModified(updateUser.getGmtCreate());
