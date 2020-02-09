@@ -17,20 +17,48 @@
   <script src="/js/sweetalert.min.js"></script>
 </th:block>
 
-<div th:fragment="nav" class="fly-header layui-bg-black">
+<div th:fragment="nav" class="fly-header layui-bg-cyan">
   <div class="layui-container">
-    <a class="fly-logo" href="/" >
-      <img src="/images/logo.png" alt="layui" style="height: 45px">
+    <a class="fly-logo layui-hide-xs" href="/" >
+      <img src="/images/logo.png" alt="layui" style="height: 40px">
     </a>
+
+      <!--导航针对移动端优化-->
+    <a class="fly-logo layui-hide-lg layui-hide-md" href="/" >
+      <img src="/images/N80.png" alt="layui" style="height: 40px">
+    </a>
+    <ul class="layui-nav layui-hide-lg layui-hide-md" style="margin-left: 60px">
+      <li th:class="${'communitynav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
+        <a href="/"><i class="layui-icon">&#xe68e;</i>主页</a>
+      </li>
+      <li class="layui-nav-item">
+        <a></a>
+        <dl class="layui-nav-child">
+          <dd><a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank"><i class="layui-icon">&#xe770;</i>官方群</a></dd>
+          <dd><a href="/chat"><i class="iconfont icon-jiaoliu"></i>聊天室</a></dd>
+          <dd><a href="/dev"><i class="iconfont icon-iconmingxinganli"></i>实验室</a></dd>
+          <dd><a target="_blank" href="https://gitee.com/yourkevin/NiterForum/"><i><img src="/images/gitee120c.png" style="height: 16px"></i>Gitee</a></dd>
+          <dd><a target="_blank" href="https://github.com/yourkevin/NiterForum/"><i><img src="/images/github120c.png" style="height: 16px"></i>Github</a></dd>
+        </dl>
+      </li>
+    </ul>
+
     <ul class="layui-nav fly-nav layui-hide-xs">
       <li th:class="${'communitynav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
-        <a href="/"><i class="iconfont icon-jiaoliu"></i>交流</a>
+        <a href="/"><i class="layui-icon">&#xe68e;</i>主页</a>
       </li>
-      <li th:class="${'devnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
+      <!--li th:class="${'devnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
         <a href="/dev"><i class="iconfont icon-iconmingxinganli"></i>实验室</a>
+      </li-->
+      <li th:class="${'devnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
+        <a href="/chat"><i class="iconfont icon-jiaoliu"></i>聊天室</a>
       </li>
       <li class="layui-nav-item">
         <a href="https://github.com/yourkevin/NiterForum/" target="_blank"><i class="layui-icon">&#xe635;</i>源码</a>
+        <dl class="layui-nav-child">
+          <dd><a target="_blank" href="https://gitee.com/yourkevin/NiterForum/"><i><img src="/images/gitee120c.png" style="height: 28px"></i>Gitee</a></dd>
+          <dd><a target="_blank" href="https://github.com/yourkevin/NiterForum/"><i><img src="/images/github120c.png" style="height: 28px"></i>Github</a></dd>
+        </dl>
       </li>
       <li class="layui-nav-item">
         <a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank"><i class="layui-icon">&#xe770;</i>联系</a>
