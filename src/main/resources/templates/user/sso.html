@@ -250,7 +250,7 @@
                         });
                         //vaptchaObj.reset();
                     } else {
-                        code = result.message;
+                        sessionStorage.setItem("code", result.message);
                         sweetAlert("请耐心等待", "验证码已发送成功!", "info");
                         $('#mail').attr("disabled", "disabled");
 
@@ -279,7 +279,8 @@
     function registerOrLoginWithMail(){
         var verifyCode = $("#verifyCode").val();
         var mail = $("#mail").val();
-        if(verifyCode==code){
+        //console.log("code:"+sessionStorage.getItem("code"));
+        if(verifyCode==sessionStorage.getItem("code")){
             $.getJSON(
                 "/mail/registerOrLoginWithMail",
                 "mail="+mail,
