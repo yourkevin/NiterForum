@@ -178,7 +178,9 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
             $.post('/user/set/avatar', {
               avatar: res.url
             }, function(res){
-              location.reload();
+                if(res.code==200) {swal("Good job!", ""+res.msg, "success").then((value) => {
+                    location.reload();});
+                }else swal("Oh,no!", ""+res.msg, "error");
             });
           } else {
             layer.msg(res.msg, {icon: 5});
@@ -258,6 +260,29 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     effectShow();
 
   }
+
+  layui.use('laydate', function(){
+    var laydate = layui.laydate;
+
+    //执行一个laydate实例
+    laydate.render({
+      elem: '#birthday' //指定元素
+      ,trigger: 'click'
+    });
+  });
+
+  //提交资料
+  form.on('submit(submitInfo)', function(data){
+    //layer.msg(JSON.stringify(data.field));
+      $.post('/user/set/info', {
+          json: JSON.stringify(data.field)
+      }, function(res){
+         if(res.code==200) swal("Good job!", ""+res.msg, "success");
+         else swal("Oh,no!", ""+res.msg, "error");
+      });
+    return false;
+  });
+
 
   //提交成功后刷新
   fly.form['set-mine'] = function(data, required){

@@ -2,11 +2,9 @@ package cn.niter.forum.interceptor;
 
 import cn.niter.forum.enums.AdPosEnum;
 import cn.niter.forum.mapper.UserAccountMapper;
+import cn.niter.forum.mapper.UserInfoMapper;
 import cn.niter.forum.mapper.UserMapper;
-import cn.niter.forum.model.User;
-import cn.niter.forum.model.UserAccount;
-import cn.niter.forum.model.UserAccountExample;
-import cn.niter.forum.model.UserExample;
+import cn.niter.forum.model.*;
 import cn.niter.forum.service.AdService;
 import cn.niter.forum.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +25,8 @@ public class SessionInterceptor implements HandlerInterceptor {
     private UserMapper userMapper;
     @Autowired
     private UserAccountMapper userAccountMapper;
+    @Autowired
+    private UserInfoMapper userInfoMapper;
     @Autowired
     private NotificationService notificationService;
     @Autowired
@@ -67,12 +67,19 @@ public class SessionInterceptor implements HandlerInterceptor {
 
                     if(users.size()!=0){
                         User user = users.get(0);
+                        //System.out.println("id"+user.getId());
                         UserAccountExample userAccountExample = new UserAccountExample();
                         userAccountExample.createCriteria().andUserIdEqualTo(user.getId());
                         List<UserAccount> userAccounts = userAccountMapper.selectByExample(userAccountExample);
                         UserAccount userAccount = userAccounts.get(0);
+                        UserInfoExample userInfoExample = new UserInfoExample();
+                        userInfoExample.createCriteria().andUserIdEqualTo(user.getId());
+                        List<UserInfo> userInfos = userInfoMapper.selectByExample(userInfoExample);
+                        UserInfo userInfo = userInfos.get(0);
+                        //System.out.println("infoid"+userInfo.getId());
                         request.getSession().setAttribute("user",user);
                         request.getSession().setAttribute("userAccount",userAccount);
+                        request.getSession().setAttribute("userInfo",userInfo);
                         Long unreadCount = notificationService.unreadCount(users.get(0).getId());
                         request.getSession().setAttribute("unreadCount", unreadCount);
                     //    System.out.println("用户ID："+userAccount.getGroupId());

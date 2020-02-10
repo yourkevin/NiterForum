@@ -226,8 +226,7 @@ public class UserService {
     public int updateAvatarById(Long userId,String url){
         User user = userMapper.selectByPrimaryKey(userId);
         user.setAvatarUrl(url);
-        userMapper.updateByPrimaryKey(user);
-        return 1;
+        return userMapper.updateByPrimaryKey(user);
     }
 
     public Object registerOrLoginWithMail(String mail,String token) {

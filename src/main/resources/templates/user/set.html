@@ -5,6 +5,7 @@
   <title th:text="${'账号设置'+@environment.getProperty('site.main.titleInfo')}"></title>
   <th:block th:insert="~{common/header :: head}"></th:block>
   <script src="/js/community.js" type="application/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="/css/select.css" />
 </head>
 <body>
 <div th:insert="~{common/header :: nav}"></div>
@@ -34,42 +35,110 @@
 
       </ul>
       <div class="layui-tab-content" style="padding: 20px 0;">
+
         <div class="layui-form layui-form-pane layui-tab-item layui-show">
           <form method="post">
-            <div class="layui-form-item">
+            <!--div class="layui-form-item">
               <label for="L_email" class="layui-form-label">邮箱</label>
               <div class="layui-input-inline">
                 <input type="text" id="L_email" name="email" required lay-verify="email" autocomplete="off" value="" class="layui-input">
               </div>
               <div class="layui-form-mid layui-word-aux">如果您在邮箱已激活的情况下，变更了邮箱，需<a href="activate.html" style="font-size: 12px; color: #4f99cf;">重新验证邮箱</a>。</div>
-            </div>
+            </div-->
             <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">昵称</label>
               <div class="layui-input-inline">
-                <input type="text" id="L_username" name="username" required lay-verify="required" autocomplete="off" value="" class="layui-input">
+                <input type="text" id="L_username" name="username" required lay-verify="required" autocomplete="off" th:value="${session.user.name}" class="layui-input">
               </div>
               <div class="layui-inline">
                 <div class="layui-input-inline">
-                  <input type="radio" name="sex" value="0" checked title="男">
-                  <input type="radio" name="sex" value="1" title="女">
+                  <input type="radio" name="sex" value="男" checked title="男">
+                  <input type="radio" name="sex" value="女" title="女">
                 </div>
               </div>
             </div>
-            <div class="layui-form-item">
-              <label for="L_city" class="layui-form-label">城市</label>
+            <div class="layui-form-item ">
+              <label for="birthday" class="layui-form-label">生日</label>
               <div class="layui-input-inline">
-                <input type="text" id="L_city" name="city" autocomplete="off" value="" class="layui-input">
+                <input type="text" id="birthday" name="birthday" autocomplete="off" th:value="${session.userInfo.birthday}" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <label for="constellation" class="layui-form-label">星座</label>
+              <div class="layui-input-inline">
+               <input disabled type="text" id="constellation" name="constellation" th:value="${session.userInfo.constellation}" class="layui-input">
+              </div>
+              <div class="layui-form-mid layui-word-aux">无需手动填写，星座将在填写生日后自动生成~</div>
+            </div>
+            <div class="layui-form-item ">
+              <label for="marriage" class="layui-form-label">婚姻</label>
+              <div class="layui-input-inline">
+                <select id="marriage" name="marriage" lay-verify="">
+                  <option th:selected="${session.userInfo.marriage=='未婚'}" value="未婚">未婚</option>
+                  <option th:selected="${session.userInfo.marriage=='已婚'}" value="已婚">已婚</option>
+                </select>
+              </div>
+            </div>
+            <div class="layui-form-item ">
+              <label for="blood" class="layui-form-label">血型</label>
+              <div class="layui-input-inline">
+                <select id="blood" name="blood" lay-verify="">
+                  <option th:selected="${session.userInfo.blood=='A型'}" value="A型">A型</option>
+                  <option th:selected="${session.userInfo.blood=='B型'}" value="B型">B型</option>
+                  <option th:selected="${session.userInfo.blood=='AB型'}" value="AB型">AB型</option>
+                  <option th:selected="${session.userInfo.blood=='O型'}" value="O型">O型</option>
+                  <option th:selected="${session.userInfo.blood=='其它'}" value="其它">其它</option>
+                </select>
+              </div>
+            </div>
+            <div class="layui-form-item ">
+              <label for="education" class="layui-form-label">学历</label>
+              <div class="layui-input-inline">
+                <select id="education" name="education" lay-verify="">
+                  <option th:selected="${session.userInfo.education=='小学'}" value="小学">小学</option>
+                  <option th:selected="${session.userInfo.education=='初中'}" value="初中">初中</option>
+                  <option th:selected="${session.userInfo.education=='高中'}" value="高中">高中</option>
+                  <option th:selected="${session.userInfo.education=='专科'}" value="专科">专科</option>
+                  <option th:selected="${session.userInfo.education=='本科'}" value="本科">本科</option>
+                  <option th:selected="${session.userInfo.education=='硕士'}" value="硕士">硕士</option>
+                  <option th:selected="${session.userInfo.education=='博士'}" value="博士">博士</option>
+                  <option th:selected="${session.userInfo.education=='其它'}" value="其它">其它</option>
+                </select>
+              </div>
+            </div>
+            <div class="layui-form-item">
+              <input type="hidden" name="locationValue" id="locationValue" th:value="${session.userInfo.location}">
+              <label for="location" class="layui-form-label">位置</label>
+              <div class="layui-inline">
+                <div class="layui-form-item" id="location" name="location">
+                  <div class="layui-input-inline">
+                    <select name="P1" lay-filter="province" id="province">
+                      <option></option>
+                    </select>
+                  </div>
+                  <div class="layui-input-inline">
+                    <select name="C1" lay-filter="city" id="city">
+                      <option></option>
+                    </select>
+                  </div>
+                  <div class="layui-input-inline">
+                    <select name="A1" lay-filter="area" id="area">
+                      <option></option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="layui-form-item layui-form-text">
-              <label for="L_sign" class="layui-form-label">签名</label>
+              <label for="userdetail" class="layui-form-label">签名</label>
               <div class="layui-input-block">
-                <textarea placeholder="随便写些什么刷下存在感" id="L_sign"  name="sign" autocomplete="off" class="layui-textarea" style="height: 80px;"></textarea>
+                <textarea placeholder="写点什么吧，让大家更好的认识你" id="userdetail"  name="userdetail" autocomplete="off" class="layui-textarea" style="height: 80px;" th:text="${session.userInfo.userdetail}"></textarea>
               </div>
             </div>
             <div class="layui-form-item">
-              <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit>确认修改</button>
+              <button class="layui-btn" key="set-mine" lay-filter="submitInfo" lay-submit>确认修改</button>
             </div>
+          </form>
         </div>
 
         <div class="layui-form layui-form-pane layui-tab-item">
@@ -180,10 +249,7 @@
                 <button type="button" class="layui-btn upload-img">
                   <i class="layui-icon">&#xe67c;</i>上传头像
                 </button>
-                <button type="button" class="layui-btn upload-img">
-                  <i class="layui-icon">&#xe67c;</i>上传头像
-                </button>
-                <img th:src="${session.user.avatarUrl}" src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
+                <img th:src="${session.user.avatarUrl}" >
                 <span class="loading"></span>
               </div>
             </div>
@@ -241,6 +307,7 @@ layui.config({
   fly: 'index'
 }).use('fly');
 </script>
-
+<!--script src="/layui/layui.js" type="text/javascript" charset="utf-8"></script-->
+<script src="/js/select.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

@@ -1,0 +1,31 @@
+.addressDl{
+    width: 120%;
+    display: none;
+    top: 42px;
+    padding: 5px 0;
+    z-index: 899;
+    min-width: 100%;
+    border: 1px solid #d2d2d2;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.12);
+    box-sizing: border-box;
+    margin-top: 2px;
+    position: absolute;
+    cursor:pointer;
+
+}
+.addressDd{
+    padding-left: 10px;
+    color: #424040;
+    height: 24px;
+    padding: 0 10px;
+    line-height: 36px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 41px;
+
+}

@@ -18,8 +18,8 @@
     <i th:if="${userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
     <span  th:text="${user.getName()}"></span>
 
-    <i class="iconfont icon-nan"></i>
-    <!-- <i class="iconfont icon-nv"></i>  -->
+    <i th:if="${userInfo.sex=='男'}" class="iconfont icon-nan"></i>
+    <i th:if="${userInfo.sex=='女'}" class="iconfont icon-nv"></i>
     <i class="layui-badge fly-badge-vip" th:text="${@environment.getProperty('user.group.r'+userAccount.groupId)}">VIP3</i>
     <!--
     <span style="color:#c00;">（管理员）</span>
@@ -33,10 +33,10 @@
   <p class="fly-home-info">
     <i class="iconfont icon-kiss" title="总积分"></i><span style="color: #FF7200;" th:text="${userAccount.score}"></span>
     <i class="iconfont icon-shijian"></i><span th:text="${#dates.format(user.gmtCreate,'yyyy-MM-dd HH:mm')+' 加入'}"></span>
-    <i class="iconfont icon-chengshi"></i><span>来自杭州</span>
+    <i class="iconfont icon-chengshi"></i><span th:text="${'来自：'+(userInfo.location==null?'保密':userInfo.location)}"></span>
   </p>
 
-  <p class="fly-home-sign">（人生仿若一场修行）</p>
+  <p class="fly-home-sign" th:text="${'个人简介：'+(userInfo.userdetail==null?'该用户太懒了，还没来得及填写':userInfo.userdetail)}"></p>
 
   <div class="fly-sns" data-user="">
     <a href="javascript:;" class="layui-btn layui-btn-primary fly-imActive" data-type="addFriend">加为好友</a>
@@ -50,6 +50,7 @@
     <div class="layui-col-md6 fly-home-jie">
       <div class="fly-panel">
         <h3 class="fly-panel-title" th:text="${user.getName()+' 发表了 '+paginationDto.totalCount+' 个帖子'}"></h3>
+        <div th:if="${paginationDto.totalCount} == 0" class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><i style="font-size:14px;">该用户还没有发表任何帖子</i></div>
         <ul class="jie-row" >
           <th:block th:each="question : ${paginationDto.data}">
           <li>
@@ -60,7 +61,6 @@
           </li>
           </th:block>
         </ul>
-        <div th:if="${paginationDto.totalPage} == 0" class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><i style="font-size:14px;">该用户还没有发表任何帖子</i></div>
         <div style="text-align: center">
           <div class="laypage-main"  ><!-- 分页展示 -->
             <a th:if="${paginationDto.showFirstPage}" th:href="@{'/user/'+${user.id}(page=1)}"
