@@ -272,18 +272,25 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   });
 
   //提交资料
-  form.on('submit(submitInfo)', function(data){
-    //layer.msg(JSON.stringify(data.field));
-      $.post('/user/set/info', {
-          json: JSON.stringify(data.field)
-      }, function(res){
-         if(res.code==200) swal("Good job!", ""+res.msg, "success");
-         else swal("Oh,no!", ""+res.msg, "error");
-      });
-    return false;
+ /* form.on('submit(submitInfo)', function(data){
+
+     // layer.msg(JSON.stringify(data.field));
+    if(slider.isOk()){
+      console.log(JSON.stringify(data.field));
+    }
+
+    $.post('/user/set/info', {
+      json: JSON.stringify(data.field)
+    }, function(res){
+      if(res.code==200) swal("Good job!", ""+res.msg, "success");
+      else swal("Oh,no!", ""+res.msg, "error");
+    });
+
+
+    return true;
   });
 
-
+*/
   //提交成功后刷新
   fly.form['set-mine'] = function(data, required){
     layer.msg('修改成功', {

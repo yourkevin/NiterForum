@@ -136,6 +136,12 @@
               </div>
             </div>
             <div class="layui-form-item">
+              <label class="layui-form-label">验证</label>
+              <div class="layui-input-inline" id="slider2" name="slider2">
+                <div id="slider"></div>
+              </div>
+            </div>
+            <div class="layui-form-item">
               <button class="layui-btn" key="set-mine" lay-filter="submitInfo" lay-submit>确认修改</button>
             </div>
           </form>
@@ -305,8 +311,39 @@ layui.config({
   ,base: '/mods/'
 }).extend({
   fly: 'index'
-}).use('fly');
+}).use(['fly','sliderVerify', 'jquery', 'form'], function() {
+  var sliderVerify = layui.sliderVerify,
+          $ = layui.jquery,
+          form = layui.form;
+  var slider = sliderVerify.render({
+    elem: '#slider',
+    //isAutoVerify:false,//关闭自动验证
+    onOk: function(){//当验证通过回调
+      layer.msg("滑块验证通过");
+    }
+  })
+  /*$('#reset').on('click',function(){
+    slider.reset();
+  })*/
+  //监听提交
+  form.on('submit(submitInfo)', function(data) {
+    if(slider.isOk()){
+      //layer.msg(JSON.stringify(data.field));
+      $.post('/user/set/info', {
+        json: JSON.stringify(data.field)
+      }, function(res){
+        if(res.code==200) swal("Good job!", ""+res.msg, "success");
+        else swal("Oh,no!", ""+res.msg, "error");
+      });
+    }else{
+      layer.msg("请先通过滑块验证");
+    }
+    return false;
+  });
+
+});
 </script>
+
 <!--script src="/layui/layui.js" type="text/javascript" charset="utf-8"></script-->
 <script src="/js/select.js" type="text/javascript" charset="utf-8"></script>
 </body>
