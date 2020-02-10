@@ -99,7 +99,11 @@ public class UserController {
             UserInfo userInfo = JSON.parseObject(json, UserInfo.class);
             JSONObject obj=JSON.parseObject(json);
             userInfo.setLocation(obj.getString("P1")+"-"+obj.getString("C1")+"-"+obj.getString("A1"));
-            //userInfo.setUserId(user.getId());
+            String[] birthday = userInfo.getBirthday().split("-");
+            if(birthday.length==3) {
+                String  constellation = userInfoService.getConstellation(Integer.parseInt(birthday[1]), Integer.parseInt(birthday[2]));
+                userInfo.setConstellation(constellation);
+            }
             int i = userInfoService.updateByUserId(userInfo,user.getId());
             if(i==1) {
                 map.put("code",200);
