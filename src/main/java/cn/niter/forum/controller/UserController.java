@@ -95,7 +95,7 @@ public class UserController {
         }
 
         if("info".equals(action)){
-            System.out.println(json);
+            System.out.println("json:"+json);
             UserInfo userInfo = JSON.parseObject(json, UserInfo.class);
             JSONObject obj=JSON.parseObject(json);
             userInfo.setLocation(obj.getString("P1")+"-"+obj.getString("C1")+"-"+obj.getString("A1"));

@@ -211,9 +211,11 @@ public class AuthorizeController {
             user.setQqAccountId(qqUser.getOpenId());
             user.setAvatarUrl(qqUser.getFigureurl_qq());
             userInfo.setSex(qqUser.getGender());
-            userInfo.setLocation(qqUser.getProvince()+"省"+qqUser.getCity()+"市");
-            userInfo.setConstellation(qqUser.getConstellation());
-            userInfo.setBirthday(qqUser.getYear());
+            if(StringUtils.isBlank(qqUser.getProvince())) qqUser.setProvince("全部");
+            if(StringUtils.isBlank(qqUser.getCity())) qqUser.setCity("全部");
+            userInfo.setLocation(qqUser.getProvince()+"-"+qqUser.getCity()+"-全部");
+            if(!StringUtils.isBlank(qqUser.getConstellation())) userInfo.setConstellation(qqUser.getConstellation());
+            userInfo.setBirthday(qqUser.getYear()+"-10-10");
             User loginuser = (User) request.getSession().getAttribute("user");
             int flag = userService.createOrUpdateQq(user,loginuser,userInfo);
             if(flag == 1) {//创建qq账号
@@ -266,7 +268,8 @@ public class AuthorizeController {
             user.setWeiboAccountId(weiboUser.getIdstr());
             user.setAvatarUrl(weiboUser.getAvatar_hd());
             userInfo.setUserdetail(weiboUser.getDescription());
-            userInfo.setSex(weiboUser.getGender());
+            if("f".equals(weiboUser.getGender())) userInfo.setSex("女");
+            else userInfo.setSex("男");
             userInfo.setLocation(weiboUser.getLocation());
             //BeanUtils.copyProperties(weiboUser,userInfo);
             User loginuser = (User) request.getSession().getAttribute("user");
