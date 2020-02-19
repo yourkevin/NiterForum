@@ -46,9 +46,10 @@ public class PublishController {
         String defaultDescription = "<p id=\"descriptionP\"></p>";
         //String defaultDescription2= "<p id=\"descriptionP\" class=\"video\"></p>";
         //String defaultDescription3= "<p class=\"video\" id=\"descriptionP\"></p>";
-        description = description.replaceAll(defaultDescription, ""); //剔出每次编辑产生的冗余p标签
-        //description = description.replaceAll(defaultDescription2, ""); //剔出每次的冗余p标签
-        //description = description.replaceAll(defaultDescription3, ""); //剔出每次的冗余p标签
+        description = description.replaceAll("<p id=\"descriptionP\"></p>", ""); //剔出每次编辑产生的冗余p标签
+        description = description.replaceAll("<p id=\"descriptionP\" class=\"video\"></p>", ""); //剔出每次的冗余p标签
+        description = description.replaceAll("<p class=\"video\" id=\"descriptionP\"></p>", ""); //剔出每次的冗余p标签
+        description = description.replaceAll("qs.niter", "qcdn.niter"); //剔出每次编辑产生的冗余p标签
         title = title.trim();
         tag = tag.trim();
         model.addAttribute("title",title);

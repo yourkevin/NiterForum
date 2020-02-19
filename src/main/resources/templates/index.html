@@ -3,6 +3,7 @@
 <head>
   <meta name="baidu-site-verification" th:content="${@environment.getProperty('baidu.site.verification')}"  />
   <meta name="sogou_site_verification" th:content="${@environment.getProperty('sogou.site.verification')}"/>
+  <meta name="baidu_union_verify" th:content="${@environment.getProperty('baidu.union.verify')}">
   <th:block th:insert="~{common/header :: head}"></th:block>
   <link rel="stylesheet" href="/css/community.css">
   <title th:text="${@environment.getProperty('site.main.title')}"></title>
@@ -75,10 +76,12 @@
           <a th:class="${sort == 'hot30' ? 'layui-this':''}" th:href="@{/(sort='hot30',search=${search},tag=${tag},column=${column})}">月榜</a>
           <span class="fly-mid"></span>
           <a th:class="${sort == 'good' ? 'layui-this':''}" th:href="@{/(sort='good',search=${search},tag=${tag},column=${column})}">精华</a>
-          <span class="fly-filter-right layui-hide-xs">
-            <a th:href="@{/(sort='new',search=${search},tag=${tag},column=${column})}" th:class="${sort == 'new' || sort == null ? 'layui-this':''}">按最新</a>
-            <span class="fly-mid"></span>
-            <a th:class="${sort == 'no' ? 'layui-this':''}" th:href="@{/(sort='no',search=${search},tag=${tag},column=${column})}">抢沙发</a>
+          <span class="fly-filter-right">
+            <a th:href="@{/t/(sort=${sort},search=${search},tag=${tag},column=${column})}" style="color: red"><i class="layui-icon">&#xe636;</i>瀑布流</a>
+            <span class="fly-mid layui-hide-xs"></span>
+            <a th:href="@{/(sort='new',search=${search},tag=${tag},column=${column})}" th:class="${sort == 'new' || sort == null ? 'layui-this layui-hide-xs':'layui-hide-xs'}">按最新</a>
+            <span class="fly-mid layui-hide-xs"></span>
+            <a th:class="${sort == 'no' ? 'layui-this  layui-hide-xs':' layui-hide-xs'}" th:href="@{/(sort='no',search=${search},tag=${tag},column=${column})}">抢沙发</a>
           </span>
         </div>
 

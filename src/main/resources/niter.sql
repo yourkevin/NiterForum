@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: 2020-02-05 17:50:05
+-- Generation Time: 2020-02-19 19:38:46
 -- 服务器版本： 5.5.62-log
 -- PHP Version: 7.2.18
 
@@ -62,6 +62,35 @@ CREATE TABLE `comment` (
 -- --------------------------------------------------------
 
 --
+-- 表的结构 `news`
+--
+
+CREATE TABLE `news` (
+  `news_id` bigint(20) NOT NULL COMMENT '主键',
+  `id` varchar(40) DEFAULT NULL,
+  `title` varchar(128) CHARACTER SET utf8mb4 NOT NULL,
+  `description` text CHARACTER SET utf8mb4 NOT NULL,
+  `html` text CHARACTER SET utf8mb4 NOT NULL,
+  `source` varchar(16) NOT NULL,
+  `link` varchar(64) NOT NULL,
+  `pub_date` varchar(24) NOT NULL,
+  `imageurl1` varchar(128) DEFAULT NULL,
+  `imageurl2` varchar(128) DEFAULT NULL,
+  `imageurl3` varchar(128) DEFAULT NULL,
+  `tag` varchar(128) DEFAULT NULL,
+  `view_count` int(11) NOT NULL DEFAULT '0',
+  `comment_count` int(11) NOT NULL DEFAULT '0',
+  `like_count` int(11) NOT NULL DEFAULT '0',
+  `gmt_latest_comment` bigint(20) NOT NULL,
+  `status` int(2) NOT NULL DEFAULT '1',
+  `column2` int(2) NOT NULL DEFAULT '0',
+  `gmt_create` bigint(20) NOT NULL,
+  `gmt_modified` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- 表的结构 `notification`
 --
 
@@ -85,7 +114,7 @@ CREATE TABLE `notification` (
 
 CREATE TABLE `question` (
   `id` bigint(20) NOT NULL,
-  `title` varchar(100) NOT NULL,
+  `title` varchar(120) NOT NULL,
   `description` text CHARACTER SET utf8mb4,
   `gmt_create` bigint(20) NOT NULL,
   `gmt_modified` bigint(20) NOT NULL,
@@ -167,14 +196,14 @@ CREATE TABLE `user_info` (
   `userdetail` varchar(1024) DEFAULT NULL,
   `birthday` varchar(20) DEFAULT NULL,
   `marriage` varchar(5) DEFAULT NULL,
-  `sex` varchar(5) DEFAULT NULL,
+  `sex` varchar(5) DEFAULT '男',
   `blood` varchar(5) DEFAULT NULL,
   `figure` varchar(5) DEFAULT NULL,
   `constellation` varchar(20) DEFAULT NULL,
   `education` varchar(20) DEFAULT NULL,
   `trade` varchar(50) DEFAULT NULL,
   `job` varchar(50) DEFAULT NULL,
-  `location` varchar(30) DEFAULT NULL
+  `location` varchar(30) DEFAULT '北京-北京-东城区'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -192,6 +221,12 @@ ALTER TABLE `ad`
 --
 ALTER TABLE `comment`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `news`
+--
+ALTER TABLE `news`
+  ADD PRIMARY KEY (`news_id`);
 
 --
 -- Indexes for table `notification`
@@ -244,43 +279,49 @@ ALTER TABLE `ad`
 -- 使用表AUTO_INCREMENT `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=196;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=224;
+
+--
+-- 使用表AUTO_INCREMENT `news`
+--
+ALTER TABLE `news`
+  MODIFY `news_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键', AUTO_INCREMENT=485;
 
 --
 -- 使用表AUTO_INCREMENT `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=172;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=208;
 
 --
 -- 使用表AUTO_INCREMENT `question`
 --
 ALTER TABLE `question`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
 
 --
 -- 使用表AUTO_INCREMENT `thumb`
 --
 ALTER TABLE `thumb`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
 
 --
 -- 使用表AUTO_INCREMENT `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
 
 --
 -- 使用表AUTO_INCREMENT `user_account`
 --
 ALTER TABLE `user_account`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- 使用表AUTO_INCREMENT `user_info`
 --
 ALTER TABLE `user_info`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

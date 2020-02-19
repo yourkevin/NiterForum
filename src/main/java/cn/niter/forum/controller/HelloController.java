@@ -1,5 +1,7 @@
 package cn.niter.forum.controller;
 
+import cn.niter.forum.provider.AliProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,12 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletRequest;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 @Controller
 public class HelloController {
+    @Autowired
+    private AliProvider aliProvider;
 
     @GetMapping("/hello")
     public String hello(HttpServletRequest request, Model model) {
+        aliProvider.autoGetNews("5572a108b3cdc86cf39001cd");
       // model.addAttribute("test","");
         //JiGuangProvider.testSendSMSCode("227720206730");
       //  JiGuangProvider.testSendValidSMSCode("852707227164","118798");

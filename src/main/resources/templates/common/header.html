@@ -34,8 +34,9 @@
       <li class="layui-nav-item">
         <a></a>
         <dl class="layui-nav-child">
+          <dd><a href="/news"><i class="layui-icon">&#xe705;</i>看看</a></dd>
+          <dd><a href="/chat"><i class="iconfont icon-jiaoliu"></i>聊聊</a></dd>
           <dd><a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank"><i class="layui-icon">&#xe770;</i>官方群</a></dd>
-          <dd><a href="/chat"><i class="iconfont icon-jiaoliu"></i>聊天室</a></dd>
           <dd><a href="/dev"><i class="iconfont icon-iconmingxinganli"></i>实验室</a></dd>
           <dd><a target="_blank" href="https://gitee.com/yourkevin/NiterForum/"><i><img src="/images/gitee120c.png" style="height: 16px"></i>Gitee</a></dd>
           <dd><a target="_blank" href="https://github.com/yourkevin/NiterForum/"><i><img src="/images/github120c.png" style="height: 16px"></i>Github</a></dd>
@@ -50,8 +51,11 @@
       <!--li th:class="${'devnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
         <a href="/dev"><i class="iconfont icon-iconmingxinganli"></i>实验室</a>
       </li-->
-      <li th:class="${'devnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
-        <a href="/chat"><i class="iconfont icon-jiaoliu"></i>聊天室</a>
+      <li th:class="${'newsnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
+        <a href="/news"><i class="layui-icon">&#xe705;</i>看看</a>
+      </li>
+      <li th:class="${'chatnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
+        <a href="/chat"><i class="iconfont icon-jiaoliu"></i>聊聊</a>
       </li>
       <li class="layui-nav-item">
         <a href="https://github.com/yourkevin/NiterForum/" target="_blank"><i class="layui-icon">&#xe635;</i>源码</a>
@@ -60,9 +64,9 @@
           <dd><a target="_blank" href="https://github.com/yourkevin/NiterForum/"><i><img src="/images/github120c.png" style="height: 28px"></i>Github</a></dd>
         </dl>
       </li>
-      <li class="layui-nav-item">
+      <!--li class="layui-nav-item">
         <a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank"><i class="layui-icon">&#xe770;</i>联系</a>
-      </li>
+      </li-->
     </ul>
 
     <ul class="layui-nav fly-nav-user">
@@ -140,6 +144,37 @@
     <div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;">
       <a href="/p/publish" target="_blank" class="layui-btn">发表新帖</a>
     </div>
+  </div>
+</div>
+
+<div th:fragment="news_nav" class="fly-panel fly-column">
+  <div class="layui-container">
+    <ul class="layui-clear">
+      <li th:class="${column == null||column == 0}? 'layui-this' : ''"><a href="/news">全部</a></li>
+      <li th:class="${column == 1}? 'layui-this' : ''"><a href="/news?column=1">互联网</a></li>
+      <li th:class="${column == 2}? 'layui-this' : ''"><a href="/news?column=2">科技</a></li>
+      <li th:class="${column == 3}? 'layui-this' : ''"><a href="/news?column=3">电脑</a></li>
+      <li th:class="${column == 4}? 'layui-this' : ''"><a href="/news?column=4">数码<span class="layui-badge-dot"></span></a></li>
+      <li th:class="${column == 5}? 'layui-this' : ''"><a href="/news?column=5">科普</a></li>
+      <li th:class="${column == 6}? 'layui-this' : ''"><a href="/news?column=6">体育</a></li>
+      <li th:class="${column == 7}? 'layui-this' : ''"><a href="/news?column=7">娱乐</a></li>
+      <li th:class="${column == 8}? 'layui-this' : ''"><a href="/news?column=8">国内</a></li>
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
+
+      <!-- 用户登入后显示 -->
+      <!--th:block th:if="${session.user!=null}">
+        <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a target="_blank" href="/user/p/myPosts">我发表的贴</a></li>
+        <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a target="_blank" href="/user/p/likes">我收藏的贴</a></li>
+      </th:block-->
+    </ul>
+
+    <!--div class="fly-column-right layui-hide-xs">
+      <span class="fly-search"><i class="layui-icon"></i></span>
+      <a href="/p/publish" target="_blank" class="layui-btn">发表新帖</a>
+    </div>
+    <div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;">
+      <a href="/p/publish" target="_blank" class="layui-btn">发表新帖</a>
+    </div-->
   </div>
 </div>
 

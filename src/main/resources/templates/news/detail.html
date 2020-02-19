@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${news.title+@environment.getProperty('site.main.titleInfo')}"></title>
+    <th:block th:insert="~{common/header :: head}"></th:block>
+    <script src="/js/community.js" type="application/javascript"></script>
+    <script src="/js/moment.js" type="application/javascript"></script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">
+    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+</head>
+<body>
+
+<div th:insert="~{common/header :: nav}"></div>
+
+<div th:insert="~{common/header :: news_nav}"></div>
+
+<div class="layui-container">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md8 content detail">
+            <div class="fly-panel detail-box">
+                <h1 th:text="${news.title}"></h1>
+                <div class="fly-detail-info">
+                    <!-- <span class="layui-badge">审核中</span> -->
+                    <a class="layui-badge layui-bg-green" th:if="${news.column2==1}">互联网</a>
+                    <a class="layui-badge layui-bg-green" th:if="${news.column2==2}">科技</a>
+                    <a class="layui-badge layui-bg-green" th:if="${news.column2==3}">电脑</a>
+                    <a class="layui-badge layui-bg-green" th:if="${news.column2==4}">数码</a>
+                    <a class="layui-badge layui-bg-green" th:if="${news.column2==5}">科普</a>
+                    <a class="layui-badge layui-bg-green" th:if="${news.column2==6}">体育</a>
+                    <a class="layui-badge layui-bg-green" th:if="${news.column2==7}">娱乐</a>
+                    <a class="layui-badge layui-bg-green" th:if="${news.column2==8}">国内</a>
+                    <span class="fly-list-nums">
+            <a href="#comment"><i class="iconfont" title="回复">&#xe60c;</i><span th:text="${news.commentCount}"></span></a>
+            <i class="iconfont" title="浏览">&#xe60b;</i><span th:text="${news.viewCount}"></span>
+          </span>
+                </div>
+                <div class="detail-about">
+                    <a class="fly-avatar niter-avatar" th:href="${'/news?column='+news.column2}">
+                        <img th:src="${'/images/avatar/news/'+news.column2+'.jpg'}"
+                             th:alt="${news.columnStr+'资讯'}">
+                    </a>
+                    <div class="fly-detail-user">
+                        <a th:href="${news.link}" class="fly-link" target="_blank">
+                            <cite th:text="${news.source}"></cite>
+                            <i class="layui-badge fly-badge-vip layui-bg-gray" th:text="${news.columnStr+'资讯'}"></i>
+                        </a>
+                        <span th:text="${'发布于 '+news.pubDate}"></span>
+                    </div>
+                    <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
+                        <span style="padding-right: 10px; color: #FF7200" >本条新闻为单纯事实消息的时事新闻，转载自<a class="fly-link" target="_blank" th:href="${news.link}" th:text="${news.source}"></a>，版权归源站所有，如有侵权，烦请<a class="fly-link" target="_blank" th:href="${@environment.getProperty('site.info.contactQunUrl')}">联系我们</a>。</span>
+                        <!--span th:data-id="${question.id}" onclick="like_question(this)" class="layui-btn layui-btn-xs layui-btn-warm"><i class="layui-icon">&#xe600;</i>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span-->
+                    </div>
+                </div>
+                <div style="margin-top: 20px;margin-bottom: 20px" class="layui-text layui-table video photos" id="descriptionP" th:text="${news.html}">
+                </div>
+                <!--div style="margin-top: 10px">
+                    相关标签：
+                    <span class="layui-badge-rim" th:each="tag : ${news.tag.split(',')}">
+                        <a th:href="@{/(page=1,tag=${tag})}"
+                           th:text="${tag}" class="community-tag"></a>
+                    </span>
+                </div--><!--标签-->
+            </div>
+
+            <div class="fly-panel detail-box" id="flyReply">
+                <fieldset class="layui-elem-field layui-field-title" style="text-align: center;">
+                    <legend th:text="${news.commentCount+'个回复'}"></legend>
+
+                </fieldset>
+
+                <!---->
+                <!-- 无数据时 -->
+                <ul class="jieda">
+                    <li th:if="${news.commentCount==0}" class="fly-none">暂不支持评论，请去<a target="_blank" th:href="${news.link}" th:text="${news.source}"></a>交流</li>
+                </ul>
+
+            </div>
+        </div>
+        <th:block th:insert="~{common/sider :: news_detail}"></th:block>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    var obj = document.getElementById("descriptionP");
+    //alert(obj.innerText);//这样就自动解析了
+    obj.innerHTML = obj.innerText;//这样重新设置html代码为解析后的格式
+</script>
+
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+
+<script>
+    layui.cache.page = 'jie';
+    layui.cache.user = {
+        username: '匿名用户'
+        ,uid: -1
+        ,avatar: '/images/avatar/00.jpg'
+        ,experience: 83
+        ,sex: '男'
+    };
+    layui.config({
+        version: "3.0.0"
+        ,base: '/mods/'
+    }).extend({
+        fly: 'index'
+    }).use(['fly', 'face'], function(){
+        var $ = layui.$
+            ,fly = layui.fly;
+        //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+
+        $('.detail-body').each(function(){
+            var othis = $(this), html = othis.html();
+            othis.html(fly.content(html));
+        });
+
+    });
+</script>
+<script>
+    layui.use(['element', 'layer'/*,'code'*/], function(){
+        var element = layui.element;
+        var layer = layui.layer;
+        /*layui.code({
+           elem: 'pre', //默认值为.layui-code
+           height:500,
+           about: false,
+         }); //引用code方法
+     */
+
+        //监听折叠
+        element.on('collapse(sub-comments)', function(data){
+            layer.msg('展开状态：'+ data.show);
+        });
+    });
+</script>
+<script src="https://v.vaptcha.com/v3.js"></script>
+<script type="text/javascript">
+    token = '';
+    userIp='';
+    function commentNews() {
+        if(token == '') {
+            swal({
+                title: "哎哟...",
+                text: "请先完成人机验证再提交哦~",
+                icon: "error",
+                button: "确认",
+            });
+        }else{
+            postNews();
+        }
+    }
+
+    vaptcha({
+        //配置参数
+        vid: '5ddff34a3f11e776a4947f39', // 验证单元id
+        type: 'click', // 展现类型 点击式
+        container: '#commentQBtn', // 按钮容器，可为Element 或者 selector
+        scene:2,               //场景值02，即评论
+        offline_server: '/validateOffline' //离线模式服务端地址
+    }).then(function (vaptchaObj) {
+        //  obj2=vaptchaObj;
+        //vaptchaObj.render()// 调用验证实例 vpObj 的 render 方法加载验证按钮
+        vaptchaObj.listen('pass', function() {
+            // 验证成功， 进行登录操作
+            // console.log(vaptchaObj.getToken());
+            //getCode();
+            $.ajax({
+                type: "get",
+                url: "/getIp",
+                ContentType: "application/json",
+                CacheControl: "no-cache",
+                //  dataType: "json",
+                success: function(data) {
+                    // userIp=data;
+                    $.ajax({
+                        type: "post",
+                        url: "/validate",
+                        ContentType: "application/json",
+                        CacheControl: "no-cache",
+                        data:{
+                            scene:2,
+                            token:vaptchaObj.getToken(),
+                            ip:data
+                        },
+                        //  dataType: "json",
+                        success: function(data) {
+                            if(data.success==1){
+                                //成功
+                                token = vaptchaObj.getToken();
+                                //console.log(token);
+                            }
+                            else if(data.success==0){
+                                swal({
+                                    title: ""+data.msg,
+                                    text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
+                                    icon: "error",
+                                    button: "确认",
+                                });
+                                //vaptchaObj.reset();
+                            }
+                        },
+                        error: function(msg) {
+                            console.log(msg)
+                        }
+                    })
+                },
+                error: function(msg) {
+                    console.log(msg)
+                }})
+
+
+
+        })
+        vaptchaObj.listen('close', function() {
+            //验证弹窗关闭触发
+            swal({
+                title: "哎哟...",
+                text: "您关闭了验证哦",
+                icon: "error",
+                button: "确认",
+            });
+        })
+        vaptchaObj.render()// 调用验证实例 vaptchaObj 的 render 方法加载验证按钮
+    })
+</script>
+</body>
+</html>

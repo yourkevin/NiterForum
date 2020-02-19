@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.niter.forum.mapper.NewsExtMapper">
+    <resultMap id="BaseResultMap" type="cn.niter.forum.model.News">
+        <id column="news_id" jdbcType="BIGINT" property="newsId" />
+        <result column="id" jdbcType="VARCHAR" property="id" />
+        <result column="title" jdbcType="VARCHAR" property="title" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="html" jdbcType="VARCHAR" property="html" />
+        <result column="source" jdbcType="VARCHAR" property="source" />
+        <result column="link" jdbcType="VARCHAR" property="link" />
+        <result column="pub_date" jdbcType="VARCHAR" property="pubDate" />
+        <result column="imageurl1" jdbcType="VARCHAR" property="imageurl1" />
+        <result column="imageurl2" jdbcType="VARCHAR" property="imageurl2" />
+        <result column="imageurl3" jdbcType="VARCHAR" property="imageurl3" />
+        <result column="tag" jdbcType="VARCHAR" property="tag" />
+        <result column="view_count" jdbcType="INTEGER" property="viewCount" />
+        <result column="comment_count" jdbcType="INTEGER" property="commentCount" />
+        <result column="like_count" jdbcType="INTEGER" property="likeCount" />
+        <result column="gmt_latest_comment" jdbcType="BIGINT" property="gmtLatestComment" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="column2" jdbcType="INTEGER" property="column2" />
+        <result column="gmt_create" jdbcType="BIGINT" property="gmtCreate" />
+        <result column="gmt_modified" jdbcType="BIGINT" property="gmtModified" />
+    </resultMap>
+
+    <select id="countBySearch" parameterType="cn.niter.forum.dto.NewsQueryDTO"
+            resultType="java.lang.Integer">
+        select count(*) from news
+        <where>
+            (status=0 OR status =1)
+            <if test="search != null and search != ''">
+                and title regexp #{search}
+            </if>
+            <if test="tag != null and tag != ''">
+                and tag regexp #{tag}
+            </if>
+            <if test="column2 != null and column2 != 0 ">
+                and column2 = #{column2}
+            </if>
+            <if test="sort != null and sort != '' and sort == 'no'">
+                and comment_count = 0
+            </if>
+            <if test="sort != null and sort != '' and sort == 'good'">
+                and status = 2
+            </if>
+            <if test="time != null and time != ''">
+                and gmt_create > #{time}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBySearch" parameterType="cn.niter.forum.dto.NewsQueryDTO"
+            resultMap="BaseResultMap">
+        select * from news
+        <where>
+            (status=0 OR status =1)
+            <if test="search != null and search != ''">
+                and title regexp #{search}
+            </if>
+            <if test="tag != null and tag != ''">
+                and tag regexp #{tag}
+            </if>
+            <if test="column2 != null and column2 != 0 ">
+                and column2 = #{column2}
+            </if>
+            <if test="sort != null and sort != '' and sort == 'no'">
+                and comment_count = 0
+            </if>
+            <if test="sort != null and sort != '' and sort == 'good'">
+                and status = 2
+            </if>
+            <if test="time != null and time != ''">
+                and gmt_create > #{time}
+            </if>
+        </where>
+        <if test="sort == null or sort == ''">
+            order by gmt_latest_comment desc
+        </if>
+        <if test="sort != null and sort != '' and sort == 'new'">
+            order by gmt_latest_comment desc
+        </if>
+        <if test="sort != null and sort != '' and sort == 'no'">
+            order by gmt_latest_comment desc
+        </if>
+        <if test="sort != null and sort != '' and sort == 'good'">
+            order by gmt_latest_comment desc
+        </if>
+        <if test="sort != null and sort != '' and (sort == 'hot' || sort == 'hot7' || sort == 'hot30')">
+            order by comment_count desc
+        </if>
+        limit #{offset},#{size}
+    </select>
+
+    <update id="incView" parameterType="cn.niter.forum.model.News">
+    update news
+    set
+    VIEW_COUNT = VIEW_COUNT + #{viewCount,jdbcType=INTEGER}
+    where news_id = #{newsId}
+    </update>
+
+</mapper>

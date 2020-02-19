@@ -60,14 +60,105 @@
         </dl>
     </div>
 
+    <th:block th:insert="~{common/sider :: common}"></th:block>
+
+</div>
+
+<div th:fragment="news_index" class="layui-col-md4">
+
+    <div class="fly-panel">
+        <div class="fly-panel-title">
+            本版公告
+        </div>
+        <div class="fly-panel-main">
+          <p>欢迎访问看看板块，我们将在本版块为您带来最新最全最热的资讯，包含互联网、科技、数码、电脑、科普、体育、娱乐、国内等新闻。所有新闻都为单纯事实消息的时事新闻，转载均注明了来源，版权归源站所有，如有侵权，烦请<a class="fly-link" target="_blank" th:href="${@environment.getProperty('site.info.contactQunUrl')}">联系我们</a>。</p>
+        </div>
+    </div>
 
 
+
+
+    <div class="fly-panel fly-rank fly-rank-reply" id="LAY_replyRank">
+        <h3 class="fly-panel-title">最近访客</h3>
+        <dl>
+            <!--<i class="layui-icon fly-loading">&#xe63d;</i>-->
+            <dd th:each="loginUser : ${loginUsers}">
+                <a th:href="${'/user/'+loginUser.id}" class="niter-avatar">
+                    <img th:src="${loginUser.avatarUrl}" th:alt="${loginUser.name}"><cite th:text="${loginUser.name}"></cite><i th:text="${#dates.format(loginUser.gmtModified,'MM-dd HH:mm')}">106次回答</i>
+                </a>
+            </dd>
+        </dl>
+    </div>
+
+    <th:block th:insert="~{common/sider :: common}"></th:block>
+
+</div>
+
+<div th:fragment="news_detail" class="layui-col-md4">
+
+    <div class="fly-panel">
+        <div class="fly-panel-title">
+            本版公告
+        </div>
+        <div class="fly-panel-main">
+            <p>欢迎访问看看板块，我们将在本版块为您带来最新最全最热的资讯，包含互联网、科技、数码、电脑、科普、体育、娱乐、国内等新闻。所有新闻都为单纯事实消息的时事新闻，转载均注明了来源，版权归源站所有，如有侵权，烦请<a class="fly-link" target="_blank" th:href="${@environment.getProperty('site.info.contactQunUrl')}">联系我们</a>。</p>
+        </div>
+    </div>
+
+    <dl class="fly-panel fly-list-one">
+        <dt class="fly-panel-title" th:text="${'更多'+news.columnStr+'资讯...'}"></dt>
+        <dd th:each="related : ${relatedNews}">
+            <a th:href="@{'/news/'+ ${related.newsId}}" th:text="${related.title}"></a>
+            <span><i class="iconfont icon-pinglun1"></i> <span th:text="${related.commentCount}"></span></span>
+        </dd>
+
+        <div th:if="${relatedNews==null}" class="fly-none">没有相关数据</div>
+
+    </dl>
+
+    <th:block th:insert="~{common/sider :: common}"></th:block>
+
+</div>
+
+<div th:fragment="p_detail" class="layui-col-md4">
+
+    <dl class="fly-panel fly-list-one">
+        <dt class="fly-panel-title">相关帖子</dt>
+        <dd th:each="related : ${relatedQuestions}">
+            <a th:href="@{'/p/'+ ${related.id}}" th:text="${related.title}">基于 layui 的极简社区页面模版</a>
+            <span><i class="iconfont icon-pinglun1"></i> <span th:text="${related.commentCount}"></span></span>
+        </dd>
+
+        <div th:if="${relatedQuestions==null}" class="fly-none">没有相关数据</div>
+
+    </dl>
+
+    <th:block th:insert="~{common/sider :: common}"></th:block>
+
+</div>
+
+
+
+
+
+
+<th:block th:fragment="common">
     <div class="fly-panel">
         <div class="fly-panel-title">
             广告招募哦~
         </div>
         <div class="fly-panel-main">
             <a href="#" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">NiterForum 2.0 - 尼特网 旗舰之作</a>
+        </div>
+    </div>
+
+    <div class="fly-panel" style="">
+        <div class="fly-panel-title">
+            点击图片或者QQ扫码加入尼特社区官方交流群
+        </div>
+        <div class="fly-panel-main">
+            <a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank">
+                <img src="/images/qunQrcode.jpg" style="max-width: 100%;" alt="layui"></a>
         </div>
     </div>
 
@@ -78,11 +169,13 @@
             <!--留个友链嘛，(* ￣3)(ε￣ *)--><dd><a href="https://niter.cn/" target="_blank">NiterForum</a><dd>
             <dd><a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank">官方Q群</a><dd>
             <dd><a href="https://github.com/yourkevin/NiterForum/" target="_blank">社区源码</a><dd>
-            <dd><a href="mailto:xianxin@layui-inc.com?subject=%E7%94%B3%E8%AF%B7Fly%E7%A4%BE%E5%8C%BA%E5%8F%8B%E9%93%BE" class="fly-link">申请友链</a><dd>
+            <dd><a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank" class="fly-link">申请友链</a><dd>
         </dl>
     </div>
 
-</div>
+</th:block>
+
+
 
 
 </html>

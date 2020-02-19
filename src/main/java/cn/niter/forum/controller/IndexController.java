@@ -5,6 +5,7 @@ import cn.niter.forum.cache.LoginUserCache;
 import cn.niter.forum.dto.PaginationDTO;
 import cn.niter.forum.dto.QuestionDTO;
 import cn.niter.forum.model.User;
+import cn.niter.forum.model.UserAccount;
 import cn.niter.forum.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,9 +37,9 @@ public class IndexController {
                         @RequestParam(name = "search", required = false) String search,
                         @RequestParam(name = "tag", required = false) String tag,
                         @RequestParam(name = "sort", required = false) String sort) {
-
+        UserAccount userAccount = (UserAccount)request.getSession().getAttribute("userAccount");
         List<QuestionDTO> topQuestions = questionService.listTopwithColumn(search, tag, sort,column2);
-        PaginationDTO pagination = questionService.listwithColumn(search, tag, sort, page,size,column2);
+        PaginationDTO pagination = questionService.listwithColumn(search, tag, sort, page,size,column2,userAccount);
         List<String> tags = hotTagCache.getHots();
         List<User> loginUsers = loginUserCache.getLoginUsers();
         //System.out.println("users"+loginUsers);

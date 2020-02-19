@@ -26,7 +26,7 @@ public class QuestionController {
     private Environment env;
 
 
-
+//NiterForum1.x->2.x过渡
     @GetMapping("/question/{id}")
     public String question(@PathVariable(name = "id") Long id, Model model){
         QuestionDTO questionDTO = questionService.getById(id);

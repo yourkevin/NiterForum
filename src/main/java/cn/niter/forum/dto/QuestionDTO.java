@@ -1,6 +1,5 @@
 package cn.niter.forum.dto;
 
-import cn.niter.forum.model.User;
 import cn.niter.forum.model.UserAccount;
 import lombok.Data;
 
@@ -16,9 +15,14 @@ public class QuestionDTO {
     private Integer viewCount;
     private Integer commentCount;
     private Integer likeCount;
-    private User user;
+    private String userGroupName;
+    //private User user;
+    private UserDTO user;
     private UserAccount userAccount;
     private Long gmtLatestComment;
+    private String gmtLatestCommentStr;
+    private String shortDescription;
+    private Integer isVisible;
     private Integer status;
     private Integer column2;
     private Integer permission;
