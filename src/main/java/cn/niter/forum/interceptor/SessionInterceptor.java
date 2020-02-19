@@ -83,6 +83,11 @@ public class SessionInterceptor implements HandlerInterceptor {
                         Long unreadCount = notificationService.unreadCount(users.get(0).getId());
                         request.getSession().setAttribute("unreadCount", unreadCount);
                     //    System.out.println("用户ID："+userAccount.getGroupId());
+                        UserExample example = new UserExample();
+                        users.get(0).setGmtModified(System.currentTimeMillis());
+                        example.createCriteria()
+                                .andIdEqualTo(users.get(0).getId());
+                        userMapper.updateByExampleSelective(users.get(0), example);
                     }
                     break;
                 }
