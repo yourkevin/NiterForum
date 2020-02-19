@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta name="baidu-site-verification" th:content="${@environment.getProperty('baidu.site.verification')}"  />
+  <meta name="sogou_site_verification" th:content="${@environment.getProperty('sogou.site.verification')}"/>
+  <th:block th:insert="~{common/header :: head}"></th:block>
+  <link rel="stylesheet" href="/css/community.css">
+  <link rel="stylesheet" href="/css/t-global.css">
+
+    <title th:text="${@environment.getProperty('site.main.title')}"></title>
+</head>
+<body>
+
+<div th:insert="~{common/header :: nav}"></div>
+
+<div th:insert="~{common/header :: sub_nav}"></div>
+
+
+
+<div class="layui-container">
+  <div class="layui-row layui-col-space15">
+    <div class="layui-col-md8">
+        <div class="fly-panel">
+            <div class="fly-panel-title fly-filter">
+                <a>置顶</a>
+                <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
+            </div>
+            <ul class="fly-list">
+                <li th:each="question : ${topQuestions}">
+                    <a th:href="${'/user/'+question.user.id}" class="fly-avatar niter-avatar">
+                        <img th:src="${question.user.avatarUrl}"
+                             th:alt="${question.user.name}">
+                    </a>
+                    <h2>
+                        <a class="layui-badge" th:if="${question.column2==1}">提问</a>
+                        <a class="layui-badge" th:if="${question.column2==2}">分享</a>
+                        <a class="layui-badge" th:if="${question.column2==3}">建议</a>
+                        <a class="layui-badge" th:if="${question.column2==4}">讨论</a>
+                        <a class="layui-badge layui-bg-green" th:if="${question.column2==5}">公告</a>
+                        <a class="layui-badge" th:if="${question.column2==6}">动态</a>
+                        <a class="layui-badge" th:if="${question.column2==9}">其它</a>
+                        <a th:if="${question.permission==10}" class="fly-list-like layui-hide-xs" title="会员尊享"><i class="layui-icon">&#xe735</i></a>
+                        <a th:href="@{'/p/'+ ${question.id}}" th:text="${question.title}" th:title="${question.title}" target="_blank" th:style="${question.permission==10? 'color:red':''}"></a>
+                        <a th:if="${question.viewCount>100}" class="fly-list-like layui-hide-xs" title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
+                    </h2>
+                    <div class="fly-list-info">
+                        <a th:href="${'/user/'+question.user.id}" link target="_blank">
+                            <i th:if="${question.userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
+                            <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
+                            <i class="layui-badge fly-badge-vip layui-bg-gray layui-hide-xs" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
+                        </a>
+                        <span th:text="${#dates.format(question.gmtLatestComment,'yyyy-MM-dd HH:mm')}">刚刚</span>
+
+                        <span class="fly-list-kiss layui-hide-xs" title="浏览"><i class="iconfont icon-kiss"></i><span th:text="${question.viewCount}"></span></span>
+                        <span class="fly-list-like layui-hide-xs" title="收藏"><i class="layui-icon">&#xe600;</i><span th:text="${question.LikeCount}"></span></span>
+                        <!--span class="layui-badge fly-badge-accept layui-hide-xs">已结</span-->
+                        <span class="fly-list-nums" >
+                <i class="iconfont icon-pinglun1" title="回复" ></i> <span th:text="${question.commentCount}"></span>
+              </span>
+                    </div>
+                    <div class="fly-list-badge">
+
+                        <span th:if="${question.status==2||question.status==3}" class="layui-badge layui-bg-orange">置顶</span>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+
+      <div class="fly-panel" style="margin-bottom: 0;">
+        
+        <div class="fly-panel-title fly-filter">
+          <a th:href="@{/t/(sort='new',search=${search},tag=${tag},column=${column})}" th:class="${sort == 'new' || sort == null ? 'layui-this':''}">综合</a>
+          <span class="fly-mid"></span>
+          <a th:class="${sort == 'hot7' ? 'layui-this':''}" th:href="@{/t/(sort='hot7',search=${search},tag=${tag},column=${column})}">周榜</a>
+          <span class="fly-mid"></span>
+          <a th:class="${sort == 'hot30' ? 'layui-this':''}" th:href="@{/t/(sort='hot30',search=${search},tag=${tag},column=${column})}">月榜</a>
+          <span class="fly-mid"></span>
+          <a th:class="${sort == 'good' ? 'layui-this':''}" th:href="@{/t/(sort='good',search=${search},tag=${tag},column=${column})}">精华</a>
+          <span class="fly-filter-right">
+            <a th:href="@{/(sort=${sort},search=${search},tag=${tag},column=${column})}"><i class="layui-icon">&#xe649;</i>楼层模式</a>
+            <span class="fly-mid layui-hide-xs"></span>
+            <a th:href="@{/t/(sort='new',search=${search},tag=${tag},column=${column})}" th:class="${sort == 'new' || sort == null ? 'layui-this layui-hide-xs':'layui-hide-xs'}">按最新</a>
+            <span class="fly-mid layui-hide-xs"></span>
+            <a th:class="${sort == 'no' ? 'layui-this layui-hide-xs':'layui-hide-xs'}" th:href="@{/t/(sort='no',search=${search},tag=${tag},column=${column})}">抢沙发</a>
+          </span>
+        </div>
+<!--
+        <ul class="t-list" id="t-index">
+          <li th:each="question : ${pagination.data}">
+           <div th:if="${question.status==0||question.status==1}">
+            <a th:href="${'/user/'+question.user.id}" class="fly-avatar niter-avatar">
+              <img th:src="${question.user.avatarUrl}"
+                   th:alt="${question.user.name}">
+            </a>
+            <div class="fly-list-info">
+                <a th:href="${'/user/'+question.user.id}" link target="_blank">
+                    <i th:if="${question.userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
+                    <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
+                    <i class="layui-badge fly-badge-vip layui-bg-gray layui-hide-xs" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
+                </a>
+            </div>
+            <div class="fly-list-info">
+                   <span th:text="${#dates.format(question.gmtLatestComment,'yyyy-MM-dd HH:mm')}"></span>
+               </div>
+               <a th:if="${question.permission==10}" class="fly-list-like layui-hide-xs" title="会员尊享"><i class="layui-icon">&#xe735</i></a>
+               <a th:href="@{'/p/'+ ${question.id}}" th:text="${question.title}" th:title="${question.title}" th:style="${question.permission==10? 'font-weight: bold;color:red':'font-weight: bold;'}"></a>
+               <a th:if="${question.viewCount>100}" class="fly-list-like layui-hide-xs" title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
+               <p>SpringBoot框架。</p>
+
+            <div class="fly-list-badge">
+                <a th:if="${question.permission==10}" class="fly-list-like " title="会员尊享"><i class="layui-icon">&#xe735</i></a>
+                <a th:if="${question.viewCount>100}" class="fly-list-like " title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
+                <span th:if="${question.status==1||question.status==3}" class="layui-badge layui-bg-red" >精帖</span>
+            </div>
+           </div>
+          </li>
+        </ul>
+-->
+        <ul class="t-list" id="t-index2">
+          </ul>
+
+      </div>
+    </div>
+      <th:block th:insert="~{common/sider :: index}"></th:block>
+  </div>
+</div>
+
+
+<!--script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_30088308'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "w.cnzz.com/c.php%3Fid%3D30088308' type='text/javascript'%3E%3C/script%3E"));</script-->
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+<script th:inline="javascript">
+  layui.cache.page = '';
+  layui.cache.user = {
+    username: '匿名用户'
+    ,uid: -1
+    ,avatar: '/images/avatar/00.jpg'
+    ,experience: 83
+    ,sex: '男'
+  };
+  layui.config({
+    version: "3.0.0"
+    ,base: '/mods/'  //这里实际使用时，建议改成绝对路径
+  }).extend({
+    fly: 'index'
+  }).use(['fly','flow','layer'], function() {
+
+      var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+      var flow = layui.flow;
+      var layer = layui.layer;
+      //var page=[[${page}]];
+      flow.load({
+          elem: '#t-index2' //指定列表容器
+          ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+              if([[${tag}]]!=null)
+              var tag = [[${tag}]];
+              var sort = [[${sort}]];
+              var column = [[${column}]];
+              var search = [[${search}]];
+             // alert(tag);
+              var lis = [];
+              //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+             $.get('/t/list?page='+page+'&tag='+tag+'&sort='+sort+'&search='+search+'&column='+column, function(res){
+                  //假设你的列表返回在data集合中
+                  layui.each(res.questions, function(index, item){
+                      var str="          <li>" +
+                          "           <div>" +
+                          "            <a href=\"/user/"+item.user.id+"\" class=\"fly-avatar niter-avatar\">\n" +
+                          "              <img src=\""+item.user.avatarUrl+"\"\n" +
+                          "                   alt=\""+item.user.name+"\">\n" +
+                          "            </a>\n" +
+                          "            <div class=\"fly-list-info\">\n" +
+                          "                <a href=\"/user/"+item.user.id+" \" link target=\"_blank\">\n";
+                      if(item.userAccount.vipRank==1)//为vip，显示会员图标
+                          str = str + " <i class=\"layui-icon fly-list-kiss\" title=\"红砖会员等级：LV1\">&#xe735</i>\n";
+                          str = str + " <cite class=\"";
+                      if(item.userAccount.vipRank==1)//为vip，昵称红名
+                          str = str +"fly-list-kiss"+"\">"+item.user.name+"</cite>";
+                      else str = str +"\">"+item.user.name+"</cite>";
+                          str = str +
+                          "       <i class=\"layui-badge fly-badge-vip layui-bg-gray layui-hide-xs\" >"+item.userGroupName+"</i>\n" +
+                          "                </a><div class=\"t-list-badge\"><span class=\"layui-badge layui-bg-gray\" style='cursor: pointer' onclick=\"javascript:window.open('/p/"+item.id+"')\">详情</span>";
+                      if(item.status==1||item.status==3)
+                          str = str +" <span class=\"layui-badge layui-bg-red\" >精帖</span>";
+                          str = str + "            </div></div>\n" +
+                          "            <div class=\"fly-list-info\">\n" +
+                          "                   <span>"+item.gmtLatestCommentStr+"</span>\n" +
+                          "                <span class=\"fly-list-nums\" >\n" +
+                              "                <i class=\"iconfont layui-hide-xs\" title=\"浏览\" >&#xe60b;</i> <span class=\"layui-hide-xs\">"+item.viewCount+"</span>\n" +
+                              "                <i class=\"layui-icon\" title=\"收藏\">&#xe600;</i> <span>"+item.likeCount+"</span>\n" +
+                              "                <i class=\"iconfont icon-pinglun1\" title=\"回复\" ></i> <span>"+item.commentCount+"</span>\n" +
+                              "                </span>"+
+                          "               </div><div class='t-photos'>" ;
+                      if(item.permission==10)//会员专享贴，会员图标+红色标题
+                          str = str +" <a class=\"fly-list-like layui-hide-xs\" title=\"会员尊享\"><i class=\"layui-icon\">&#xe735</i></a>\n"
+                                    +"    <a target='_blank' href=\"/p/"+item.id+"\" title=\""+item.title+"\" style=\"font-weight: bold;font-size:15px;color:red\">"+item.title+"</a>\n";
+                       else  str = str+"<a target='_blank' href=\"/p/"+item.id+"\" title=\""+item.title+"\" style=\"font-weight: bold;font-size:15px;\">"+item.title+"</a>\n";
+                      if(item.viewCount>100)//浏览数超过1000，热门标识
+                      str = str +" <a class=\"fly-list-like layui-hide-xs\" title=\"烫烫烫\"><i  class=\"layui-icon\" style=\"font-size: 20px\">&#xe756;</i></a>\n";
+                      if(item.permission==0)
+                          str = str +"<p>"+item.shortDescription+"</p>\n" ;
+                      else if(item.isVisible==1)//权限控制，没有权限的用户不显示页面
+                          str = str +"<p>"+item.shortDescription+"</p>\n" ;
+                      str = str+"</div> ";
+                      str = str +" </div>\n" +
+                          "          </li>";
+                      if(item.status==0||item.status==1) lis.push(str);
+                  });
+
+                  //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                  //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                  next(lis.join(''), page < res.totalPage);
+              });
+              /*lis.push('<li>'+ 'item.title' +'</li>');
+              next(lis.join(''), 1 < 2);*/
+          }
+      });
+
+      $('body').on('click', '.t-photos img', function(){
+          //window.open(this.src);
+          layer.photos({
+              photos: {
+                  "data": [{
+                      "src": this.src
+                  }]},
+              anim:1
+          });
+      });
+
+  });
+</script>
+</body>
+</html>

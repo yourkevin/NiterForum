@@ -15,6 +15,10 @@
     height: 460px;
 }
 
+.video img{
+    max-width: 100%;
+}
+
 
 .niter-avatar img{
 
