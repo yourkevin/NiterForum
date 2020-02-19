@@ -9,9 +9,9 @@
         
         <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/niter"
+                        connectionURL="jdbc:mysql://***:3306/community"
                         userId="***"
-                        password="***">
+                        password="****">
         </jdbcConnection>
 
         <javaTypeResolver>
@@ -40,6 +40,11 @@
         <table tableName="ad" domainObjectName="Ad"></table>
         <table tableName="user_info" domainObjectName="UserInfo"></table>
         <table tableName="user_account" domainObjectName="UserAccount"></table>
+        <table tableName="news" domainObjectName="News">
+            <columnOverride column="description" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <columnOverride column="html" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </table>
+
 
     </context>
 </generatorConfiguration>
