@@ -22,6 +22,7 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     PHONE_CODE_ERROR(2033, "验证码错误或失效，请稍后再试！"),
     SUBMIT_PHONE_FAILED(2034, "手机号绑定/更新失败,可能该号码已在其他账号上绑定，请重试！"),
     USER_IS_EMPTY(2040, "该用户不存在或已被屏蔽！"),
+    NEWS_NOT_FOUND(2050, "该条资讯已经找不到了，已被删除或压根就不存在？"),
 
     ;
 

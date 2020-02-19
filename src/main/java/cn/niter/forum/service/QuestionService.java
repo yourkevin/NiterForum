@@ -3,22 +3,27 @@ package cn.niter.forum.service;
 import cn.niter.forum.dto.PaginationDTO;
 import cn.niter.forum.dto.QuestionDTO;
 import cn.niter.forum.dto.QuestionQueryDTO;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.enums.SortEnum;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.mapper.*;
 import cn.niter.forum.model.*;
+import cn.niter.forum.util.TimeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +40,8 @@ public class QuestionService {
     private QuestionExtMapper questionExtMapper;
     @Autowired
     private ThumbMapper thumbMapper;
+    @Autowired
+    private TimeUtils timeUtils;
 
     @Value("${score1.publish.inc}")
     private Integer score1PublishInc;
@@ -49,8 +56,11 @@ public class QuestionService {
     @Value("${user.score3.priorities}")
     private Integer score3Priorities;
 
-    public PaginationDTO listwithColumn(String search, String tag, String sort, Integer page, Integer size, Integer column2) {
-        //System.out.println("c:"+column2);
+    @Autowired
+    private Environment env;
+
+    public PaginationDTO listwithColumn(String search, String tag, String sort, Integer page, Integer size, Integer column2,UserAccount userAccount) {
+
         if (StringUtils.isNotBlank(search)) {
             String[] tags = StringUtils.split(search, " ");
             search = Arrays
@@ -116,8 +126,17 @@ public class QuestionService {
             List<UserAccount> userAccounts = userAccountMapper.selectByExample(userAccountExample2);
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setUser(user);
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(user,userDTO);
+            questionDTO.setUser(userDTO);
             questionDTO.setUserAccount(userAccounts.get(0));
+            questionDTO.setUserGroupName(env.getProperty("user.group.r"+userAccounts.get(0).getGroupId()));
+            questionDTO.setGmtLatestCommentStr(timeUtils.timeStamp2Date(questionDTO.getGmtLatestComment(),null));
+            String shortDescription=getShortDescription(questionDTO.getDescription(),questionDTO.getId());
+            questionDTO.setShortDescription(shortDescription);
+            if(questionDTO.getPermission()==0) questionDTO.setIsVisible(1);
+            else if(userAccount!=null&&userAccount.getGroupId()>=questionDTO.getPermission()) questionDTO.setIsVisible(1);
+            else questionDTO.setIsVisible(0);
             questionDTOList.add(questionDTO);
         }
         paginationDTO.setData(questionDTOList);
@@ -125,6 +144,52 @@ public class QuestionService {
 
         paginationDTO.setPagination(totalPage,page);
         return paginationDTO;
+    }
+
+    public static List<String> getHtmlImageSrcList(String htmlText)
+    {
+        List<String> imgSrc = new ArrayList<String>();
+        Matcher m = Pattern.compile("src=\"?(.*?)(\"|>|\\s+)").matcher(htmlText);
+        while(m.find())
+        {
+            imgSrc.add(m.group(1));
+        }
+        return imgSrc;
+    }
+
+    public String getShortDescription(String description,Long id){
+        String shortDescription = description;
+
+        //System.out.println(imgSrc);
+        shortDescription = shortDescription.replaceAll("<p id=\"descriptionP\" class=\"video\">","" );
+        shortDescription = shortDescription.replaceAll("<p class=\"video\" id=\"descriptionP\">","" );
+        shortDescription = shortDescription.replaceAll("<p id=\"descriptionP\">", "");
+        shortDescription = shortDescription.replaceAll("</p>", "<br>");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("</h1>", "<br>");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("<h1>", "");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("</h2>", "<br>");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("<h2>", "");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("</h3>", "<br>");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("<h3>", "");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("<br><br>", "<br>");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("<p><br></p>", "");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("<p><br>", "<p>");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("<br></p>", "</p>");//去除&nbsp;
+       // shortDescription = shortDescription.replaceAll("<br>", "</br>");//去除&nbsp;
+        // shortDescription = shortDescription.replaceAll("</?[^>]+>", ""); //剔出<html>的标签
+        shortDescription = shortDescription.replaceAll("(?!<(br|p|img).*?>)<.*?>", ""); //剔出指定标签外的<iframe>的标签
+        List<String> imgSrc = getHtmlImageSrcList(shortDescription);
+        shortDescription = shortDescription.replaceAll("(?!<(br|p).*?>)<.*?>", ""); //剔出指定标签外的<html>的标签
+        //  shortDescription = shortDescription.replaceAll("<a>\\s*|\t|\r|\n</a>", "");//去除字符串中的空格,回车,换行符,制表符
+
+        shortDescription = shortDescription.replaceAll("&nbsp;", "");//去除&nbsp;
+        shortDescription = shortDescription.replaceAll("&nbsp;", "");//去除&nbsp;
+
+        shortDescription = shortDescription.replaceAll("<pre>", "");
+        shortDescription = shortDescription.replaceAll("</pre>", "");
+        if(shortDescription.length()>200) shortDescription=shortDescription.substring(0,200)+"...";
+        if(imgSrc.size()>0) shortDescription=shortDescription+"<img src=\""+imgSrc.get(0)+"\">";
+        return shortDescription;
     }
 
 
@@ -190,7 +255,9 @@ public class QuestionService {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setUser(user);
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(user,userDTO);
+            questionDTO.setUser(userDTO);
             questionDTOList.add(questionDTO);
         }
         paginationDTO.setData(questionDTOList);
@@ -247,7 +314,9 @@ public class QuestionService {
             List<UserAccount> userAccounts = userAccountMapper.selectByExample(userAccountExample);
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setUser(user);
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(user,userDTO);
+            questionDTO.setUser(userDTO);
             questionDTO.setUserAccount(userAccounts.get(0));
             questionDTOList.add(questionDTO);
         }
@@ -298,7 +367,9 @@ public class QuestionService {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setUser(user);
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(user,userDTO);
+            questionDTO.setUser(userDTO);
             questionDTOList.add(questionDTO);
         }
 
@@ -342,7 +413,9 @@ public class QuestionService {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setUser(user);
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(user,userDTO);
+            questionDTO.setUser(userDTO);
             questionDTOList.add(questionDTO);
         }
 
@@ -399,7 +472,9 @@ public class QuestionService {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setUser(user);
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(user,userDTO);
+            questionDTO.setUser(userDTO);
             questionDTOList.add(questionDTO);
         }
         paginationDTO.setData(questionDTOList);
@@ -421,7 +496,9 @@ public class QuestionService {
         userAccountExample.createCriteria().andUserIdEqualTo(user.getId());
         List<UserAccount> userAccounts = userAccountMapper.selectByExample(userAccountExample);
         UserAccount userAccount = userAccounts.get(0);
-        questionDTO.setUser(user);
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user,userDTO);
+        questionDTO.setUser(userDTO);
         questionDTO.setUserAccount(userAccount);
         return questionDTO;
     }
