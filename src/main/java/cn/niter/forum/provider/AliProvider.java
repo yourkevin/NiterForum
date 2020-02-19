@@ -16,6 +16,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -27,8 +28,11 @@ public class AliProvider {
     @Autowired
     private NewsMapper newsMapper;
 
-    private String ali_showapi_appid="145155";
-    private String ali_showapi_sign="a5ce8f0ec7ce403abbb178864ca1de6a";
+    @Value("${ali.showapi.appid}")
+    private String ali_showapi_appid;
+
+    @Value("${ali.showapi.sign}")
+    private String ali_showapi_sign;
 
     public int autoGetNews(String channelId) {
        // String channelId="5572a108b3cdc86cf39001cd";
