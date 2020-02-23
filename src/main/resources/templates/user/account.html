@@ -309,7 +309,7 @@
 
     vaptcha({
         //配置参数
-        vid: '5ddff34a3f11e776a4947f39', // 验证单元id
+        vid: '[[${vaptcha_vid}]]', // 验证单元id
         type: 'click', // 展现类型 点击式
         container: '#getCodeBtn', // 按钮容器，可为Element 或者 selector
         scene:1,                //场景值01，即邮箱注册
@@ -496,7 +496,7 @@
 
     vaptcha({
         //配置参数
-        vid: '5ddff34a3f11e776a4947f39', // 验证单元id
+        vid: '[[${vaptcha_vid}]]', // 验证单元id
         type: 'click', // 展现类型 点击式
         container: '#getPhoneCodeBtn', // 按钮容器，可为Element 或者 selector
         scene:4,              //场景值04，即手机

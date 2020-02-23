@@ -7,6 +7,7 @@ import cn.niter.forum.model.UserAccount;
 import cn.niter.forum.service.CommentService;
 import cn.niter.forum.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,8 @@ public class QuestionController {
     @Autowired
     private Environment env;
 
+    @Value("${vaptcha.vid}")
+    private String vaptcha_vid;
 
 //NiterForum1.x->2.x过渡
     @GetMapping("/question/{id}")
@@ -75,6 +78,7 @@ public class QuestionController {
         model.addAttribute("comments", comments);
         model.addAttribute("relatedQuestions", relatedQuestions);
         model.addAttribute("navtype", "communitynav");
+        model.addAttribute("vaptcha_vid", vaptcha_vid);
         return "p/detail";
     }
 

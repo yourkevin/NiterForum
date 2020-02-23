@@ -2,6 +2,7 @@ package cn.niter.forum.controller;
 
 
 import cn.niter.forum.model.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class SSOController {
+    @Value("${vaptcha.vid}")
+    private String vaptcha_vid;
+
     @RequestMapping("/sso/{action}")
     public String aouth(HttpServletRequest request,
                          HttpServletResponse response,
@@ -24,6 +28,7 @@ public class SSOController {
         if(user != null) {
             return "redirect:/";
         }
+        model.addAttribute("vaptcha_vid", vaptcha_vid);
         if("login".equals(action)){
             model.addAttribute("section", "login");
             model.addAttribute("sectionName", "登录");

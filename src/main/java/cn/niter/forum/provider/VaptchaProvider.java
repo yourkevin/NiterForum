@@ -2,12 +2,31 @@ package cn.niter.forum.provider;
 
 
 import okhttp3.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class VaptchaProvider {
+
+    private static String vid ;
+    @Value("${vaptcha.vid}")
+    public  void setVid(String vid) {
+        this.vid= vid;
+    }
+
+    private static String key ;
+    @Value("${vaptcha.key}")
+    public  void setKey(String key) {
+        this.key= key;
+    }
+
+
+
     public static String getValidateResult(String token,int scene,String ip){
         MediaType mediaType = MediaType.get("application/x-www-form-urlencoded; charset=utf-8");
         OkHttpClient client = new OkHttpClient();
-        String s = "id=5ddff34a3f11e776a4947f39&secretkey=5fcab456ff884a1f84bcb96fac0c6beb&token="+token+"&scene="+scene+"&ip="+ip;
+       // System.out.println("vid:"+vid);
+        String s = "id="+vid+"&secretkey="+key+"&token="+token+"&scene="+scene+"&ip="+ip;
        // RequestBody body = RequestBody.create(mediaType, JSON.toJSONString(validateDTO));
         RequestBody body = RequestBody.create(mediaType, s);
         //System.out.println("body:"+body.toString());
