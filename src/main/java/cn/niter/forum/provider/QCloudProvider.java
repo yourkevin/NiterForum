@@ -3,6 +3,9 @@ package cn.niter.forum.provider;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.model.User;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
@@ -14,6 +17,14 @@ import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.model.StorageClass;
 import com.qcloud.cos.region.Region;
+import com.tencentcloudapi.common.Credential;
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
+import com.tencentcloudapi.common.profile.ClientProfile;
+import com.tencentcloudapi.common.profile.HttpProfile;
+import com.tencentcloudapi.nlp.v20190408.NlpClient;
+import com.tencentcloudapi.nlp.v20190408.models.KeywordsExtractionRequest;
+import com.tencentcloudapi.nlp.v20190408.models.KeywordsExtractionResponse;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +36,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Base64;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -146,6 +158,47 @@ public class QCloudProvider {
         // 关闭客户端
         cosclient.shutdown();
         return objecturl+key;
+    }
+
+    public String getKeywords(String text , int num , double score){
+        String keyWordString = "";
+        try{
+
+            Credential cred = new Credential(secretId, secretKey);
+
+            HttpProfile httpProfile = new HttpProfile();
+            httpProfile.setEndpoint("nlp.tencentcloudapi.com");
+
+            ClientProfile clientProfile = new ClientProfile();
+            clientProfile.setHttpProfile(httpProfile);
+
+            NlpClient client = new NlpClient(cred, "ap-guangzhou", clientProfile);
+
+            String params = "{\"Num\":"+num+",\"Text\":\""+text+"\"}";
+            KeywordsExtractionRequest req = KeywordsExtractionRequest.fromJsonString(params, KeywordsExtractionRequest.class);
+
+            KeywordsExtractionResponse resp = client.KeywordsExtraction(req);
+            JSONObject obj= JSON.parseObject(KeywordsExtractionRequest.toJsonString(resp));
+            JSONArray keywords = obj.getJSONArray("Keywords");
+            List<Keywords> keywordsList = JSONObject.parseArray(keywords.toJSONString(), Keywords.class);
+
+            if(keywordsList.size()>0)
+                for (Keywords keyword : keywordsList) {
+                    if(keyword.getScore()>score) keyWordString=keyWordString+","+keyword.getWord();
+                }
+            //System.out.println("keyWordString:"+keyWordString.substring(1));
+            //System.out.println(KeywordsExtractionRequest.toJsonString(resp));
+        } catch (TencentCloudSDKException e) {
+            System.out.println(e.toString());
+        }
+        return keyWordString;//返回格式  ,k1,k2,k3,k4.....,kn
+    }
+
+
+    @Data
+    static class  Keywords{
+        Double Score;
+        String Word;
     }
 
 }

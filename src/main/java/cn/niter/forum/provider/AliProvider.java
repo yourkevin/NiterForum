@@ -27,6 +27,8 @@ public class AliProvider {
 
     @Autowired
     private NewsMapper newsMapper;
+    @Autowired
+    private QCloudProvider qCloudProvider;
 
     @Value("${ali.showapi.appid}")
     private String ali_showapi_appid;
@@ -63,7 +65,7 @@ public class AliProvider {
              JSONObject pagebean = showapi_res_body.getJSONObject("pagebean");
              JSONArray contentlist = pagebean.getJSONArray("contentlist");
              List<NewsDTO> newsDTOs = JSONObject.parseArray(contentlist.toJSONString(), NewsDTO.class);
-                System.out.println("newsDTOs:"+newsDTOs.size());
+               // System.out.println("newsDTOs:"+newsDTOs.size());
                 News news = new News();
                 for (NewsDTO newsDTO : newsDTOs) {
                     BeanUtils.copyProperties(newsDTO, news);
@@ -80,6 +82,7 @@ public class AliProvider {
                        //System.out.println(twitterDTO.getImageurl2());
                    }
                     String des = newsDTO.getContent();
+                    String keywords = qCloudProvider.getKeywords(des,5,0.4);
                     String regex = "\\（.*?）";
                     des = des.replaceAll(regex, "");
                     news.setDescription(des.length()>140?des.substring(0,140)+"...":des+"...");
@@ -87,6 +90,7 @@ public class AliProvider {
                     news.setGmtModified(news.getGmtCreate());
                     news.setGmtLatestComment(TimeUtils.date2TimeStamp(news.getPubDate(),null));
                     news.setColumn2(NewsColumnEnum.strIdToCode(channelId));
+                    news.setTag(keywords.substring(1));
                     news.setStatus(1);
                     news.setViewCount(0);
                     news.setLikeCount(0);
