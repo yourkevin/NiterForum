@@ -22,7 +22,7 @@ public class ValidateController {
         validateDTO.setId("5d807776fc650fd878051c24");
         validateDTO.setSecretkey("0758d7dab2674d5c8e4e003cf16c4558");
         validateDTO.setToken(token);*/
-        System.out.println("token:"+token+"scene:"+scene+"ip:"+ip);
+        //System.out.println("token:"+token+"scene:"+scene+"ip:"+ip);
         String json = VaptchaProvider.getValidateResult(token,scene,ip);
 
         JSONObject obj = JSONObject.parseObject(json);
