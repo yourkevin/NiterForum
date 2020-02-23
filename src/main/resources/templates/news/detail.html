@@ -55,13 +55,13 @@
                 </div>
                 <div style="margin-top: 20px;margin-bottom: 20px" class="layui-text layui-table video photos" id="descriptionP" th:text="${news.html}">
                 </div>
-                <!--div style="margin-top: 10px">
+                <div th:if="${news.tag!=null&&news.tag!=''}" style="margin-top: 10px">
                     相关标签：
                     <span class="layui-badge-rim" th:each="tag : ${news.tag.split(',')}">
-                        <a th:href="@{/(page=1,tag=${tag})}"
+                        <a th:href="@{/news/(page=1,tag=${tag})}"
                            th:text="${tag}" class="community-tag"></a>
                     </span>
-                </div--><!--标签-->
+                </div><!--标签-->
             </div>
 
             <div class="fly-panel detail-box" id="flyReply">
@@ -117,112 +117,6 @@
 
     });
 </script>
-<script>
-    layui.use(['element', 'layer'/*,'code'*/], function(){
-        var element = layui.element;
-        var layer = layui.layer;
-        /*layui.code({
-           elem: 'pre', //默认值为.layui-code
-           height:500,
-           about: false,
-         }); //引用code方法
-     */
 
-        //监听折叠
-        element.on('collapse(sub-comments)', function(data){
-            layer.msg('展开状态：'+ data.show);
-        });
-    });
-</script>
-<script src="https://v.vaptcha.com/v3.js"></script>
-<script type="text/javascript">
-    token = '';
-    userIp='';
-    function commentNews() {
-        if(token == '') {
-            swal({
-                title: "哎哟...",
-                text: "请先完成人机验证再提交哦~",
-                icon: "error",
-                button: "确认",
-            });
-        }else{
-            postNews();
-        }
-    }
-
-    vaptcha({
-        //配置参数
-        vid: '5ddff34a3f11e776a4947f39', // 验证单元id
-        type: 'click', // 展现类型 点击式
-        container: '#commentQBtn', // 按钮容器，可为Element 或者 selector
-        scene:2,               //场景值02，即评论
-        offline_server: '/validateOffline' //离线模式服务端地址
-    }).then(function (vaptchaObj) {
-        //  obj2=vaptchaObj;
-        //vaptchaObj.render()// 调用验证实例 vpObj 的 render 方法加载验证按钮
-        vaptchaObj.listen('pass', function() {
-            // 验证成功， 进行登录操作
-            // console.log(vaptchaObj.getToken());
-            //getCode();
-            $.ajax({
-                type: "get",
-                url: "/getIp",
-                ContentType: "application/json",
-                CacheControl: "no-cache",
-                //  dataType: "json",
-                success: function(data) {
-                    // userIp=data;
-                    $.ajax({
-                        type: "post",
-                        url: "/validate",
-                        ContentType: "application/json",
-                        CacheControl: "no-cache",
-                        data:{
-                            scene:2,
-                            token:vaptchaObj.getToken(),
-                            ip:data
-                        },
-                        //  dataType: "json",
-                        success: function(data) {
-                            if(data.success==1){
-                                //成功
-                                token = vaptchaObj.getToken();
-                                //console.log(token);
-                            }
-                            else if(data.success==0){
-                                swal({
-                                    title: ""+data.msg,
-                                    text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
-                                    icon: "error",
-                                    button: "确认",
-                                });
-                                //vaptchaObj.reset();
-                            }
-                        },
-                        error: function(msg) {
-                            console.log(msg)
-                        }
-                    })
-                },
-                error: function(msg) {
-                    console.log(msg)
-                }})
-
-
-
-        })
-        vaptchaObj.listen('close', function() {
-            //验证弹窗关闭触发
-            swal({
-                title: "哎哟...",
-                text: "您关闭了验证哦",
-                icon: "error",
-                button: "确认",
-            });
-        })
-        vaptchaObj.render()// 调用验证实例 vaptchaObj 的 render 方法加载验证按钮
-    })
-</script>
 </body>
 </html>
