@@ -38,3 +38,12 @@
     -ms-transform:rotate(720deg);
     border-radius:35px;
 }
+
+.p-detail blockquote{
+    margin-bottom:10px;
+    padding:5px;
+    line-height:22px;
+    border-left:5px solid #01aaed;
+    border-radius:0 2px 2px 0;
+    background-color:#f8f8f8;
+}

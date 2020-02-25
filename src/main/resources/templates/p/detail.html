@@ -7,8 +7,8 @@
   <th:block th:insert="~{common/header :: head}"></th:block>
   <script src="/js/community.js" type="application/javascript"></script>
   <script src="/js/moment.js" type="application/javascript"></script>
-  <link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">
-  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>
+  <!--link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">
+  <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script-->
 </head>
 <body>
 
@@ -69,7 +69,7 @@
             <span th:data-id="${question.id}" onclick="like_question(this)" class="layui-btn layui-btn-xs layui-btn-warm"><i class="layui-icon">&#xe600;</i>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span>
           </div>
         </div>
-        <div style="margin-top: 20px;margin-bottom: 20px" class="layui-text layui-table video photos" id="descriptionP" th:text="${question.description}">
+        <div style="margin-top: 20px;margin-bottom: 20px" class="layui-text layui-table video photos p-detail" id="descriptionP" th:text="${question.description}">
         </div>
         <div style="margin-top: 10px">
           相关标签：
