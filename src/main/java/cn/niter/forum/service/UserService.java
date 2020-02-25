@@ -229,6 +229,13 @@ public class UserService {
         return userMapper.updateByPrimaryKey(user);
     }
 
+    public int updateUsernameById(Long userId,String username){
+        User user = userMapper.selectByPrimaryKey(userId);
+        if(user.getName().equals(username)) return 1;
+        else user.setName(username);
+        return userMapper.updateByPrimaryKey(user);
+    }
+
     public Object registerOrLoginWithMail(String mail,String token) {
 
         UserExample userExample = new UserExample();

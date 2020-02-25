@@ -105,13 +105,19 @@ public class UserController {
                 userInfo.setConstellation(constellation);
             }
             int i = userInfoService.updateByUserId(userInfo,user.getId());
-            if(i==1) {
-                map.put("code",200);
-                map.put("msg","恭喜您，资料修改成功！！！");
+            int j = userService.updateUsernameById(user.getId(),obj.getString("username"));
+
+            if(j!=1){
+                map.put("code",500);
+                map.put("msg","妈呀，昵称修改失败啦！");
+            }
+            else if(i!=1) {
+                map.put("code",500);
+                map.put("msg","妈呀，资料修改失败啦！");
             }
             else{
-                map.put("code",500);
-                map.put("msg","妈呀，出问题啦！");
+                map.put("code",200);
+                map.put("msg","恭喜您，资料修改成功！！！");
             }
         }
 
