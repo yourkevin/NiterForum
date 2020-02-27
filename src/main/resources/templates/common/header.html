@@ -4,14 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="author" th:content="${question==null?@environment.getProperty('site.meta.author'):question.user.name+','+@environment.getProperty('site.meta.author')}">
-  <meta name="keywords" th:content="${question==null?@environment.getProperty('site.meta.keywords'):question.tag+','+@environment.getProperty('site.meta.keywords')}">
+  <meta th:if="${question!=null}" name="keywords" th:content="${question.tag+','+@environment.getProperty('site.meta.keywords')}">
+  <meta th:if="${news!=null}" name="keywords" th:content="${news.tag+',资讯,新闻,'+news.columnStr}">
+  <meta th:if="${question==null&&news==null}" name="keywords" th:content="${@environment.getProperty('site.meta.keywords')}">
   <meta name="description" th:content="${textDescription==null?@environment.getProperty('site.meta.description'):textDescription}">
   <meta name="Copyright" th:content="${'本页版权归'+@environment.getProperty('site.main.title')+'所有'}">
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <link rel="stylesheet" href="/layui/css/layui.css">
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/mylay.css">
-  <link rel="icon" href="/images/N80.png" type="image/x-icon"/>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
   <script src="/js/jquery-3.4.1.min.js"></script>
   <script src="/js/community.js" type="application/javascript"></script>
   <script src="/js/sweetalert.min.js"></script>
@@ -37,9 +39,10 @@
           <dd><a href="/news"><i class="layui-icon">&#xe705;</i>看看</a></dd>
           <dd><a href="/chat"><i class="iconfont icon-jiaoliu"></i>聊聊</a></dd>
           <dd><a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank"><i class="layui-icon">&#xe770;</i>官方群</a></dd>
-          <dd><a href="/dev"><i class="iconfont icon-iconmingxinganli"></i>实验室</a></dd>
+          <!--dd><a href="/dev"><i class="iconfont icon-iconmingxinganli"></i>实验室</a></dd-->
           <dd><a target="_blank" href="https://gitee.com/yourkevin/NiterForum/"><i><img src="/images/gitee120c.png" style="height: 16px"></i>Gitee</a></dd>
           <dd><a target="_blank" href="https://github.com/yourkevin/NiterForum/"><i><img src="/images/github120c.png" style="height: 16px"></i>Github</a></dd>
+          <dd><a target="_blank" href="https://api-1251590924.cos.ap-nanjing.myqcloud.com/qrcode/index.html"><i class="layui-icon" style="font-size: 16px; color: #ffdd11;">&#xe65e;</i>打赏</a></dd>
         </dl>
       </li>
     </ul>
@@ -62,6 +65,7 @@
         <dl class="layui-nav-child">
           <dd><a target="_blank" href="https://gitee.com/yourkevin/NiterForum/"><i><img src="/images/gitee120c.png" style="height: 28px"></i>Gitee</a></dd>
           <dd><a target="_blank" href="https://github.com/yourkevin/NiterForum/"><i><img src="/images/github120c.png" style="height: 28px"></i>Github</a></dd>
+          <dd><a target="_blank" href="https://api-1251590924.cos.ap-nanjing.myqcloud.com/qrcode/index.html"><i class="layui-icon" style="font-size: 30px; color: #ffdd11;">&#xe65e;</i>打赏</a></dd>
         </dl>
       </li>
       <!--li class="layui-nav-item">
