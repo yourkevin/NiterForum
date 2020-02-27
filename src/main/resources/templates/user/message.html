@@ -31,7 +31,7 @@
         <button class="layui-btn" id="LAY_readallmsg">一键已读</button>
         <button class="layui-btn layui-btn-danger" id="LAY_delallmsg">清空全部消息</button>
         <div  id="LAY_minemsg" style="margin-top: 10px;">
-        <!--<div class="fly-none">您暂时没有最新消息</div>-->
+        <div th:if="${pagination.data==null}" class="fly-none">您暂时没有最新消息</div>
         <ul class="mine-msg" th:each="notification : ${pagination.data}">
           <li data-id="123">
             <blockquote class="layui-elem-quote">

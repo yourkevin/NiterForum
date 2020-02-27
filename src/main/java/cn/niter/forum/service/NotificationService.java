@@ -103,4 +103,20 @@ public class NotificationService {
         notificationDTO.setTypeName(NotificationTypeEnum.nameOfType(notification.getType()));
         return notificationDTO;
     }
+
+    public int removeAllByUserId(Long id){
+        NotificationExample notificationExample = new NotificationExample();
+        notificationExample.createCriteria().andReceiverEqualTo(id);
+        return notificationMapper.deleteByExample(notificationExample);
+
+    }
+
+    public int readAllByUserId(Long id){
+        NotificationExample notificationExample = new NotificationExample();
+        notificationExample.createCriteria().andReceiverEqualTo(id).andStatusEqualTo(0);
+        Notification notification = new Notification();
+        notification.setStatus(1);
+        return notificationMapper.updateByExampleSelective(notification,notificationExample);
+
+    }
 }
