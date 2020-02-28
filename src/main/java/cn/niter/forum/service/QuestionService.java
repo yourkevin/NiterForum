@@ -594,5 +594,17 @@ public class QuestionService {
     }
 
 
+    public int delQuestionById(Long user_id, Integer group_id,Long id) {
+        int c=0;
+        if(group_id>=18){
+            c=questionMapper.deleteByPrimaryKey(id);
+        }
+        else {
+            QuestionExample questionExample = new QuestionExample();
+            questionExample.createCriteria().andCreatorEqualTo(user_id).andIdEqualTo(id);
+            c = questionMapper.deleteByExample(questionExample);
+        }
 
+         return c;
+    }
 }

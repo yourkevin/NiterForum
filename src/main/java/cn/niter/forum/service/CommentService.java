@@ -306,4 +306,23 @@ public class CommentService {
 
         return commentDTOS;
     }
+
+    public int delCommentByIdAndType(Long userId, Integer groupId, Long id, Integer type) {
+        int c=0;
+        if(groupId>=18){
+            c=commentMapper.deleteByPrimaryKey(id);
+        }
+        else {
+            CommentExample commentExample = new CommentExample();
+            commentExample.createCriteria().andIdEqualTo(id).andCommentatorEqualTo(userId);
+            c = commentMapper.deleteByExample(commentExample);
+        }
+        if(c>0&&type==1){
+            CommentExample commentExample = new CommentExample();
+            commentExample.createCriteria().andTypeEqualTo(2).andParentIdEqualTo(id);
+            c+=commentMapper.deleteByExample(commentExample);
+        }
+
+        return c;
+    }
 }

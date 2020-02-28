@@ -3,6 +3,9 @@ package cn.niter.forum.controller;
 import cn.niter.forum.dto.CommentDTO;
 import cn.niter.forum.dto.QuestionDTO;
 import cn.niter.forum.enums.CommentTypeEnum;
+import cn.niter.forum.exception.CustomizeErrorCode;
+import cn.niter.forum.exception.CustomizeException;
+import cn.niter.forum.model.User;
 import cn.niter.forum.model.UserAccount;
 import cn.niter.forum.service.CommentService;
 import cn.niter.forum.service.QuestionService;
@@ -11,11 +14,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class QuestionController {
@@ -80,6 +84,37 @@ public class QuestionController {
         model.addAttribute("navtype", "communitynav");
         model.addAttribute("vaptcha_vid", vaptcha_vid);
         return "p/detail";
+    }
+
+    @PostMapping("/p/del/id")
+    @ResponseBody
+    public Map<String,Object> delQuestionById(HttpServletRequest request,
+                                                     @RequestParam(name = "id",defaultValue = "0") Long id) {
+
+        User user = (User) request.getSession().getAttribute("user");
+        UserAccount userAccount = (UserAccount) request.getSession().getAttribute("userAccount");
+        if (user == null||userAccount==null) {
+            throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+        }
+        Map<String,Object> map  = new HashMap<>();
+        if(id==null||id==0) {
+            map.put("code",500);
+            map.put("msg","妈呀，出问题啦！");
+        }
+        else{
+
+            int c = questionService.delQuestionById(user.getId(),userAccount.getGroupId(),id);
+            if(c==0) {
+                map.put("code",500);
+                map.put("msg","哎呀，该贴已删除或您无权删除！");
+            }
+            else {
+                map.put("code",200);
+                map.put("msg","恭喜您，成功删除"+c+"条帖子！");
+            }
+        }
+        return map;
+
     }
 
 

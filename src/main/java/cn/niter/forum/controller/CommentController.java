@@ -5,6 +5,7 @@ import cn.niter.forum.dto.CommentDTO;
 import cn.niter.forum.dto.ResultDTO;
 import cn.niter.forum.enums.CommentTypeEnum;
 import cn.niter.forum.exception.CustomizeErrorCode;
+import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.model.Comment;
 import cn.niter.forum.model.User;
 import cn.niter.forum.model.UserAccount;
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class CommentController {
@@ -58,4 +61,36 @@ public class CommentController {
         List<CommentDTO> commentDTOS = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
         return ResultDTO.okOf(commentDTOS);
     }
+
+    @PostMapping("/comment/del/id")
+    @ResponseBody
+    public Map<String,Object> deleteCommentById(HttpServletRequest request,
+                                                     @RequestParam(name = "id",defaultValue = "0") Long id
+                                                     ,@RequestParam(name = "type",defaultValue = "0") Integer type ) {
+
+        User user = (User) request.getSession().getAttribute("user");
+        UserAccount userAccount = (UserAccount) request.getSession().getAttribute("userAccount");
+        if (user == null||userAccount==null) {
+            throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+        }
+        Map<String,Object> map  = new HashMap<>();
+        if(id==null||id==0||type==null||type==0) {
+            map.put("code",500);
+            map.put("msg","妈呀，出问题啦！");
+        }
+        else {
+            int c = commentService.delCommentByIdAndType(user.getId(),userAccount.getGroupId(),id,type);
+            if(c==0) {
+                map.put("code",500);
+                map.put("msg","哎呀，该评论已删除或您无权删除！");
+            }
+            else {
+                map.put("code",200);
+                map.put("msg","恭喜您，成功删除"+c+"条评论及子评论！");
+            }
+        }
+        return map;
+    }
+
+
 }

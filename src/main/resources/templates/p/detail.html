@@ -36,13 +36,13 @@
           <span th:if="${question.status==2||question.status==3}" class="layui-badge layui-bg-orange">置顶</span>
           <span th:if="${question.status==1||question.status==3}" class="layui-badge layui-bg-red">精帖</span>
           
-          <div class="fly-admin-box" data-id="123" th:if="${session.user!=null&&question.user.id==session.user.id}">
-            <span class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
+          <div class="fly-admin-box" th:data-id="${question.id}">
+            <span th:if="${session.user!=null&&(question.user.id==session.user.id||session.userAccount.groupId>=18)}" class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
             
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span> 
+            <span th:if="${session.user!=null&&session.userAccount.groupId>=18}" class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span>
             <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span> -->
             
-            <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1">加精</span> 
+            <span th:if="${session.user!=null&&session.userAccount.groupId>=18}" class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1">加精</span>
             <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;">取消加精</span> -->
           </div>
           <span class="fly-list-nums"> 
@@ -87,7 +87,7 @@
         </fieldset>
 
         <ul class="jieda" id="jieda" th:each="comment : ${comments}">
-          <li th:id="${'comment-body-'+comment.id}" class="jieda-daan">
+          <li th:data-id="${comment.id}" th:id="${'comment-body-'+comment.id}" class="jieda-daan">
             <a name="item-1111111111"></a>
             <div class="detail-about detail-about-reply">
               <a class="fly-avatar niter-avatar" th:href="${'/user/'+comment.user.id}">
@@ -125,10 +125,10 @@
                 <i class="iconfont icon-svgmoban53"></i>
                <em th:text="${comment.commentCount}" th:class="${comment.commentCount != 0}? 'zanok' : ''"></em>
               </span>
-              <div class="jieda-admin" th:if="${session.user!=null}">
-                <span type="edit" th:if="${question.user.id==session.user.id}">编辑</span>
-                <span type="del" th:if="${question.user.id==session.user.id}">删除</span>
-                <span class="jieda-accept" type="accept" th:if="${session.user!=null&&session.user.id == 17}">采纳</span>
+              <div class="jieda-admin" th:if="${session.user!=null&&session.userAccount!=null}">
+                <span type="edit" th:if="${comment.commentator==session.user.id}">编辑</span>
+                <span type="del" th:if="${session.userAccount.groupId>18||comment.commentator==session.user.id}">删除</span>
+                <span class="jieda-accept" type="accept" th:if="${session.userAccount.groupId>18}">采纳</span>
               </div>
             </div>
             <!--二级评论-->

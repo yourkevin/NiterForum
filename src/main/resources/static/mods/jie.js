@@ -82,17 +82,17 @@ layui.define('fly', function(exports){
   gather.jieAdmin = {
     //删求解
     del: function(div){
-      layer.confirm('确认删除该求解么？', function(index){
+      layer.confirm('确认删除该贴么？删除后将无法恢复！', function(index){
         layer.close(index);
-        fly.json('/api/jie-delete/', {
+        $.post('/p/del/id', {
           id: div.data('id')
         }, function(res){
-          if(res.status === 0){
-            location.href = '/jie/';
-          } else {
-            layer.msg(res.msg);
-          }
+          if(res.code==200) {swal("Good job!", ""+res.msg, "success").then((value) => {
+            location.href = '/';});
+          }else swal("Oh,no!", ""+res.msg, "error");
         });
+
+
       });
     }
     
@@ -212,23 +212,18 @@ layui.define('fly', function(exports){
       });
     }
     ,del: function(li){ //删除
-      layer.confirm('确认删除该回答么？', function(index){
+      layer.confirm('确认删除该回复么？删除后无法恢复！', function(index){
         layer.close(index);
-        fly.json('/api/jieda-delete/', {
-          id: li.data('id')
+        $.post('/comment/del/id', {
+          id: li.data('id'),
+          type:1
         }, function(res){
-          if(res.status === 0){
-            var count = dom.jiedaCount.text()|0;
-            dom.jiedaCount.html(--count);
+          if(res.code==200) {
             li.remove();
-            //如果删除了最佳答案
-            if(li.hasClass('jieda-daan')){
-              $('.jie-status').removeClass('jie-status-ok').text('求解中');
-            }
-          } else {
-            layer.msg(res.msg);
-          }
+            swal("Good job!", ""+res.msg, "success");
+          }else swal("Oh,no!", ""+res.msg, "error");
         });
+
       });    
     }
   };
