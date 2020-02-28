@@ -49,7 +49,7 @@ public class NotificationService {
             page = 1;
         }
 
-
+        paginationDTO.setTotalCount(totalCount);
         paginationDTO.setPagination(totalPage, page);
 
         //size*(page-1)
@@ -109,6 +109,10 @@ public class NotificationService {
         notificationExample.createCriteria().andReceiverEqualTo(id);
         return notificationMapper.deleteByExample(notificationExample);
 
+    }
+
+    public int removeById(Long id){
+        return notificationMapper.deleteByPrimaryKey(id);
     }
 
     public int readAllByUserId(Long id){

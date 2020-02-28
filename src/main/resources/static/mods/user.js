@@ -360,31 +360,47 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     });
     */
     
-    //阅读后删除
+    //删除消息
     dom.minemsg.on('click', '.mine-msg li .fly-delete', function(){
       var othis = $(this).parents('li'), id = othis.data('id');
-      fly.json('/message/remove/', {
+      $.post('/notification/remove/id', {
         id: id
       }, function(res){
-        if(res.status === 0){
+        if(res.code==200) {
           othis.remove();
           delEnd();
-        }
+        }else swal("Oh,no!", ""+res.msg, "error");
       });
+
     });
 
-    //删除全部
+    //删除全部消息
     $('#LAY_delallmsg').on('click', function(){
       var othis = $(this);
       layer.confirm('确定清空吗？', function(index){
-        fly.json('/message/remove/', {
-          all: true
+        $.post('/notification/removeAll', {
+          all: 1
         }, function(res){
-          if(res.status === 0){
-            layer.close(index);
+          layer.close(index);
+          if(res.code==200) {
             othis.addClass('layui-hide');
             delEnd(true);
-          }
+          }else swal("Oh,no!", ""+res.msg, "error");
+        });
+      });
+    });
+
+    //一键阅读全部消息
+    $('#LAY_readallmsg').on('click', function(){
+      var othis = $(this);
+      layer.confirm('确定一键已读吗？', function(index){
+        $.post('/notification/readAll', {
+          all: 1
+        }, function(res){
+          layer.close(index);
+          if(res.code==200) {
+            location.reload();
+          }else swal("Oh,no!", ""+res.msg, "error");
         });
       });
     });

@@ -57,13 +57,45 @@ public class NotificationController {
             map.put("msg","妈呀，出问题啦！");
         }
         else if(all==1){
-            map.put("code",200);
             int c = notificationService.removeAllByUserId(user.getId());
-            if(c==0) map.put("msg","哎呀，您都已经全部删除了呀！");
-            else map.put("msg","恭喜您，成功删除"+c+"条消息！");
+            if(c==0) {
+                map.put("code",500);
+                map.put("msg","哎呀，没有需要删除的消息呀！");
+            }
+            else {
+                map.put("code",200);
+                map.put("msg","恭喜您，成功删除"+c+"条消息！");
+            }
         }
         return map;
+    }
 
+    @PostMapping("/notification/remove/id")
+    @ResponseBody
+    public Map<String,Object> removeNotificationById(HttpServletRequest request,
+                                                     @RequestParam(name = "id",defaultValue = "0") Long id) {
+
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+        }
+        Map<String,Object> map  = new HashMap<>();
+        if(id==null||id==0) {
+            map.put("code",500);
+            map.put("msg","妈呀，出问题啦！");
+        }
+        else if(id>0){
+            int c = notificationService.removeById(id);
+            if(c==0) {
+                map.put("code",500);
+                map.put("msg","哎呀，该消息已经被删除过了呀！");
+            }
+            else {
+                map.put("code",200);
+                map.put("msg","恭喜您，成功删除"+c+"条消息！");
+            }
+        }
+        return map;
     }
 
 
@@ -82,10 +114,15 @@ public class NotificationController {
             map.put("msg","妈呀，出问题啦！");
         }
         else if(all==1){
-            map.put("code",200);
             int c = notificationService.readAllByUserId(user.getId());
-            if(c==0) map.put("msg","哎呀，您都已经全部已读了呀！");
-            else map.put("msg","恭喜您，成功已读"+c+"条消息！");
+            if(c==0){
+                map.put("msg","哎呀，没有需要您已读的消息呀！");
+                map.put("code",500);
+            }
+            else{
+                map.put("msg","恭喜您，成功已读"+c+"条消息！");
+                map.put("code",200);
+            }
         }
         return map;
 
