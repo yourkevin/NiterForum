@@ -20,6 +20,7 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
   var gather = {}, dom = {
     mine: $('#LAY_mine')
     ,mineview: $('.mine-view')
+    ,minelikep: $('#NT_minelike_p')
     ,minemsg: $('#LAY_minemsg')
     ,infobtn: $('#LAY_btninfo')
   };
@@ -406,6 +407,23 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     });
 
   };
+
+  //移除收藏
+  $('.NT-remove-like-p').on('click', function(){
+    var othis = $(this).parents('li'), id = othis.data('id');
+    console.log("id"+id);
+    layer.confirm('确定取消收藏吗？', function(index){
+      $.post('/user/p/like/remove/id', {
+        id: id,
+        type:1
+      }, function(res){
+        layer.close(index);
+        if(res.code==200) {
+          othis.remove();
+        }else swal("Oh,no!", ""+res.msg, "error");
+      });
+    });
+  });
 
   dom.minemsg[0] && gather.minemsg();
 

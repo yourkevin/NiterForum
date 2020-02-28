@@ -114,5 +114,13 @@ public class LikeService {
         notificationMapper.insert(notification);
     }
 
+    public int removeLikeByIdAndType(Long userId, Long id, Integer type) {
+
+
+        ThumbExample thumbExample = new ThumbExample();
+        thumbExample.createCriteria().andLikerEqualTo(userId).andTypeEqualTo(type).andTargetIdEqualTo(id);
+        return thumbMapper.deleteByExample(thumbExample);
+
     }
+}
 

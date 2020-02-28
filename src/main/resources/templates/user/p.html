@@ -47,13 +47,13 @@
           </ul>
           <div id="LAY_page"></div>
         </div>
-        <div th:class="${section=='likes'}?'layui-tab-item layui-show':'layui-tab-item'">
-          <ul th:each="question : ${pagination.data}" class="mine-view jie-row">
-            <li>
+        <div id="mine-view" th:class="${section=='likes'}?'layui-tab-item layui-show ':'layui-tab-item'">
+          <ul th:each="question : ${pagination.data}" class="mine-like-p jie-row">
+            <li th:data-id="${question.id}">
               <a class="jie-title" th:href="@{'/p/'+ ${question.id}}" th:text="${question.title}"></a>
               <i th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></i>
               <a th:if="${session.user!=null&&session.user.id == question.creator}" class="mine-edit" th:href="@{'/p/publish/'+${question.id}}">编辑</a>
-              <a style="margin-left:10px; padding:0 6px; background-color: #ff6200; color:#fff; font-size:12px;">取消</a>
+              <a style="cursor:pointer;margin-left:10px; padding:0 6px; background-color: #ff6200; color:#fff; font-size:12px;" class="NT-remove-like-p" href="javascript:;">取消</a>
               <em th:text="${question.commentCount+'个回复 •'+question.viewCount+'次浏览 •'+question.LikeCount+'人收藏'}"></em>
             </li>
           </ul>

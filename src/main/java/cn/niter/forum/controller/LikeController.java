@@ -3,17 +3,17 @@ package cn.niter.forum.controller;
 import cn.niter.forum.dto.ResultDTO;
 import cn.niter.forum.dto.ThumbCreateDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
+import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.model.Thumb;
 import cn.niter.forum.model.User;
 import cn.niter.forum.service.LikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class LikeController {
@@ -55,6 +55,35 @@ public class LikeController {
 
 
         return ResultDTO.errorOf(CustomizeErrorCode.CAN_NOT_LIKE);
+    }
+
+    @PostMapping("/user/p/like/remove/id")
+    @ResponseBody
+    public Map<String,Object> removeLikeById(HttpServletRequest request,
+                                                     @RequestParam(name = "id",defaultValue = "0") Long id
+                                                    ,@RequestParam(name = "type",defaultValue = "0") Integer type) {
+
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+        }
+        Map<String,Object> map  = new HashMap<>();
+        if(id==null||id==0||type==null||type==0) {
+            map.put("code",500);
+            map.put("msg","妈呀，出问题啦！");
+        }
+        else {
+            int c = likeService.removeLikeByIdAndType(user.getId(),id,type);
+            if(c==0) {
+                map.put("code",500);
+                map.put("msg","哎呀，该收藏已移除或您无权移除！");
+            }
+            else {
+                map.put("code",200);
+                map.put("msg","恭喜您，成功移除"+c+"条收藏！");
+            }
+        }
+        return map;
     }
 
 
