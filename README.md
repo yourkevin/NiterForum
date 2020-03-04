@@ -139,7 +139,7 @@ JDK，Maven
 ### 打赏我们
 扫码二维码或者点击下方图片向我们打赏。您的每一份捐赠，对我们都是莫大的鼓励与支持,一块也是爱(* ￣3)(ε￣ *)
 
-[![使用手机支付宝、微信、QQ扫码，向我打赏](https://api-1251590924.cos.ap-nanjing.myqcloud.com/qrcode/qrcode.png "使用手机支付宝、微信、QQ扫码，向我打赏")](https://api-1251590924.cos.ap-nanjing.myqcloud.com/qrcode/index.html "使用手机支付宝、微信、QQ扫码，向我打赏")
+[![使用手机支付宝、微信、QQ扫码，向我打赏](https://api-1251590924.cos.ap-nanjing.myqcloud.com/qrcode/qrcode_small.png "使用手机支付宝、微信、QQ扫码，向我打赏")](https://api-1251590924.cos.ap-nanjing.myqcloud.com/qrcode/index.html "使用手机支付宝、微信、QQ扫码，向我打赏")
 
 ## 其它
 ```bash
