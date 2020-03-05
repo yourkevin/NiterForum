@@ -105,7 +105,7 @@ public class PublishController {
                        HttpServletRequest request){
         QuestionDTO question = questionService.getById(id);
         User user = (User)request.getSession().getAttribute("user");
-        if (question.getCreator() != user.getId() ){
+        if (question.getCreator().longValue() != user.getId().longValue() ){
             throw new CustomizeException(CustomizeErrorCode.CAN_NOT_EDIT_QUESTION);
         }
         model.addAttribute("title", question.getTitle());
