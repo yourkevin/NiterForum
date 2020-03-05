@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="foot">
 <div class="fly-footer">
-  <p> Copyright &copy; 2019-2020<a href="/" target="_blank" th:text="${@environment.getProperty('site.main.title')+'('+@environment.getProperty('site.main.domain')+')'}"></a><!--请勿修改此处的Powered，谢谢支持！-->Powered by<a href="https://niter.cn" target="_blank">NiterForum2.0</a></p>
+  <p> Copyright &copy; 2019-2020<a href="/" target="_blank" th:text="${@environment.getProperty('site.main.title')+'('+@environment.getProperty('site.main.domain')+')'}"></a><!--请勿修改此处的Powered，谢谢支持！-->Powered by<a href="https://niter.cn" target="_blank">NiterForum2.0</a><a style="padding: 0" href='https://gitee.com/yourkevin/NiterForum' target="_blank"><img src='https://gitee.com/yourkevin/NiterForum/widgets/widget_5.svg' alt='Fork me on Gitee' style="height: 15px;"></img></a><a style="padding: 0" href='https://github.com/yourkevin/NiterForum/' target="_blank"><img src='/images/github120c.png' alt='Fork me on Github' style="height: 16px;"></img></a></p>
   <p>
     <a href="https://niter.cn/p/26" target="_blank">更新日志</a>
     <a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank">联系我们</a>
@@ -23,8 +23,8 @@
       var s = document.getElementsByTagName("script")[0];
       s.parentNode.insertBefore(bp, s);
     })();
-  </script-->
-  <!--script>
+  </script>
+  <script>
     (function(){
       var src = "https://jspassport.ssl.qhimg.com/11.0.1.js?d182b3f28525f2db83acfaaf6e696dba";
       document.write('<script src="' + src + '" id="sozz"><\/script>');
