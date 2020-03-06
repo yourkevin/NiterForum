@@ -50,10 +50,11 @@
               </a>
               <span th:text="${#dates.format(question.gmtLatestComment,'yyyy-MM-dd HH:mm')}">刚刚</span>
               
-              <span class="fly-list-kiss layui-hide-xs" title="浏览"><i class="iconfont icon-kiss"></i><span th:text="${question.viewCount}"></span></span>
+              <!--span class="fly-list-kiss layui-hide-xs" title="浏览"><i class="iconfont icon-kiss"></i><span th:text="${question.viewCount}"></span></span-->
               <span class="fly-list-like layui-hide-xs" title="收藏"><i class="layui-icon">&#xe600;</i><span th:text="${question.LikeCount}"></span></span>
                 <!--span class="layui-badge fly-badge-accept layui-hide-xs">已结</span-->
                 <span class="fly-list-nums" >
+                <i class="iconfont layui-hide-xs" title="浏览">&#xe60b;</i> <span class="layui-hide-xs" th:text="${question.viewCount}"></span>
                 <i class="iconfont icon-pinglun1" title="回复" ></i> <span th:text="${question.commentCount}"></span>
               </span>
             </div>
@@ -112,10 +113,11 @@
                 </a>
               <span th:text="${#dates.format(question.gmtLatestComment,'yyyy-MM-dd HH:mm')}"></span>
 
-                <span class="fly-list-kiss layui-hide-xs" title="浏览"><i class="iconfont icon-kiss"></i><span th:text="${question.viewCount}"></span></span>
+                <!--span class="fly-list-kiss layui-hide-xs" title="浏览"><i class="iconfont icon-kiss"></i><span th:text="${question.viewCount}"></span></span-->
                 <span class="fly-list-like layui-hide-xs" title="收藏"><i class="layui-icon">&#xe600;</i><span th:text="${question.LikeCount}"></span></span>
                 <!--span class="layui-badge fly-badge-accept layui-hide-xs">已结</span-->
                 <span class="fly-list-nums" >
+                <i class="iconfont layui-hide-xs" title="浏览">&#xe60b;</i> <span class="layui-hide-xs" th:text="${question.viewCount}"></span>
                 <i class="iconfont icon-pinglun1" title="回复" ></i> <span th:text="${question.commentCount}"></span>
               </span>
             </div>

@@ -103,7 +103,7 @@ public class PublishController {
     public String edit2(@PathVariable(name = "id") Long id,
                        Model model,
                        HttpServletRequest request){
-        QuestionDTO question = questionService.getById(id);
+        QuestionDTO question = questionService.getById(id,0L);
         User user = (User)request.getSession().getAttribute("user");
         if (question.getCreator().longValue() != user.getId().longValue() ){
             throw new CustomizeException(CustomizeErrorCode.CAN_NOT_EDIT_QUESTION);

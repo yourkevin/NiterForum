@@ -25,5 +25,11 @@ public class UserAccountService {
         return userAccount;
     }
 
+    public boolean isAdminByUserId(Long userId){
+        if(selectUserAccountByUserId(userId).getGroupId()>=18) return true;
+        else return false;
+
+    }
+
 }
 

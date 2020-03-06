@@ -42,6 +42,10 @@ public class QuestionService {
     private ThumbMapper thumbMapper;
     @Autowired
     private TimeUtils timeUtils;
+    @Autowired
+    private LikeService likeService;
+    @Autowired
+    private UserAccountService userAccountService;
 
     @Value("${score1.publish.inc}")
     private Integer score1PublishInc;
@@ -484,7 +488,7 @@ public class QuestionService {
 
     }
 
-    public QuestionDTO getById(Long id) {
+    public QuestionDTO getById(Long id,Long viewUser_id) {
         Question question = questionMapper.selectByPrimaryKey(id);
         if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
@@ -500,6 +504,7 @@ public class QuestionService {
         BeanUtils.copyProperties(user,userDTO);
         questionDTO.setUser(userDTO);
         questionDTO.setUserAccount(userAccount);
+        questionDTO = setStatuses(questionDTO,viewUser_id);
         return questionDTO;
     }
 
@@ -606,5 +611,38 @@ public class QuestionService {
         }
 
          return c;
+    }
+
+
+
+    public QuestionDTO setStatuses(QuestionDTO questionDTO,Long viewUser_id){
+        questionDTO.setEdited(questionDTO.getGmtCreate().longValue()!=questionDTO.getGmtModified().longValue());
+        if((questionDTO.getStatus()&1)==1) questionDTO.setEssence(true);
+        if((questionDTO.getStatus()&2)==2) questionDTO.setSticky(true);
+        if(viewUser_id.longValue()!=0L){
+            if(likeService.queryLike(questionDTO.getId(),1,viewUser_id)>0) questionDTO.setFavorite(true);
+            if(userAccountService.isAdminByUserId(viewUser_id)){
+                questionDTO.setCanClassify(true);
+                questionDTO.setCanDelete(true);
+                questionDTO.setCanEssence(true);
+                questionDTO.setCanSticky(true);
+                //questionDTO.setCanEdit(true);
+                questionDTO.setCanPromote(true);
+            }else if(viewUser_id.longValue()==questionDTO.getCreator().longValue()){
+                questionDTO.setCanEdit(true);
+                questionDTO.setCanClassify(true);
+                questionDTO.setCanDelete(true);
+            }
+        }
+
+        return questionDTO;
+    }
+
+    public Question getQuestionById(Long id){
+        return questionMapper.selectByPrimaryKey(id);
+    }
+
+    public int updateQuestion(Question question){
+        return questionMapper.updateByPrimaryKeySelective(question);
     }
 }

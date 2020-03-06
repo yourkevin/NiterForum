@@ -96,18 +96,20 @@ layui.define('fly', function(exports){
       });
     }
     
-    //设置置顶、状态
+    //设置置顶等状态于操作
     ,set: function(div){
       var othis = $(this);
-      fly.json('/api/jie-set/', {
+      $.post('/p/set/id', {
         id: div.data('id')
         ,rank: othis.attr('rank')
         ,field: othis.attr('field')
       }, function(res){
-        if(res.status === 0){
-          location.reload();
-        }
+        if(res.code==200) {swal("Good job!", ""+res.msg, "success").then((value) => {
+          location.reload();});
+        }else swal("Oh,no!", ""+res.msg, "error");
       });
+
+
     }
 
     //收藏
@@ -239,6 +241,30 @@ layui.define('fly', function(exports){
     var replyTop = $('#flyReply').offset().top - 80;
     $('html,body').scrollTop(replyTop);
   }
+
+  $('#admin-btn').on('click', function(){
+    layer.open({
+      title: '请下拉选择'
+      ,  type: 1
+      ,area:['auto','220px']
+      ,content: $("#admin-panel")
+    });
+  });
+
+  //监听提交
+  form.on('submit(submitAdmin)', function(data) {
+    $.post('/p/set/id', {
+      id: data.field.id
+      ,json: JSON.stringify(data.field)
+      ,field: 'admin'
+    }, function(res){
+      if(res.code==200) {
+        location.reload();
+      }else swal("Oh,no!", ""+res.msg, "error");
+    });
+
+    return false;
+  });
 
   exports('jie', null);
 });

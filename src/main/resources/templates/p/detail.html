@@ -33,17 +33,19 @@
           <span class="layui-badge" style="background-color: #999;">未结</span>
           <!-- <span class="layui-badge" style="background-color: #5FB878;">已结</span> -->
           
-          <span th:if="${question.status==2||question.status==3}" class="layui-badge layui-bg-orange">置顶</span>
-          <span th:if="${question.status==1||question.status==3}" class="layui-badge layui-bg-red">精帖</span>
+          <span th:if="${question.sticky}" class="layui-badge layui-bg-orange">置顶</span>
+          <span th:if="${question.essence}" class="layui-badge layui-bg-red">精帖</span>
           
-          <div class="fly-admin-box" th:data-id="${question.id}">
-            <span th:if="${session.user!=null&&(question.user.id==session.user.id||session.userAccount.groupId>=18)}" class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
+          <div class="fly-admin-box" th:data-id="${question.id}" th:if="${session.user!=null}">
+            <span th:if="${question.canDelete}" class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
             
-            <span th:if="${session.user!=null&&session.userAccount.groupId>=18}" class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span>
-            <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span> -->
+            <span th:if="${question.canSticky&&(!question.sticky)}" class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span>
+            <span th:if="${question.sticky&&question.canSticky}" class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span>
             
-            <span th:if="${session.user!=null&&session.userAccount.groupId>=18}" class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="1">加精</span>
-            <!-- <span class="layui-btn layui-btn-xs jie-admin" type="set" field="status" rank="0" style="background-color:#ccc;">取消加精</span> -->
+            <span th:if="${question.canEssence&&(!question.essence)}" class="layui-btn layui-btn-xs jie-admin" type="set" field="essence" rank="1">加精</span>
+            <span th:if="${question.canEssence&&(question.essence)}" class="layui-btn layui-btn-xs jie-admin" type="set" field="essence" rank="0" style="background-color:#ccc;">取消加精</span>
+            <span th:if="${question.canPromote}" class="layui-btn layui-btn-xs jie-admin" type="set" field="promote" rank="1">提升</span>
+            <span th:if="${question.canClassify}" class="layui-btn layui-btn-xs jie-admin" id="admin-btn">快改</span>
           </div>
           <span class="fly-list-nums"> 
             <a href="#comment"><i class="iconfont" title="回复">&#xe60c;</i><span th:text="${question.commentCount}"></span></a>
@@ -61,12 +63,12 @@
               <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
               <i class="layui-badge fly-badge-vip layui-bg-gray" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
             </a>
-            <span th:text="${#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></span>更新
+            <span th:text="${'于 '+#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></span><th:block th:text="${question.edited?' 编辑':' 发表'}"></th:block>
           </div>
           <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
             <span style="padding-right: 10px; color: #FF7200" >点击群号免费加入尼特社区交流群：<a target="_blank" th:href="${@environment.getProperty('site.info.contactQunUrl')}" th:text="${@environment.getProperty('site.info.contactQun')}"></a>。</span>
-            <span th:if="${session.user!=null&&session.user.id == question.creator}" class="layui-btn layui-btn-xs jie-admin" type="edit"><a th:href="@{'/p/publish/'+${question.id}}" style="margin-left: -5px;"><i class="layui-icon">&#xe642;</i>编辑</a></span>
-            <span th:data-id="${question.id}" onclick="like_question(this)" class="layui-btn layui-btn-xs layui-btn-warm"><i class="layui-icon">&#xe600;</i>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span>
+            <span th:if="${session.user!=null&&question.canEdit}" class="layui-btn layui-btn-xs jie-admin" type="edit"><a th:href="@{'/p/publish/'+${question.id}}" style="margin-left: -5px;"><i class="layui-icon">&#xe642;</i>编辑</a></span>
+            <span th:data-id="${question.id}" onclick="like_question(this)" class="layui-btn layui-btn-xs layui-btn-warm"><i class="layui-icon">&#xe600;</i><th:block th:text="${question.favorite?'已':''}"></th:block>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span>
           </div>
         </div>
         <div style="margin-top: 20px;margin-bottom: 20px" class="layui-text layui-table video photos p-detail" id="descriptionP" th:text="${question.description}">
@@ -176,6 +178,46 @@
           <!--/form-->
         </div>
       </div>
+
+        <form class="layui-form" id="admin-panel" style="display:none">
+        <input style="display: none" name="id" th:value="${question.id}">
+        <div class="layui-form-item" >
+            <label class="layui-form-label" style="padding: 9px 0px;text-align: center">所在专栏</label>
+            <div class="layui-input-block" style="margin-left: 80px">
+                <select lay-verify="required" id="column2" name="column2"  >
+                    <option></option>
+                    <option value="1" th:selected="${question.column2==1}">提问</option>
+                    <option value="2" th:selected="${question.column2==2}" >分享</option>
+                    <option value="3" th:selected="${question.column2==3}">建议</option>
+                    <option value="4" th:selected="${question.column2==4}">讨论</option>
+                    <option th:if="${question.canSticky}" th:selected="${question.column2==5}" value="5">公告</option>
+                    <option value="6" th:selected="${question.column2==6}">动态</option>
+                    <option value="9" th:selected="${question.column2==9}">其它</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="padding: 9px 0px;text-align: center">阅读权限</label>
+                    <div class="layui-input-block" style="margin-left: 80px;">
+                        <select lay-verify="required" id="permission" name="permission">
+                            <option value="0" th:selected="${question.permission==0}">默认，所有用户可见</option>
+                            <option value="1" th:selected="${question.permission==1}">LV1及以上用户可见</option>
+                            <option value="2" th:selected="${question.permission==2}">LV2及以上用户可见</option>
+                            <option value="3" th:selected="${question.permission==3}">LV3及以上用户可见</option>
+                            <option value="4" th:selected="${question.permission==4}">LV4及以上用户可见</option>
+                            <option value="5" th:selected="${question.permission==5}">LV5及以上用户可见</option>
+                            <option value="6" th:selected="${question.permission==6}">LV6及以上用户可见</option>
+                            <option value="10" th:selected="${question.permission==10}">会员专享</option>
+                            <option value="19" th:selected="${question.permission==19}">管理员可见</option>
+                        </select>
+                    </div>
+                </div>
+         </div>
+        <div class="layui-form-item">
+            <button style="float: right" class="layui-btn" lay-filter="submitAdmin" lay-submit>确认修改</button>
+        </div>
+        </form>
     </div>
     <th:block th:insert="~{common/sider :: p_detail}"></th:block>
   </div>
@@ -212,6 +254,8 @@ layui.config({
     var othis = $(this), html = othis.html();
     othis.html(fly.content(html));
   });
+
+
 
 });
 </script>

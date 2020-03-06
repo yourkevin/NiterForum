@@ -122,5 +122,15 @@ public class LikeService {
         return thumbMapper.deleteByExample(thumbExample);
 
     }
+
+    public int queryLike(Long targetId, Integer type, Long liker) {
+
+
+        ThumbExample thumbExample = new ThumbExample();
+        thumbExample.createCriteria().andLikerEqualTo(liker).andTypeEqualTo(type).andTargetIdEqualTo(targetId);
+        return thumbMapper.selectByExample(thumbExample).size();
+
+    }
+
 }
 
