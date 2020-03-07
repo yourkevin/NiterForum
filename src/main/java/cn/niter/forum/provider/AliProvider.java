@@ -51,7 +51,7 @@ public class AliProvider {
         //List<TwitterDTO> twitterDTOS = new ArrayList<>();
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("https://route.showapi.com/109-35?showapi_appid="+ali_showapi_appid+"&showapi_sign="+ali_showapi_sign+"&channelId="+channelId+"&needHtml=1&needAllList=0&needContent=1")
+                .url("https://route.showapi.com/109-35?showapi_appid="+ali_showapi_appid+"&showapi_sign="+ali_showapi_sign+"&channelId="+channelId+"&needHtml=1&needAllList=0&needContent=1&maxResult=15")
                 .build();
         try {
             Response response = client.newCall(request).execute();
