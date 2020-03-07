@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: 2020-03-06 20:42:07
+-- Generation Time: 2020-03-06 22:58:20
 -- 服务器版本： 5.5.62-log
 -- PHP Version: 7.2.18
 
@@ -106,13 +106,6 @@ CREATE TABLE `notification` (
   `outer_title` varchar(1024) CHARACTER SET utf8mb4 NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- 转存表中的数据 `notification`
---
-
-INSERT INTO `notification` (`id`, `notifier`, `receiver`, `outerid`, `type`, `gmt_create`, `status`, `notifier_name`, `outer_title`) VALUES
-(208, 135, 135, 128, 3, 1583498471872, 0, 'NiterBot', '欢迎访问，又一个NiterForum社区');
-
 -- --------------------------------------------------------
 
 --
@@ -141,7 +134,7 @@ CREATE TABLE `question` (
 --
 
 INSERT INTO `question` (`id`, `title`, `description`, `gmt_create`, `gmt_modified`, `creator`, `comment_count`, `view_count`, `like_count`, `tag`, `gmt_latest_comment`, `status`, `column2`, `permission`) VALUES
-(128, '欢迎访问，又一个NiterForum社区', '<p><img src=\"/images/smile/douyin/bly.png\" alt=\"undefined\" data-w-e=\"1\" style=\"height: 20px;\">感谢您选用<a href=\"https://niter.cn/\" target=\"_blank\"><img style=\"height: 12px;\" src=\"https://api.d5.nz/api/favicon/?url=https://niter.cn/\">NiterForum</a>社区</p><p><img src=\"/images/smile/douyin/bol.png\" alt=\"undefined\" data-w-e=\"1\" style=\"height: 20px;\">关于站点的<span style=\"color: rgb(0, 255, 0);\">配置</span>，您可以参考此帖：<a href=\"https://niter.cn/p/135\">https://niter.cn/p/135</a>&nbsp;&nbsp;</p><p><img src=\"/images/smile/douyin/bod.png\" alt=\"undefined\" data-w-e=\"1\" style=\"height: 20px;\">关于<span style=\"color: rgb(249, 150, 59);\">更新</span>日志，您可以关注此帖：<a href=\"https://niter.cn/p/26\">https://niter.cn/p/26</a>&nbsp;&nbsp;</p><p><img src=\"/images/smile/douyin/bov.png\" alt=\"undefined\" data-w-e=\"1\" style=\"height: 20px;\">我们已经将<span style=\"color: rgb(255, 0, 0);\">最新</span>版本的代码上传到了<a href=\"https://github.com/yourkevin/NiterForum/\" target=\"_blank\"><img style=\"height: 12px;\" src=\"https://api.d5.nz/api/favicon/?url=https://github.com/yourkevin/NiterForum/\">Github</a>与<a href=\"https://gitee.com/yourkevin/NiterForum/\" target=\"_blank\"><img style=\"height: 12px;\" src=\"https://api.d5.nz/api/favicon/?url=https://gitee.com/yourkevin/NiterForum/\">码云</a>，欢迎下载体验。</p><p><img src=\"/images/smile/douyin/bo7.png\" alt=\"undefined\" data-w-e=\"1\" style=\"height: 20px;\">您可以编辑或者删除掉此帖。</p><p><br></p>', 1583498281151, 1583498281151, 135, 0, 7, 1, '公告,教程', 1583498281151, 1, 6, 0);
+(1, '欢迎访问，又一个NiterForum社区', '<p id=\"descriptionP\"><p><img src=\"/images/smile/douyin/bly.png\" alt=\"undefined\" data-w-e=\"1\" style=\"height: 20px;\">感谢您选用<a href=\"https://niter.cn/\" target=\"_blank\">NiterForum</a>社区</p><p><img src=\"/images/smile/douyin/bn8.png\" alt=\"undefined\" data-w-e=\"1\" style=\"height: 20px;\">关于站点的<span style=\"\\&quot;color:\" rgb(0,=\"\" 255,=\"\" 0);\\\"=\"\">配置</span>，您可以参考此帖：<a href=\"\\&quot;https://niter.cn/p/135\\&quot;\">https://niter.cn/p/135</a>&nbsp;&nbsp;</p><p><img src=\"/images/smile/douyin/bmp.png\" alt=\"undefined\" data-w-e=\"1\" style=\"height: 20px;\">关于<span style=\"\\&quot;color:\" rgb(249,=\"\" 150,=\"\" 59);\\\"=\"\">更新</span>日志，您可以关注此帖：<a href=\"\\&quot;https://niter.cn/p/26\\&quot;\">https://niter.cn/p/26</a>&nbsp;&nbsp;</p><p><img src=\"/images/smile/douyin/bp6.png\" alt=\"undefined\" data-w-e=\"1\" style=\"height: 20px;\">我们已经将<span style=\"\\&quot;color:\" rgb(255,=\"\" 0,=\"\" 0);\\\"=\"\">最新</span>版本的代码上传到了<a href=\"https://github.com/yourkevin/NiterForum/\" target=\"_blank\"><img style=\"height: 12px;\" src=\"https://api.d5.nz/api/favicon/?url=https://github.com/yourkevin/NiterForum/\">Github</a>与<a href=\"https://gitee.com/yourkevin/NiterForum/\" target=\"_blank\"><img style=\"height: 12px;\" src=\"https://api.d5.nz/api/favicon/?url=https://gitee.com/yourkevin/NiterForum/\">码云</a>，欢迎下载体验。</p><p><img src=\"/images/smile/douyin/blx.png\" alt=\"undefined\" data-w-e=\"1\" style=\"height: 20px;\">您可以编辑或者删除掉此帖。</p><p><br></p></p><p><br></p>', 1583505927481, 1583506092096, 1, 0, 6, 0, '教程,公告', 1583505927481, 1, 4, 0);
 
 -- --------------------------------------------------------
 
@@ -157,13 +150,6 @@ CREATE TABLE `thumb` (
   `gmt_create` bigint(20) NOT NULL,
   `gmt_modified` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- 转存表中的数据 `thumb`
---
-
-INSERT INTO `thumb` (`id`, `target_id`, `type`, `liker`, `gmt_create`, `gmt_modified`) VALUES
-(135, 128, 1, 135, 1583498471755, 1583498471755);
 
 -- --------------------------------------------------------
 
@@ -192,7 +178,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `account_id`, `qq_account_id`, `baidu_account_id`, `weibo_account_id`, `name`, `token`, `gmt_create`, `gmt_modified`, `avatar_url`, `email`, `phone`, `password`) VALUES
-(135, NULL, NULL, '2751668346', NULL, 'NiterBot', 'bb7e9b3a-33d0-4568-a12c-edab50af8cbb', 1583498245668, 1583498471646, '/images/avatar/1.jpg', NULL, NULL, NULL);
+(1, NULL, NULL, NULL, NULL, 'NiterBot', 'cccfcdb1-17d6-4183-a4e2-5ca911ba7199', 1583505749783, 1583506631145, '/images/avatar/default.png', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -216,7 +202,7 @@ CREATE TABLE `user_account` (
 --
 
 INSERT INTO `user_account` (`id`, `user_id`, `group_id`, `vip_rank`, `score`, `score1`, `score2`, `score3`) VALUES
-(73, 135, 21, 0, 20, 10, 2, 1);
+(1, 1, 1, 0, 20, 10, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -246,7 +232,7 @@ CREATE TABLE `user_info` (
 --
 
 INSERT INTO `user_info` (`id`, `user_id`, `realname`, `userdetail`, `birthday`, `marriage`, `sex`, `blood`, `figure`, `constellation`, `education`, `trade`, `job`, `location`) VALUES
-(116, 135, NULL, '这里是NiterForum官方机器人', '1987-04-30', NULL, '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(1, 1, NULL, '大家好，这里是NiterForum官方机器人', '1987-04-03', NULL, '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -315,55 +301,55 @@ ALTER TABLE `user_info`
 -- 使用表AUTO_INCREMENT `ad`
 --
 ALTER TABLE `ad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- 使用表AUTO_INCREMENT `comment`
 --
 ALTER TABLE `comment`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=224;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- 使用表AUTO_INCREMENT `news`
 --
 ALTER TABLE `news`
-  MODIFY `news_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键', AUTO_INCREMENT=485;
+  MODIFY `news_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键';
 
 --
 -- 使用表AUTO_INCREMENT `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=209;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- 使用表AUTO_INCREMENT `question`
 --
 ALTER TABLE `question`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 使用表AUTO_INCREMENT `thumb`
 --
 ALTER TABLE `thumb`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- 使用表AUTO_INCREMENT `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 使用表AUTO_INCREMENT `user_account`
 --
 ALTER TABLE `user_account`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- 使用表AUTO_INCREMENT `user_info`
 --
 ALTER TABLE `user_info`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
