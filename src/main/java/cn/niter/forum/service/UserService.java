@@ -455,7 +455,7 @@ public class UserService {
     public void updateUserInfo(User user,User updateUser,User loginuser,UserInfo userInfo){
         updateUser.setGmtModified(System.currentTimeMillis());
         updateUser.setToken(user.getToken());
-        updateUser.setAvatarUrl(user.getAvatarUrl());
+        //updateUser.setAvatarUrl(user.getAvatarUrl());
         UserExample example = new UserExample();
         example.createCriteria()
                 .andIdEqualTo(loginuser.getId());
