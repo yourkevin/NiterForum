@@ -78,7 +78,7 @@ public class PublishController {
             return "p/add";
         }
         //审核
-        ResultDTO resultDTO = baiduCloudProvider.getTextCensorReult(questionService.getTextDescriptionFromHtml(description));
+        ResultDTO resultDTO = baiduCloudProvider.getTextCensorReult(questionService.getTextDescriptionFromHtml(title+description+tag));
         if(resultDTO.getCode()!=1){
             model.addAttribute("error",resultDTO.getMessage());
             model.addAttribute("description", description);
