@@ -2,11 +2,13 @@ package cn.niter.forum.controller;
 
 import cn.niter.forum.cache.TagCache;
 import cn.niter.forum.dto.QuestionDTO;
+import cn.niter.forum.dto.ResultDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.model.Question;
 import cn.niter.forum.model.User;
 import cn.niter.forum.model.UserAccount;
+import cn.niter.forum.provider.BaiduCloudProvider;
 import cn.niter.forum.service.QuestionService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 public class PublishController {
     @Autowired
     private QuestionService questionService;
-
+    @Autowired
+    private BaiduCloudProvider baiduCloudProvider;
 
     @GetMapping("p/publish")
     public String publish2(Model model) {
@@ -41,41 +44,45 @@ public class PublishController {
             HttpServletRequest request,
             Model model
     ){
-      //  System.out.println("description:"+description);
-     //   System.out.println("txtcontent:"+txtcontent);
+
         String defaultDescription = "<p id=\"descriptionP\"></p>";
-        //String defaultDescription2= "<p id=\"descriptionP\" class=\"video\"></p>";
-        //String defaultDescription3= "<p class=\"video\" id=\"descriptionP\"></p>";
         description = description.replaceAll("<p id=\"descriptionP\"></p>", ""); //剔出每次编辑产生的冗余p标签
-        description = description.replaceAll("<p id=\"descriptionP\" class=\"video\"></p>", ""); //剔出每次的冗余p标签
-        description = description.replaceAll("<p class=\"video\" id=\"descriptionP\"></p>", ""); //剔出每次的冗余p标签
-        description = description.replaceAll("qs.niter", "qcdn.niter"); //剔出每次编辑产生的冗余p标签
         title = title.trim();
         tag = tag.trim();
         model.addAttribute("title",title);
-        // model.addAttribute("description",description);
         model.addAttribute("tag",tag);
         model.addAttribute("tags", TagCache.get());
+        model.addAttribute("column2", column2);
+        model.addAttribute("id", id);
+        model.addAttribute("navtype", "publishnav");
+        model.addAttribute("permission", permission);
         User user = (User)request.getSession().getAttribute("user");
         UserAccount userAccount = (UserAccount)request.getSession().getAttribute("userAccount");
-     //   System.out.println("permission:"+permission);
-        // System.out.println("正文|"+description+"|"+"相同="+defaultDescription.equals(description));
+
         if(user==null) {
             model.addAttribute("error","用户未登陆");
-            return "p/publish";
+            model.addAttribute("description", description);
+            return "p/add";
         }
 
         if (StringUtils.isBlank(title)) {
             model.addAttribute("error", "标题不能为空");
-            return "p/publish";
+            return "p/add";
         }
         if (description == null || defaultDescription.equals(description)) {
             model.addAttribute("error", "问题补充不能为空");
-            return "p/publish";
+            return "p/add";
         }
         if (StringUtils.isBlank(tag)) {
             model.addAttribute("error", "标签不能为空");
-            return "p/publish";
+            return "p/add";
+        }
+        //审核
+        ResultDTO resultDTO = baiduCloudProvider.getTextCensorReult(questionService.getTextDescriptionFromHtml(description));
+        if(resultDTO.getCode()!=1){
+            model.addAttribute("error",resultDTO.getMessage());
+            model.addAttribute("description", description);
+            return "p/add";
         }
 //如果无需限制标签规范或者允许用户自定义标签，那么删掉下面这段代码就可以了
       /*  String invalid = TagCache.filterInvalid(tag);

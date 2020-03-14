@@ -9,6 +9,7 @@ import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.model.Comment;
 import cn.niter.forum.model.User;
 import cn.niter.forum.model.UserAccount;
+import cn.niter.forum.provider.BaiduCloudProvider;
 import cn.niter.forum.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,14 @@ public class CommentController {
 
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private BaiduCloudProvider baiduCloudProvider;
 
     @ResponseBody//@ResponseBody返回json格式的数据
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     public Object post(@RequestBody CommentCreateDTO commentCreateDTO,//@RequestBody接受json格式的数据
                        HttpServletRequest request) {
+
         User user = (User) request.getSession().getAttribute("user");
         UserAccount userAccount = (UserAccount) request.getSession().getAttribute("userAccount");
         if (user == null) {
@@ -38,6 +42,10 @@ public class CommentController {
 
         if (commentCreateDTO == null || StringUtils.isBlank(commentCreateDTO.getContent())) {
             return ResultDTO.errorOf(CustomizeErrorCode.CONTENT_IS_EMPTY);
+        }
+        ResultDTO resultDTO = baiduCloudProvider.getTextCensorReult(commentCreateDTO.getContent());
+        if(resultDTO.getCode()!=1){
+            return resultDTO;
         }
 
         Comment comment = new Comment();

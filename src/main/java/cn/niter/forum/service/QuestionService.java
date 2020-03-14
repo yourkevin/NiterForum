@@ -161,6 +161,13 @@ public class QuestionService {
         return imgSrc;
     }
 
+    public String getTextDescriptionFromHtml(String html){
+        String textDescription = html.replaceAll("</?[^>]+>", ""); //剔出<html>的标签
+        textDescription = textDescription.replaceAll("<a>\\s*|\t|\r|\n</a>", "");//去除字符串中的空格,回车,换行符,制表符
+        textDescription = textDescription.replaceAll("&nbsp;", "");//去除&nbsp;
+        return textDescription;
+    }
+
     public String getShortDescription(String description,Long id){
         String shortDescription = description;
 
@@ -626,7 +633,7 @@ public class QuestionService {
                 questionDTO.setCanDelete(true);
                 questionDTO.setCanEssence(true);
                 questionDTO.setCanSticky(true);
-                //questionDTO.setCanEdit(true);
+                questionDTO.setCanEdit(true);
                 questionDTO.setCanPromote(true);
             }else if(viewUser_id.longValue()==questionDTO.getCreator().longValue()){
                 questionDTO.setCanEdit(true);

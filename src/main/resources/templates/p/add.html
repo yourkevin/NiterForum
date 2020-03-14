@@ -19,7 +19,7 @@
     <div class="layui-form layui-form-pane">
       <div class="layui-tab layui-tab-brief" lay-filter="user">
         <ul class="layui-tab-title">
-          <li class="layui-this">发表新帖<!-- 编辑帖子 --></li>
+          <li class="layui-this">发表新帖                <span class="layui-bg-red" th:if="${error!=null}" th:text="${error}" id="error"></span></li>
         </ul>
         <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
           <div class="layui-tab-item layui-show">
@@ -124,8 +124,8 @@
                   <label class="layui-form-label">阅读权限</label>
                   <div class="layui-input-inline" style="width: 190px;">
                     <select lay-verify="required" id="permission" name="permission">
-                      <option value="0" selected>默认，所有用户可见</option>
-                      <option value="1">LV1及以上用户可见</option>
+                      <option value="0" th:selected="${permission==null||permission==0}">默认，所有用户可见</option>
+                      <option value="1" th:selected="${permission==1}">LV1及以上用户可见</option>
                       <option value="2">LV2及以上用户可见</option>
                       <option value="3">LV3及以上用户可见</option>
                       <option value="4">LV4及以上用户可见</option>
@@ -153,7 +153,7 @@
 <th:block th:insert="~{common/footer :: foot}"></th:block>
 
 <script type="text/javascript" src="/js/wangEditor3.min.js"></script>
-<script src="/js/myeditor.js"></script>
+<script src="/js/myeditor.js?v=1.2n"></script>
 <script src="/layui/layui.js"></script>
 <script>
 layui.cache.page = 'jie';

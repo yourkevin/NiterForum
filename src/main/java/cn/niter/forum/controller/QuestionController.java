@@ -39,16 +39,6 @@ public class QuestionController {
 //NiterForum1.x->2.x过渡
     @GetMapping("/question/{id}")
     public String question(@PathVariable(name = "id") Long id, Model model){
-     /*   QuestionDTO questionDTO = questionService.getById(id);
-        List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
-        List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
-        //累加阅读数
-        questionService.incView(id);
-        model.addAttribute("question", questionDTO);
-        model.addAttribute("comments", comments);
-        model.addAttribute("relatedQuestions", relatedQuestions);
-        model.addAttribute("navtype", "communitynav");*/
-        //return "question";
         return "redirect:/p/"+id;
     }
 
