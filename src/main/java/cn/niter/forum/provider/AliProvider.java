@@ -39,7 +39,7 @@ public class AliProvider {
     @Value("${qcloud.keywords.enable}")
     private int keywordsEnable;
 
-    public int autoGetNews(String channelId) {
+    public int autoGetNews(String channelId,int maxResult) {
        // String channelId="5572a108b3cdc86cf39001cd";
         /*
         * 5572a108b3cdc86cf39001cd 国内焦点
@@ -54,7 +54,7 @@ public class AliProvider {
         //List<TwitterDTO> twitterDTOS = new ArrayList<>();
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("https://route.showapi.com/109-35?showapi_appid="+ali_showapi_appid+"&showapi_sign="+ali_showapi_sign+"&channelId="+channelId+"&needHtml=1&needAllList=0&needContent=1&maxResult=15")
+                .url("https://route.showapi.com/109-35?showapi_appid="+ali_showapi_appid+"&showapi_sign="+ali_showapi_sign+"&channelId="+channelId+"&needHtml=1&needAllList=0&needContent=1&maxResult="+maxResult)
                 .build();
         try {
             Response response = client.newCall(request).execute();
