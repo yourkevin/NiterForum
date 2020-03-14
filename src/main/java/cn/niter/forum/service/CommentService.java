@@ -102,20 +102,7 @@ public class CommentService {
             }
 
             // 获取回复的问题
-            Question question = questionMapper.selectByPrimaryKey(dbComment.getParentId());
-            if (question == null) {
-                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
-            }
-            //给问题设置最后回复时间
-            question.setGmtLatestComment(System.currentTimeMillis());
-            QuestionExample example = new QuestionExample();
-            example.createCriteria()
-                    .andIdEqualTo(question.getId());
-            int updated = questionMapper.updateByExampleSelective(question, example);
-            if (updated != 1) {
-                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
-            }
-
+            Question question = updateQuestionAfterComment(dbComment.getParentId());
             comment.setCommentCount(0);
             commentMapper.insert(comment);
 
@@ -143,22 +130,8 @@ public class CommentService {
             if (dbComment2 == null) {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
-
             // 获取回复的问题
-            Question question = questionMapper.selectByPrimaryKey(dbComment2.getParentId());
-            if (question == null) {
-                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
-            }
-            //给问题设置最后回复时间
-            question.setGmtLatestComment(System.currentTimeMillis());
-            QuestionExample example = new QuestionExample();
-            example.createCriteria()
-                    .andIdEqualTo(question.getId());
-            int updated = questionMapper.updateByExampleSelective(question, example);
-            if (updated != 1) {
-                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
-            }
-
+            Question question = updateQuestionAfterComment(dbComment2.getParentId());
             Comment insertComment  = comment;
             insertComment.setParentId(dbComment.getParentId());//设置回复评论方便读取
             insertComment.setType(2);//设回2方便读取
@@ -170,30 +143,17 @@ public class CommentService {
             parentComment.setId(dbComment2.getId());
             parentComment.setCommentCount(1);
             commentExtMapper.incCommentCount(parentComment);
-            parentComment = commentMapper.selectByPrimaryKey(dbComment2.getId());
+            //parentComment = commentMapper.selectByPrimaryKey(dbComment2.getId());
 
             // 创建通知
             createNotify(comment, dbComment.getCommentator(), commentator.getName(), dbComment.getContent(), NotificationTypeEnum.REPLY_SUB_COMMENT, question.getId());
         }
         if (comment.getType() == CommentTypeEnum.QUESTION.getType()) {
             // 回复问题
-            Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
-            if (question == null) {
-                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
-            }
-            //给问题设置最后回复时间
-            question.setGmtLatestComment(System.currentTimeMillis());
-            QuestionExample example = new QuestionExample();
-            example.createCriteria()
-                    .andIdEqualTo(question.getId());
-            int updated = questionMapper.updateByExampleSelective(question, example);
-            if (updated != 1) {
-                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
-            }
+            Question question = updateQuestionAfterComment(comment.getParentId());
             comment.setCommentCount(0);
             commentMapper.insert(comment);
-            question.setCommentCount(1);
-            questionExtMapper.incCommentCount(question);
+
 
             // 创建通知
             createNotify(comment, question.getCreator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
@@ -211,6 +171,26 @@ public class CommentService {
         userAccountExtMapper.incScore(userAccount);
         updateUserAccoundByUserId(comment.getCommentator());
         userAccount=null;
+    }
+
+    private Question updateQuestionAfterComment(Long questionId){
+        Question question = questionMapper.selectByPrimaryKey(questionId);
+        if (question == null) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
+        //给问题设置最后回复时间
+        question.setGmtLatestComment(System.currentTimeMillis());
+        int updated = questionMapper.updateByPrimaryKeySelective(question);
+        /*QuestionExample example = new QuestionExample();
+        example.createCriteria()
+                .andIdEqualTo(question.getId());
+        int updated = questionMapper.updateByExampleSelective(question, example);*/
+        if (updated != 1) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
+        question.setCommentCount(1);
+        questionExtMapper.incCommentCount(question);
+        return question;
     }
 
     private void updateUserAccoundByUserId(Long userId){
