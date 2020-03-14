@@ -289,6 +289,7 @@ public class CommentService {
 
     public int delCommentByIdAndType(Long userId, Integer groupId, Long id, Integer type) {
         int c=0;
+        Comment comment = commentMapper.selectByPrimaryKey(id);
         if(groupId>=18){
             c=commentMapper.deleteByPrimaryKey(id);
         }
@@ -302,7 +303,14 @@ public class CommentService {
             commentExample.createCriteria().andTypeEqualTo(2).andParentIdEqualTo(id);
             c+=commentMapper.deleteByExample(commentExample);
         }
-
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUserId(comment.getCommentator());
+        userAccount.setScore1(score1CommentInc);
+        userAccount.setScore2(score2CommentInc);
+        userAccount.setScore3(score3CommentInc);
+        userAccount.setScore(score1CommentInc*score1Priorities+score2CommentInc*score2Priorities+score3CommentInc*score3Priorities);
+        userAccountExtMapper.decScore(userAccount);
+        userAccount=null;
         return c;
     }
 }

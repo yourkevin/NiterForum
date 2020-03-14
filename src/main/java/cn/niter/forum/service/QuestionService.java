@@ -529,6 +529,7 @@ public class QuestionService {
             if(userAccount.getVipRank()!=0){//VIP积分策略，可自行修改，这里简单处理
                 score1PublishInc=score1PublishInc*2;
                 score2PublishInc=score2PublishInc*2;
+                score3PublishInc=score2PublishInc*3;
             }
             userAccount = new UserAccount();
             userAccount.setUserId(question.getCreator());
@@ -541,18 +542,6 @@ public class QuestionService {
 
         } else {
             // 更新
-          /*  Question updateQuestion = new Question();
-            updateQuestion.setGmtModified(System.currentTimeMillis());
-            updateQuestion.setTitle(question.getTitle());
-            updateQuestion.setDescription(question.getDescription());
-            updateQuestion.setTag(question.getTag());
-            QuestionExample example = new QuestionExample();
-            example.createCriteria()
-                    .andIdEqualTo(question.getId());
-            int updated = questionMapper.updateByExampleSelective(updateQuestion, example);
-            if (updated != 1) {
-                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
-            }*/
          question.setGmtModified(System.currentTimeMillis());
             QuestionExample example = new QuestionExample();
             example.createCriteria()
@@ -608,6 +597,7 @@ public class QuestionService {
 
     public int delQuestionById(Long user_id, Integer group_id,Long id) {
         int c=0;
+        Question question = questionMapper.selectByPrimaryKey(id);
         if(group_id>=18){
             c=questionMapper.deleteByPrimaryKey(id);
         }
@@ -616,6 +606,14 @@ public class QuestionService {
             questionExample.createCriteria().andCreatorEqualTo(user_id).andIdEqualTo(id);
             c = questionMapper.deleteByExample(questionExample);
         }
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUserId(question.getCreator());
+        userAccount.setScore1(score1PublishInc);
+        userAccount.setScore2(score2PublishInc);
+        userAccount.setScore3(score3PublishInc);
+        userAccount.setScore(score1PublishInc*score1Priorities+score2PublishInc*score2Priorities+score3PublishInc*score3Priorities);
+        userAccountExtMapper.decScore(userAccount);
+        userAccount=null;
 
          return c;
     }

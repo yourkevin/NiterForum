@@ -22,4 +22,14 @@
     where user_id = #{userId}
     </update>
 
+    <update id="decScore" parameterType="cn.niter.forum.model.UserAccount">
+    update user_account
+    set
+    SCORE1 = SCORE1 - #{score1,jdbcType=INTEGER},
+    SCORE2 = SCORE2 - #{score2,jdbcType=INTEGER},
+    SCORE3 = SCORE3 - #{score3,jdbcType=INTEGER},
+    SCORE = SCORE - #{score,jdbcType=INTEGER}
+    where user_id = #{userId}
+    </update>
+
 </mapper>
