@@ -36,6 +36,9 @@ public class AliProvider {
     @Value("${ali.showapi.sign}")
     private String ali_showapi_sign;
 
+    @Value("${qcloud.keywords.enable}")
+    private int keywordsEnable;
+
     public int autoGetNews(String channelId) {
        // String channelId="5572a108b3cdc86cf39001cd";
         /*
@@ -82,15 +85,17 @@ public class AliProvider {
                        //System.out.println(twitterDTO.getImageurl2());
                    }
                     String des = newsDTO.getContent();
-                    String keywords = qCloudProvider.getKeywords(des,5,0.4);
                     String regex = "\\（.*?）";
                     des = des.replaceAll(regex, "");
-                    news.setDescription(des.length()>140?des.substring(0,140)+"...":des+"...");
+                    if(keywordsEnable==1){
+                        String keywords = qCloudProvider.getKeywords(des,5,0.4);
+                        news.setTag(keywords.substring(1));
+                    }
+                    news.setDescription(des.length()>140?des.substring(0,140)+"...":des);
                     news.setGmtCreate(System.currentTimeMillis());
                     news.setGmtModified(news.getGmtCreate());
                     news.setGmtLatestComment(TimeUtils.date2TimeStamp(news.getPubDate(),null));
                     news.setColumn2(NewsColumnEnum.strIdToCode(channelId));
-                    news.setTag(keywords.substring(1));
                     news.setStatus(1);
                     news.setViewCount(0);
                     news.setLikeCount(0);
