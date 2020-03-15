@@ -26,6 +26,9 @@ import com.tencentcloudapi.nlp.v20190408.models.KeywordsExtractionRequest;
 import com.tencentcloudapi.nlp.v20190408.models.KeywordsExtractionResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -57,37 +60,49 @@ public class QCloudProvider {
     @Value("${qcloud.cos.objecturl}")
     private String objecturl;
 
+    @Value("${qcloud.ci.objecturl}")
+    private String ciObjecturl;
+
     @Value("${site.main.domain}")
     private String domain;
+
+    @Value("${qcloud.ci.enable}")
+    private int ciEnable;
 
     public String upload(InputStream fileStream, String contentType, User user, String fileName , Long contentLength) {
 
         String initUrl = uploadtoBucket(fileStream,"img",contentType,user,fileName,contentLength);
         String imgUrl=initUrl;
-        System.out.println(initUrl);
-        //开始处理水印，若不处理请忽略
-        String watermark = "@"+user.getName()+" "+domain;
-        try {
-            byte[] data = watermark.getBytes("utf-8");
-            watermark= Base64.getEncoder().encodeToString(data);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        //开启腾讯云数据万象后可以生成水印，进行图片审核，若不处理请忽略
+        if(ciEnable==1){
+            ImageInfo imageInfo = getImageInfo(imgUrl);
+            //大于400*150才生成水印
+            if(Integer.parseInt(imageInfo.getWidth())>400&&Integer.parseInt(imageInfo.getHeight())>150){
+                String watermark = "@"+user.getName()+" "+domain;
+                try {
+                    byte[] data = watermark.getBytes("utf-8");
+                    watermark= Base64.getEncoder().encodeToString(data);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                initUrl = initUrl+"?watermark/2/text/"+watermark+"/fill/IzNEM0QzRA/fontsize/18/dissolve/80/gravity/SouthEast/dx/20/dy/10/";
+                imgUrl=uploadUrltoBucket(initUrl,"img",contentType,user,fileName);
+            }
+            imgUrl = imgUrl.replace(objecturl,ciObjecturl);
         }
-        initUrl = initUrl+"?watermark/2/text/"+watermark+"/fill/IzNEM0QzRA/fontsize/18/dissolve/80/gravity/SouthEast/dx/20/dy/10/";
-        System.out.println(initUrl);
-        imgUrl=uploadUrltoBucket(initUrl,"img",contentType,user,fileName);
-
-
         return imgUrl;
     }
 
     public String uploadAvatar(InputStream inputStream, String contentType, User user, String fileName, Long contentLength)  {
         String initUrl = uploadtoBucket(inputStream,"avatar",contentType,user,fileName,contentLength);
-        String avatarUrl=null;
-        initUrl = initUrl+"?imageMogr2/scrop/168x168";
+        String avatarUrl=initUrl;
+        //开启腾讯云数据万象后可以上传的头像进行智能剪切，若不处理请忽略
+        if(ciEnable==1){
+        initUrl = initUrl+"?imageMogr2/scrop/168x168/crop/168x168/gravity/center";
         avatarUrl=uploadUrltoBucket(initUrl,"avatar",contentType,user,fileName);
-        initUrl = initUrl+"?imageMogr2/crop/168x168/gravity/center";
-        avatarUrl=uploadUrltoBucket(initUrl,"avatar",contentType,user,fileName);
+        //initUrl = initUrl+"?imageMogr2/crop/168x168/gravity/center";
+        //avatarUrl=uploadUrltoBucket(initUrl,"avatar",contentType,user,fileName);
+        }
         return avatarUrl;
     }
 
@@ -160,6 +175,24 @@ public class QCloudProvider {
         return objecturl+key;
     }
 
+    private ImageInfo getImageInfo(String url){
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url+"?imageInfo")
+                .build();
+        ImageInfo imageInfo=null;
+        try {
+            Response response = client.newCall(request).execute();
+            String string = response.body().string();
+            System.out.println(string);
+            imageInfo = JSON.parseObject(string, ImageInfo.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+             return imageInfo;
+    }
+
     public String getKeywords(String text , int num , double score){
         String keyWordString = "";
         try{
@@ -199,6 +232,16 @@ public class QCloudProvider {
     static class  Keywords{
         Double Score;
         String Word;
+    }
+
+    @Data
+    static class  ImageInfo{
+        String format;
+        String width;
+        String height;
+        String size;
+        String md5;
+        String photo_rgb;
     }
 
 }
