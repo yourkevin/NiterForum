@@ -14,7 +14,7 @@
 
 <div th:insert="~{common/header :: nav}"></div>
 
-<div th:insert="~{common/header :: news_nav}"></div>
+<div th:insert="~{common/header :: news_nav}" class="html5plus-hide"></div>
 
 <div class="layui-container">
     <div class="layui-row layui-col-space15">
@@ -53,6 +53,9 @@
                         <!--span th:data-id="${question.id}" onclick="like_question(this)" class="layui-btn layui-btn-xs layui-btn-warm"><i class="layui-icon">&#xe600;</i>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span-->
                     </div>
                 </div>
+                <div style="margin-top: 5px;margin-bottom: -15px;text-align: center" class="html5plus-hide layui-hide-sm">
+                    <a class="layui-btn layui-btn-radius layui-btn-primary layui-btn-fluid" href="javascript:downloadApp()" style="color: red">打开或者下载<i class="layui-icon">&#xe63b;</i>APP，畅享极致体验</a>
+                </div>
                 <div style="margin-top: 20px;margin-bottom: 20px" class="layui-text layui-table video photos" id="descriptionP" th:text="${news.html}">
                 </div>
                 <div th:if="${news.tag!=null&&news.tag!=''}" style="margin-top: 10px">
@@ -82,7 +85,17 @@
 
     </div>
 </div>
-
+<script type="text/javascript">
+    function myPlusShare() {
+        window.plusShare({
+            title: "尼特IT",//应用名字
+            content: '我在尼特IT看到一篇新鲜的资讯《'+document.title+'》，你也来看看吧！---'+this.location.href+' ',
+            href: location.href,//分享出去后，点击跳转地址
+            thumbs: ["http://m.example.com/imgs/1.png"] //分享缩略图
+        }, function(result) {
+            //分享回调
+        });  }
+</script>
 <script type="text/javascript">
     var obj = document.getElementById("descriptionP");
     //alert(obj.innerText);//这样就自动解析了

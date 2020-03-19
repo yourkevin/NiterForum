@@ -5,8 +5,9 @@
 <head>
   <title th:text="${question.title+@environment.getProperty('site.main.titleInfo')}"></title>
   <th:block th:insert="~{common/header :: head}"></th:block>
-  <script src="/js/community.js" type="application/javascript"></script>
+  <!--script src="/js/community.js" type="application/javascript"></script-->
   <script src="/js/moment.js" type="application/javascript"></script>
+  <script src="/js/clipboard.js" type="application/javascript"></script>
   <!--link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">
   <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script-->
 </head>
@@ -14,7 +15,7 @@
 
 <div th:insert="~{common/header :: nav}"></div>
 
-<div th:insert="~{common/header :: sub_nav}"></div>
+<div th:insert="~{common/header :: sub_nav}" class="html5plus-hide"></div>
 
 <div class="layui-container">
   <div class="layui-row layui-col-space15">
@@ -68,11 +69,18 @@
           <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
             <span style="padding-right: 10px; color: #FF7200" >点击群号免费加入尼特社区交流群：<a target="_blank" th:href="${@environment.getProperty('site.info.contactQunUrl')}" th:text="${@environment.getProperty('site.info.contactQun')}"></a>。</span>
             <span th:if="${session.user!=null&&question.canEdit}" class="layui-btn layui-btn-xs jie-admin" type="edit"><a th:href="@{'/p/publish/'+${question.id}}" style="margin-left: -5px;"><i class="layui-icon">&#xe642;</i>编辑</a></span>
-            <span th:data-id="${question.id}" onclick="like_question(this)" class="layui-btn layui-btn-xs layui-btn-warm"><i class="layui-icon">&#xe600;</i><th:block th:text="${question.favorite?'已':''}"></th:block>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span>
+            <!--span th:data-id="${question.id}" onclick="like_question(this)" class="layui-btn layui-btn-xs layui-btn-warm"><i class="layui-icon">&#xe600;</i><th:block th:text="${question.favorite?'已':''}"></th:block>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span-->
           </div>
+        </div>
+        <div style="margin-top: 5px;margin-bottom: -15px;text-align: center" class="html5plus-hide layui-hide-sm">
+          <a class="layui-btn layui-btn-radius layui-btn-primary layui-btn-fluid" href="javascript:downloadApp()" style="color: red">打开或者下载<i class="layui-icon">&#xe63b;</i>APP，畅享极致体验</a>
         </div>
         <div style="margin-top: 20px;margin-bottom: 20px" class="layui-text layui-table video photos p-detail" id="descriptionP" th:text="${question.description}">
         </div>
+        <div style="text-align: center;margin-top: 10px">
+          <span th:data-id="${question.id}" onclick="like_question(this)" style="font-size: 15px; color: #FFB800;cursor: pointer"><i class="layui-icon" th:text="${question.favorite?'&#xe658;':'&#xe600;'}">&#xe600; &#xe658;</i><th:block th:text="${question.favorite?'已':''}"></th:block>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span>
+          <span class="copyshare"><i class="layui-icon" style="font-size: 15px; color: #1E9FFF;cursor: pointer">&#xe641; 分享</i></span>
+        </div><!--分享-->
         <div style="margin-top: 10px">
           相关标签：
           <span class="layui-badge-rim" th:each="tag : ${question.tag.split(',')}">
@@ -80,6 +88,7 @@
                            th:text="${tag}" class="community-tag"></a>
           </span>
         </div><!--标签-->
+
       </div>
 
       <div class="fly-panel detail-box" id="flyReply">
@@ -277,6 +286,43 @@ layui.config({
   });
 </script>
 <script src="https://v.vaptcha.com/v3.js"></script>
+<script type="text/javascript">
+  //addHtml5Plus();
+  var con = '我在尼特社区找到一篇好文章《'+document.title+'》，快来戳后面的链接来围观吧！---'+this.location.href;
+  function myPlusShare() {
+    window.plusShare({
+      title: "尼特社区",//应用名字
+      content: con,
+      href: location.href,//分享出去后，点击跳转地址
+      thumbs: ["http://m.example.com/imgs/1.png"] //分享缩略图
+    }, function(result) {
+      //分享回调
+    });  }
+  var clipboard = new ClipboardJS('.copyshare', {
+    text: function() {
+      //     var con = '我在凯文社区找到一篇好文章《'+document.title+'》，快来围观吧！---'+this.location.href;
+      //alert("进来了"+document.title+this.location.href);
+      //alert(con);
+      if(navigator.userAgent.indexOf("Html5Plus") > -1) {
+        //5+ 原生分享
+           myPlusShare();
+      } else {
+        //原有wap分享实现
+        swal("复制成功!", "赶快去粘贴分享文章吧~", "success");
+      }
+      //swal("复制成功!", "赶快去分享文章吧~", "success");
+      return ''+con;
+    }
+  });
+
+  clipboard.on('success', function(e) {
+    console.log(e);
+  });
+
+  clipboard.on('error', function(e) {
+    console.log(e);
+  });
+</script>
 <script type="text/javascript">
   token = '';
   userIp='';
