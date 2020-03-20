@@ -21,8 +21,16 @@
     <div class="layui-col-md8">
       <div class="fly-panel">
         <div class="fly-panel-title fly-filter">
-          <a>置顶</a>
-          <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
+          <a>欢迎您的到来~</a>
+          <!--a href="#signin" class="html5plus-hide layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a-->
+          <a th:if="${session.user==null}" href="/sso/login" class="layui-hide-sm fly-right html5plus-display" id="LAY_gologin" style="color: #FF5722;display: none">注册/登录</a>
+          <a th:if="${session.user!=null}" class="fly-nav-avatar niter-avatar layui-hide-sm fly-right html5plus-display" id="LAY_goUserCenter" style="color: #FF5722;display: none">
+              <img th:src="${session.user.avatarUrl}">
+              <i th:if="${session.userAccount.vipRank==1}" class="layui-icon fly-list-kiss layui-hide-xs" title="红砖会员等级：LV1">&#xe735</i>
+              <cite onclick="javascript:window.open('/user/set/info')" th:class="${session.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${session.user.name}"></cite>
+              <span onclick="javascript:window.open('/user/message')" th:if="${session.unreadCount!=0}" class="layui-badge" th:text="${session.unreadCount}"></span>
+          </a>
+
         </div>
         <ul class="fly-list">
           <li th:each="question : ${topQuestions}">
@@ -78,7 +86,8 @@
           <span class="fly-mid"></span>
           <a th:class="${sort == 'good' ? 'layui-this':''}" th:href="@{/(sort='good',search=${search},tag=${tag},column=${column})}">精华</a>
           <span class="fly-filter-right">
-            <a th:href="@{/t/(sort=${sort},search=${search},tag=${tag},column=${column})}" style="color: red"><i class="layui-icon">&#xe636;</i>瀑布流</a>
+            <!--a th:href="@{/t/(sort=${sort},search=${search},tag=${tag},column=${column})}" style="color: red" class="layui-hide-xs"><i class="layui-icon">&#xe636;</i>瀑布流</a-->
+            <a class="html5plus-hide" href="javascript:downloadApp()" style="color: red"><i class="layui-icon">&#xe63b;</i>APP</a>
             <span class="fly-mid layui-hide-xs"></span>
             <a th:href="@{/(sort='new',search=${search},tag=${tag},column=${column})}" th:class="${sort == 'new' || sort == null ? 'layui-this layui-hide-xs':'layui-hide-xs'}">按最新</a>
             <span class="fly-mid layui-hide-xs"></span>
