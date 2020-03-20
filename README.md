@@ -1,5 +1,8 @@
 # 尼特社区-NiterForum
 供初学者，学习、交流使用，喜欢的话，恳请给个star(*❦ω❦)
+
+ [介绍视频（欢迎留言收藏）](https://www.bilibili.com/video/av93706388 "视频介绍")
+ 
 ## 在线体验
 [https://niter.cn/](https://niter.cn/ "https://niter.cn/")
 
@@ -61,7 +64,7 @@
 JDK，Maven
 2. 克隆代码到本地  
 3. 将[resources](/src/main/resources/ "resources")目录下的[niter.sql](/src/main/resources/niter.sql "niter.sql")导入新创建的数据库。
-4. 根据[提示与说明](https://niter.cn/p/135/ "提示与说明")，编辑[resources](/src/main/resources/ "resources")目录下的[application.properties](/src/main/resources/application.properties "application.properties")文件。
+4. 根据[提示与说明](https://niter.cn/p/135/ "提示与说明")，编辑[resources](/src/main/resources/ "resources")目录下的[application.properties](/src/main/resources/application.properties "application.properties")文件。 [（完整视频教程）](https://www.bilibili.com/video/av94451055/ "详细配置教程")
 5. 编辑[resources](/src/main/resources/ "resources")目录下的[generatorConfig.xml](/src/main/resources/generatorConfig.xml "generatorConfig.xml")文件，配置数据库相关信息（只需修改数据库链接、用户名、密码）。
 6. 运行打包命令
    ```sh 
