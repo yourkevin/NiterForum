@@ -19,6 +19,29 @@ editor.customConfig.uploadImgServer = '/file/upload';  // 上传图片到服务�
 editor.customConfig.uploadFileName = 'myFile';//设置文件上传的参数名称
 editor.customConfig.uploadImgMaxSize = 1 * 1024 * 1024;//最大尺寸1M
 editor.customConfig.uploadImgMaxLength = 5;//最多同时上传5张
+editor.customConfig.menus = [
+    'head',  // 标题
+    'bold',  // 粗体
+    'fontSize',  // 字号
+    'foreColor',  // 文字颜色
+    'emoticon',  // 表情
+    'image',  // 插入图片
+    'link',  // 插入链接
+    'code',  // 插入代码
+    'undo',  // 撤销
+    'redo',  // 重复
+    'fontName',  // 字体
+    'italic',  // 斜体
+    'underline',  // 下划线
+    'strikeThrough',  // 删除线
+    'backColor',  // 背景颜色
+    'list',  // 列表
+    'justify',  // 对齐方式
+    'quote',  // 引用
+    'table',  // 表格
+    'video',  // 插入视频
+    'nvideo'
+]
 editor.customConfig.customAlert = function (info) {
     // info 是需要提示的内容
     swal("上传失败!", info, "error");
