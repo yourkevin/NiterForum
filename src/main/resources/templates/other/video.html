@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="${title+@environment.getProperty('site.main.titleInfo')}"></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="Copyright" th:content="${'本页版权归'+@environment.getProperty('site.main.title')+'所有'}">
+    <link rel="stylesheet" href="/layui/css/layui.css">
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/mylay.css">
+    <link rel="stylesheet" href="/css/wap2app.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/community.js" type="application/javascript"></script>
+    <script src="/js/sweetalert.min.js"></script>
+    <script src="/js/plusShare.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/wap2app.js?v=1.5.6" type="text/javascript" charset="utf-8"></script>
+    <style>
+        body{
+            background: #f2f2f2;
+        }
+        .video{
+            display: block;
+            width: 80%;
+            height: auto;
+        }
+        .margin5{
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body style="margin-top: 0px">
+<div class="layui-container">
+    <div class="layui-row layui-col-space15">
+        <section class="layui-card">
+            <div class="layui-card-body">
+                <div th:data-url="${url}" class="video" id="video" style="width: 100%;"></div>
+            </div>
+        </section>
+    </div>
+</div>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript">
+    layui.config({
+        version: "3.0.0"
+        ,base: '/mods/'
+    }).extend({
+        ckplayer: 'ckplayer/ckplayer'
+    }).use(['jquery', 'ckplayer'], function() {
+        var $ = layui.$,
+            ckplayer = layui.ckplayer;
+        var vUrl = $('#video').data('url'),
+            videoObject = {
+                container: '#video',
+                loop: false,
+                autoplay: true,
+                video: [
+                    [vUrl, 'video/mp4']
+                ]
+            };
+        var player = new ckplayer(videoObject);
+    });
+</script>
+</body>
+
+</html>

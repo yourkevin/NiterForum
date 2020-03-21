@@ -11,17 +11,19 @@ public class VideoController {
     @GetMapping("/videos")
     public String index(Model model) {
         model.addAttribute("navtype", "videonav");
-        return "videos";
+        return "other/videos";
     }
 
     @GetMapping("/video")
-    public String video(@RequestParam(name = "aid") String aid,
+    public String video(@RequestParam(name = "aid",required = false) String aid,
+                        @RequestParam(name = "url",required = false) String url,
                         @RequestParam(name = "page", defaultValue = "1") String page,
+                        @RequestParam(name = "title", defaultValue = "视频播放") String title,
                         Model model) {
-        model.addAttribute("aid", aid);
-        model.addAttribute("page", page);
-        model.addAttribute("navtype", "videonav");
-        return "video";
+        model.addAttribute("title", title);
+        model.addAttribute("url", url);
+       // model.addAttribute("navtype", "videonav");
+        return "other/video";
     }
 }
 
