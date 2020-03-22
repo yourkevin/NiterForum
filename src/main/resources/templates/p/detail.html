@@ -237,54 +237,6 @@
   //alert(obj.innerText);//这样就自动解析了
   obj.innerHTML = obj.innerText;//这样重新设置html代码为解析后的格式
 </script>
-
-<th:block th:insert="~{common/footer :: foot}"></th:block>
-
-<script>
-layui.cache.page = 'jie';
-layui.cache.user = {
-  username: '匿名用户'
-  ,uid: -1
-  ,avatar: '/images/avatar/00.jpg'
-  ,experience: 83
-  ,sex: '男'
-};
-layui.config({
-  version: "3.0.0"
-  ,base: '/mods/'
-}).extend({
-  fly: 'index'
-}).use(['fly', 'face'], function(){
-  var $ = layui.$
-  ,fly = layui.fly;
-  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-
-  $('.detail-body').each(function(){
-    var othis = $(this), html = othis.html();
-    othis.html(fly.content(html));
-  });
-
-
-
-});
-</script>
-<script>
-  layui.use(['element', 'layer'/*,'code'*/], function(){
-    var element = layui.element;
-    var layer = layui.layer;
-   /*layui.code({
-      elem: 'pre', //默认值为.layui-code
-      height:500,
-      about: false,
-    }); //引用code方法
-*/
-
-    //监听折叠
-    element.on('collapse(sub-comments)', function(data){
-      layer.msg('展开状态：'+ data.show);
-    });
-  });
-</script>
 <script src="https://v.vaptcha.com/v3.js"></script>
 <script type="text/javascript">
   //addHtml5Plus();
@@ -305,7 +257,7 @@ layui.config({
       //alert(con);
       if(navigator.userAgent.indexOf("Html5Plus") > -1) {
         //5+ 原生分享
-           myPlusShare();
+        myPlusShare();
       } else {
         //原有wap分享实现
         swal("复制成功!", "赶快去粘贴分享文章吧~", "success");
@@ -360,7 +312,7 @@ layui.config({
         CacheControl: "no-cache",
         //  dataType: "json",
         success: function(data) {
-         // userIp=data;
+          // userIp=data;
           $.ajax({
             type: "post",
             url: "/validate",
@@ -412,5 +364,53 @@ layui.config({
     vaptchaObj.render()// 调用验证实例 vaptchaObj 的 render 方法加载验证按钮
   })
 </script>
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+
+<script>
+layui.cache.page = 'jie';
+layui.cache.user = {
+  username: '匿名用户'
+  ,uid: -1
+  ,avatar: '/images/avatar/00.jpg'
+  ,experience: 83
+  ,sex: '男'
+};
+layui.config({
+  version: "3.0.0"
+  ,base: '/mods/'
+}).extend({
+  fly: 'index'
+}).use(['fly', 'face'], function(){
+  var $ = layui.$
+  ,fly = layui.fly;
+  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+
+  $('.detail-body').each(function(){
+    var othis = $(this), html = othis.html();
+    othis.html(fly.content(html));
+  });
+
+
+
+});
+</script>
+<script>
+  layui.use(['element', 'layer'/*,'code'*/], function(){
+    var element = layui.element;
+    var layer = layui.layer;
+   /*layui.code({
+      elem: 'pre', //默认值为.layui-code
+      height:500,
+      about: false,
+    }); //引用code方法
+*/
+
+    //监听折叠
+    element.on('collapse(sub-comments)', function(data){
+      layer.msg('展开状态：'+ data.show);
+    });
+  });
+</script>
+
 </body>
 </html>
