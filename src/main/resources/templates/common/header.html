@@ -12,14 +12,17 @@
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <link rel="stylesheet" href="/layui/css/layui.css">
   <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/css/mylay.css">
+  <link rel="stylesheet" href="/css/mylay.css?v=1.1">
+  <link rel="stylesheet" href="/css/wap2app.css">
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
   <script src="/js/jquery-3.4.1.min.js"></script>
   <script src="/js/community.js" type="application/javascript"></script>
   <script src="/js/sweetalert.min.js"></script>
+  <script src="/js/plusShare.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/wap2app.js?v=1.5.8" type="text/javascript" charset="utf-8"></script>
 </th:block>
 
-<div th:fragment="nav" class="fly-header layui-bg-cyan">
+<div th:fragment="nav" class="fly-header layui-bg-cyan html5plus-hide">
   <div class="layui-container">
     <a class="fly-logo layui-hide-xs" href="/" >
       <img src="/images/logo.png" alt="layui" style="height: 40px">
@@ -94,10 +97,11 @@
       </th:block>
       <!-- 登入后的状态 -->
     <th:block th:if="${session.user!=null}">
-      <li class="layui-nav-item layui-hide-xs" style="margin-right: 20px">
-        <a th:if="${session.unreadCount!=0}" href="/user/message">有新消息<span class="layui-badge" th:text="${session.unreadCount}"></span></a>
+      <li class="layui-nav-item" style="margin-right: 20px">
+        <a th:if="${session.unreadCount!=0}" href="/user/message"><span class="layui-hide-xs">有新消息</span><span class="layui-badge" th:text="${session.unreadCount}"></span></a>
+        <!--span th:if="${session.unreadCount!=0}" class="layui-badge" th:text="${session.unreadCount}"></span-->
       </li>
-      <li class="layui-nav-item">
+      <li class="layui-nav-item" >
         <a class="fly-nav-avatar niter-avatar" href="javascript:;">
           <i th:if="${session.userAccount.vipRank==1}" class="layui-icon fly-list-kiss layui-hide-xs" title="红砖会员等级：LV1">&#xe735</i>
           <cite th:class="${session.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${session.user.name}"></cite>
@@ -112,7 +116,7 @@
           <dd><a href="/user/set/account"><i class="layui-icon">&#xe612;</i>账户中心</a></dd>
           <dd><a href="/user/set/info"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
           <hr style="margin: 5px 0;">
-          <dd><a href="/logout" style="text-align: center;">退出</a></dd>
+          <dd><a href="/logout" style="text-align: center;"><i class="layui-icon">&#x1006;</i>退出登录</a></dd>
         </dl>
       </li>
         </th:block>
@@ -145,9 +149,9 @@
       <span class="fly-search"><i class="layui-icon"></i></span>
       <a href="/p/publish" target="_blank" class="layui-btn">发表新帖</a>
     </div>
-    <div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;">
+    <!--div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;">
       <a href="/p/publish" target="_blank" class="layui-btn">发表新帖</a>
-    </div>
+    </div-->
   </div>
 </div>
 
