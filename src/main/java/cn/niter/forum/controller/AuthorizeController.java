@@ -17,14 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 @Slf4j
 @Controller
@@ -106,7 +105,7 @@ public class AuthorizeController {
             user.setAccountId(String.valueOf(githubUser.getId()));
 //            user.setGmtCreate(System.currentTimeMillis());
 //            user.setGmtModified(user.getGmtCreate());
-            user.setAvatarUrl(githubUser.getAvatarUrl());
+            user.setAvatarUrl("/images/avatar/"+(int)(Math.random()*11)+".jpg");
             userService.createOrUpdate(user);
          /*  Cookie cookie = new Cookie("token", token);
            cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
@@ -149,7 +148,7 @@ public class AuthorizeController {
             user.setName(baiduUser.getUsername());
             user.setToken(token);
             user.setBaiduAccountId("" + baiduUser.getUserid());
-            user.setAvatarUrl("http://tb.himg.baidu.com/sys/portrait/item/" + baiduUser.getPortrait());
+            user.setAvatarUrl("https://gss0.bdstatic.com/6LZ1dD3d1sgCo2Kml5_Y_D3/sys/portrait/item/" + baiduUser.getPortrait());
 
             BeanUtils.copyProperties(baiduUser,userInfo);
            // System.out.println("生日:"+userInfo.getBirthday()+"realname:"+userInfo.getRealname());
@@ -326,6 +325,15 @@ public class AuthorizeController {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         return "redirect:/";
+    }
+
+    @PostMapping("/callbackOpenid")
+    @ResponseBody
+    public Map<String,Object> callbackOpenid(HttpServletRequest request,
+                         HttpServletResponse response) {
+        Map<String,Object> map  = new HashMap<>();
+        map.put("info","进来了");
+        return map;
     }
 
     public String getUserName(String authorizeSize) {
