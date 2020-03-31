@@ -3,33 +3,33 @@
  @Name: Fly社区主入口
 
  */
- 
+
 
 layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(exports){
-  
-  var $ = layui.jquery
-  ,layer = layui.layer
-  ,laytpl = layui.laytpl
-  ,form = layui.form
-  ,element = layui.element
-  ,upload = layui.upload
-  ,util = layui.util
-  ,device = layui.device()
 
-  ,DISABLED = 'layui-btn-disabled';
-  
+  var $ = layui.jquery
+      ,layer = layui.layer
+      ,laytpl = layui.laytpl
+      ,form = layui.form
+      ,element = layui.element
+      ,upload = layui.upload
+      ,util = layui.util
+      ,device = layui.device()
+
+      ,DISABLED = 'layui-btn-disabled';
+
   //阻止IE7以下访问
   if(device.ie && device.ie < 8){
     layer.alert('如果您非得使用 IE 浏览器访问Fly社区，那么请使用 IE8+');
   }
-  
+
   layui.focusInsert = function(obj, str){
     var result, val = obj.value;
     obj.focus();
     if(document.selection){ //ie
-      result = document.selection.createRange(); 
-      document.selection.empty(); 
-      result.text = str; 
+      result = document.selection.createRange();
+      document.selection.empty();
+      result.text = str;
     } else {
       result = [val.substring(0, obj.selectionStart), str, val.substr(obj.selectionEnd)];
       obj.focus();
@@ -48,13 +48,13 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     }
     return num < Math.pow(10, length) ? str + (num|0) : num;
   };
-  
+
   var fly = {
 
     //Ajax
     json: function(url, data, success, options){
       var that = this, type = typeof data === 'function';
-      
+
       if(type){
         options = success
         success = data;
@@ -90,7 +90,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       }
       return len;
     }
-    
+
     ,form: {}
 
     //简易编辑器
@@ -102,7 +102,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         ,'<span type="code" title="插入代码或引用"><i class="iconfont icon-emwdaima" style="top: 1px;"></i></span>'
         ,'<span type="hr" title="插入水平线">hr</span>'
         ,'<span type="yulan" title="预览"><i class="iconfont icon-yulan1"></i></span>'
-      ,'</div>'].join('');
+        ,'</div>'].join('');
 
       var log = {}, mod = {
         face: function(editor, self){ //插入表情
@@ -140,16 +140,16 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
             ,skin: 'layui-layer-border'
             ,content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
               ,'<li class="layui-form-item">'
-                ,'<label class="layui-form-label">URL</label>'
-                ,'<div class="layui-input-inline">'
-                    ,'<input required name="image" placeholder="支持直接粘贴远程图片地址" value="" class="layui-input">'
-                  ,'</div>'
-                  ,'<button type="button" class="layui-btn layui-btn-primary" id="uploadImg"><i class="layui-icon">&#xe67c;</i>上传图片</button>'
+              ,'<label class="layui-form-label">URL</label>'
+              ,'<div class="layui-input-inline">'
+              ,'<input required name="image" placeholder="支持直接粘贴远程图片地址" value="" class="layui-input">'
+              ,'</div>'
+              ,'<button type="button" class="layui-btn layui-btn-primary" id="uploadImg"><i class="layui-icon">&#xe67c;</i>上传图片</button>'
               ,'</li>'
               ,'<li class="layui-form-item" style="text-align: center;">'
-                ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
+              ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
               ,'</li>'
-            ,'</ul>'].join('')
+              ,'</ul>'].join('')
             ,success: function(layero, index){
               var image =  layero.find('input[name="image"]');
 
@@ -157,19 +157,19 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
               upload.render({
                 elem: '#uploadImg'
                 ,url: '/file/layUpload'
-                ,size: 1000
+                ,size: 3000
                 ,done: function(res){
-                 // console.log("res:"+res)
-                //  alert(res+res.errno);
+                  // console.log("res:"+res)
+                  //  alert(res+res.errno);
                   if(res.code == 0){
                     image.val(res.data);
                   } else {
-                   // layer.msg(res.msg, {icon: 5});
+                    // layer.msg(res.msg, {icon: 5});
                     layer.msg(res.msg, {icon: 5});
                   }
                 }
               });
-              
+
               form.on('submit(uploadImages)', function(data){
                 var field = data.field;
                 if(!field.image) return image.focus();
@@ -216,10 +216,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         }
         ,yulan: function(editor){ //预览
           var content = editor.val();
-          
-          content = /^\{html\}/.test(content) 
-            ? content.replace(/^\{html\}/, '')
-          : fly.content(content);
+
+          content = /^\{html\}/.test(content)
+              ? content.replace(/^\{html\}/, '')
+              : fly.content(content);
 
           layer.open({
             type: 1
@@ -231,7 +231,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
           });
         }
       };
-      
+
       layui.use('face', function(face){
         options = options || {};
         fly.faces = face;
@@ -247,12 +247,12 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
           });
         });
       });
-      
+
     }
 
     ,escape: function(html){
       return String(html||'').replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
-      .replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+          .replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
     }
 
     //内容转义
@@ -262,23 +262,23 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         return new RegExp('\\n*\\['+ (end||'') +'(pre|hr|div|span|p|table|thead|th|tbody|tr|td|ul|li|ol|li|dl|dt|dd|h2|h3|h4|h5)([\\s\\S]*?)\\]\\n*', 'g');
       };
       content = fly.escape(content||'') //XSS
-      .replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
-        return '<img src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">';
-      }).replace(/@(\S+)(\s+?|$)/g, '@<a href="javascript:;" class="fly-aite">$1</a>$2') //转义@
-      .replace(/face\[([^\s\[\]]+?)\]/g, function(face){  //转义表情
-        var alt = face.replace(/^face/g, '');
-        return '<img alt="'+ alt +'" title="'+ alt +'" src="' + fly.faces[alt] + '">';
-      }).replace(/a\([\s\S]+?\)\[[\s\S]*?\]/g, function(str){ //转义链接
-        var href = (str.match(/a\(([\s\S]+?)\)\[/)||[])[1];
-        var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
-        if(!href) return str;
-        var rel =  /^(http(s)*:\/\/)\b(?!(\w+\.)*(sentsin.com|layui.com))\b/.test(href.replace(/\s/g, ''));
-        return '<a href="'+ href +'" target="_blank"'+ (rel ? ' rel="nofollow"' : '') +'>'+ (text||href) +'</a>';
-      }).replace(html(), '\<$1 $2\>').replace(html('/'), '\</$1\>') //转移HTML代码
-      .replace(/\n/g, '<br>') //转义换行   
+          .replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
+            return '<img src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">';
+          }).replace(/@(\S+)(\s+?|$)/g, '@<a href="javascript:;" class="fly-aite">$1</a>$2') //转义@
+          .replace(/face\[([^\s\[\]]+?)\]/g, function(face){  //转义表情
+            var alt = face.replace(/^face/g, '');
+            return '<img alt="'+ alt +'" title="'+ alt +'" src="' + fly.faces[alt] + '">';
+          }).replace(/a\([\s\S]+?\)\[[\s\S]*?\]/g, function(str){ //转义链接
+            var href = (str.match(/a\(([\s\S]+?)\)\[/)||[])[1];
+            var text = (str.match(/\)\[([\s\S]*?)\]/)||[])[1];
+            if(!href) return str;
+            var rel =  /^(http(s)*:\/\/)\b(?!(\w+\.)*(sentsin.com|layui.com))\b/.test(href.replace(/\s/g, ''));
+            return '<a href="'+ href +'" target="_blank"'+ (rel ? ' rel="nofollow"' : '') +'>'+ (text||href) +'</a>';
+          }).replace(html(), '\<$1 $2\>').replace(html('/'), '\</$1\>') //转移HTML代码
+          .replace(/\n/g, '<br>') //转义换行
       return content;
     }
-    
+
     //新消息通知
     ,newmsg: function(){
       var elemUser = $('.fly-nav-user');
@@ -309,20 +309,20 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       }
       return arguments.callee;
     }
-    
+
   };
 
   //签到
   var tplSignin = ['{{# if(d.signed){ }}'
     ,'<button class="layui-btn layui-btn-disabled">今日已签到</button>'
     ,'<span>获得了<cite>{{ d.experience }}</cite>飞吻</span>'
-  ,'{{# } else { }}'
+    ,'{{# } else { }}'
     ,'<button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>'
     ,'<span>可获得<cite>{{ d.experience }}</cite>飞吻2</span>'
-  ,'{{# } }}'].join('')
-  ,tplSigninDay = '已连续签到<cite>{{ d.days }}</cite>天'
+    ,'{{# } }}'].join('')
+      ,tplSigninDay = '已连续签到<cite>{{ d.days }}</cite>天'
 
-  ,signRender = function(data){
+      ,signRender = function(data){
     laytpl(tplSignin).render(data, function(html){
       elemSigninMain.html(html);
     });
@@ -331,11 +331,11 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     });
   }
 
-  ,elemSigninHelp = $('#LAY_signinHelp')
-  ,elemSigninTop = $('#LAY_signinTop')
-  ,elemSigninMain = $('.fly-signin-main')
-  ,elemSigninDays = $('.fly-signin-days');
-  
+      ,elemSigninHelp = $('#LAY_signinHelp')
+      ,elemSigninTop = $('#LAY_signinTop')
+      ,elemSigninMain = $('.fly-signin-main')
+      ,elemSigninDays = $('.fly-signin-days');
+
   if(elemSigninMain[0]){
     /*
     fly.json('/sign/status', function(res){
@@ -350,7 +350,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     if(othis.hasClass(DISABLED)) return;
 
     fly.json('/sign/in', {
-     // token: signRender.token || 1
+      // token: signRender.token || 1
     }, function(res){
       console.log("res:"+res.data)
       signRender(res.data);
@@ -375,62 +375,62 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       ,content: ['<div class="layui-text" style="padding: 20px;">'
         ,'<blockquote class="layui-elem-quote">“签到”可获得社区积分，规则如下</blockquote>'
         ,'<table class="layui-table">'
-          ,'<thead>'
-            ,'<tr><th>连续签到天数</th><th>每天可获积分</th></tr>'
-          ,'</thead>'
-          ,'<tbody>'
-            ,'<tr><td>＜5</td><td>5</td></tr>'
-            ,'<tr><td>≥5</td><td>10</td></tr>'
-            ,'<tr><td>≥15</td><td>15</td></tr>'
-            ,'<tr><td>≥30</td><td>20</td></tr>'
-          ,'</tbody>'
+        ,'<thead>'
+        ,'<tr><th>连续签到天数</th><th>每天可获积分</th></tr>'
+        ,'</thead>'
+        ,'<tbody>'
+        ,'<tr><td>＜5</td><td>5</td></tr>'
+        ,'<tr><td>≥5</td><td>10</td></tr>'
+        ,'<tr><td>≥15</td><td>15</td></tr>'
+        ,'<tr><td>≥30</td><td>20</td></tr>'
+        ,'</tbody>'
         ,'</table>'
         ,'<ul>'
-          ,'<li>中间若有间隔，则连续天数重新计算</li>'
-          ,'<li style="color: #FF5722;">不可利用程序自动签到，否则飞吻清零</li>'
+        ,'<li>中间若有间隔，则连续天数重新计算</li>'
+        ,'<li style="color: #FF5722;">不可利用程序自动签到，否则飞吻清零</li>'
         ,'</ul>'
-      ,'</div>'].join('')
+        ,'</div>'].join('')
     });
   });
 
   //签到活跃榜
   var tplSigninTop = ['{{# layui.each(d.data, function(index, item){ }}'
     ,'<li>'
-      ,'<a href="/u/{{item.uid}}" target="_blank">'
-        ,'<img src="{{item.user.avatar}}">'
-        ,'<cite class="fly-link">{{item.user.username}}</cite>'
-      ,'</a>'
-      ,'{{# var date = new Date(item.time); if(d.index < 2){ }}'
-        ,'<span class="fly-grey">签到于 {{ layui.laytpl.digit(date.getHours()) + ":" + layui.laytpl.digit(date.getMinutes()) + ":" + layui.laytpl.digit(date.getSeconds()) }}</span>'
-      ,'{{# } else { }}'
-        ,'<span class="fly-grey">已连续签到 <i>{{ item.days }}</i> 天</span>'
-      ,'{{# } }}'
-    ,'</li>'
-  ,'{{# }); }}'
-  ,'{{# if(d.data.length === 0) { }}'
-    ,'{{# if(d.index < 2) { }}'
-      ,'<li class="fly-none fly-grey">今天还没有人签到</li>'
+    ,'<a href="/u/{{item.uid}}" target="_blank">'
+    ,'<img src="{{item.user.avatar}}">'
+    ,'<cite class="fly-link">{{item.user.username}}</cite>'
+    ,'</a>'
+    ,'{{# var date = new Date(item.time); if(d.index < 2){ }}'
+    ,'<span class="fly-grey">签到于 {{ layui.laytpl.digit(date.getHours()) + ":" + layui.laytpl.digit(date.getMinutes()) + ":" + layui.laytpl.digit(date.getSeconds()) }}</span>'
     ,'{{# } else { }}'
-      ,'<li class="fly-none fly-grey">还没有签到记录</li>'
+    ,'<span class="fly-grey">已连续签到 <i>{{ item.days }}</i> 天</span>'
     ,'{{# } }}'
-  ,'{{# } }}'].join('');
+    ,'</li>'
+    ,'{{# }); }}'
+    ,'{{# if(d.data.length === 0) { }}'
+    ,'{{# if(d.index < 2) { }}'
+    ,'<li class="fly-none fly-grey">今天还没有人签到</li>'
+    ,'{{# } else { }}'
+    ,'<li class="fly-none fly-grey">还没有签到记录</li>'
+    ,'{{# } }}'
+    ,'{{# } }}'].join('');
 
   elemSigninTop.on('click', function(){
     var loadIndex = layer.load(1, {shade: 0.8});
     fly.json('../json/signin.js', function(res){ //实际使用，请将 url 改为真实接口
       var tpl = $(['<div class="layui-tab layui-tab-brief" style="margin: 5px 0 0;">'
         ,'<ul class="layui-tab-title">'
-          ,'<li class="layui-this">最新签到</li>'
-          ,'<li>今日最快</li>'
-          ,'<li>总签到榜</li>'
+        ,'<li class="layui-this">最新签到</li>'
+        ,'<li>今日最快</li>'
+        ,'<li>总签到榜</li>'
         ,'</ul>'
         ,'<div class="layui-tab-content fly-signin-list" id="LAY_signin_list">'
-          ,'<ul class="layui-tab-item layui-show"></ul>'
-          ,'<ul class="layui-tab-item">2</ul>'
-          ,'<ul class="layui-tab-item">3</ul>'
+        ,'<ul class="layui-tab-item layui-show"></ul>'
+        ,'<ul class="layui-tab-item">2</ul>'
+        ,'<ul class="layui-tab-item">3</ul>'
         ,'</div>'
-      ,'</div>'].join(''))
-      ,signinItems = tpl.find('.layui-tab-item');
+        ,'</div>'].join(''))
+          ,signinItems = tpl.find('.layui-tab-item');
 
       layer.close(loadIndex);
 
@@ -459,14 +459,14 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   //回帖榜
   var tplReply = ['{{# layui.each(d.data, function(index, item){ }}'
     ,'<dd>'
-      ,'<a href="/u/{{item.uid}}">'
-        ,'<img src="{{item.user.avatar}}">'
-        ,'<cite>{{item.user.username}}</cite>'
-        ,'<i>{{item["count(*)"]}}次回答</i>'
-      ,'</a>'
+    ,'<a href="/u/{{item.uid}}">'
+    ,'<img src="{{item.user.avatar}}">'
+    ,'<cite>{{item.user.username}}</cite>'
+    ,'<i>{{item["count(*)"]}}次回答</i>'
+    ,'</a>'
     ,'</dd>'
-  ,'{{# }); }}'].join('')
-  ,elemReply = $('#LAY_replyRank');
+    ,'{{# }); }}'].join('')
+      ,elemReply = $('#LAY_replyRank');
 
   if(elemReply[0]){
     /*
@@ -503,9 +503,9 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       ,shadeClose: true
       ,maxWidth: 10000
       ,skin: 'fly-layer-search'
-      ,content: ['<form action="/">'
+      ,content: ['<form action="/forum">'
         ,'<input autocomplete="off" placeholder="搜索内容，回车跳转" type="text" name="search">'
-      ,'</form>'].join('')
+        ,'</form>'].join('')
       ,success: function(layero){
         var input = layero.find('input');
         input.focus();
@@ -582,7 +582,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     layui.extend(extend);
     layui.use(layui.cache.page);
   }
-  
+
   //加载IM
   if(!device.android && !device.ios){
     //layui.use('im');
@@ -595,7 +595,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
 
   //手机设备的简单适配
   var treeMobile = $('.site-tree-mobile')
-  ,shadeMobile = $('.site-mobile-shade')
+      ,shadeMobile = $('.site-mobile-shade')
 
   treeMobile.on('click', function(){
     $('body').addClass('site-mobile');
@@ -612,7 +612,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       othis.html('（下载量：'+ res.number +'）');
     })
   });
-  
+
   //固定Bar
   util.fixbar({
     bar1: '&#xe642;'
@@ -628,4 +628,3 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   exports('fly', fly);
 
 });
-

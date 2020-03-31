@@ -17,7 +17,7 @@ editor.customConfig.colors = [
 editor.customConfig.pasteFilterStyle = false
 editor.customConfig.uploadImgServer = '/file/upload';  // 上传图片到服务器
 editor.customConfig.uploadFileName = 'myFile';//设置文件上传的参数名称
-editor.customConfig.uploadImgMaxSize = 1 * 1024 * 1024;//最大尺寸1M
+editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;//最大尺寸1M
 editor.customConfig.uploadImgMaxLength = 5;//最多同时上传5张
 editor.customConfig.menus = [
     'head',  // 标题
