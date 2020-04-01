@@ -1,5 +1,6 @@
 package cn.niter.forum.provider;
 
+import cn.niter.forum.cache.TinifyPngCache;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.model.User;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -69,12 +71,33 @@ public class QCloudProvider {
     @Value("${qcloud.ci.enable}")
     private int ciEnable;
 
+    @Value("${tinify.enable}")
+    private int tinifyEnable;
+
+    @Value("${tinify.minContentLength}")
+    private Long tinifyMinContentLength;
+
+    @Autowired
+    private TinifyPngCache tinifyPngCache;
+
     public String upload(InputStream fileStream, String contentType, User user, String fileName , Long contentLength) {
+
+      /*  if("image/png".equals(contentType)&&tinifyEnable==1&&contentLength>tinifyMinContentLength){//进行图片质量压缩（png），若不处理请忽略
+            try {
+                fileStream = tinifyProvider.getStreamfromInputStream(fileStream);
+                contentLength = (long)fileStream.available();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }*/
 
         String initUrl = uploadtoBucket(fileStream,"img",contentType,user,fileName,contentLength);
         String imgUrl=initUrl;
-        //开启腾讯云数据万象后可以生成水印，进行图片审核，若不处理请忽略
-        if(ciEnable==1){
+        if("image/png".equals(contentType)&&tinifyEnable==1&&contentLength>tinifyMinContentLength){//进行图片质量压缩（png），若不处理请忽略
+            System.out.println("add:"+imgUrl);
+            tinifyPngCache.add(imgUrl,user,fileName);
+        }
+        if(ciEnable==1){//开启腾讯云数据万象后可以生成水印，进行图片审核与质量压缩（jpg），若不处理请忽略
             ImageInfo imageInfo = getImageInfo(imgUrl);
             //大于400*150才生成水印
             if(Integer.parseInt(imageInfo.getWidth())>400&&Integer.parseInt(imageInfo.getHeight())>150){
@@ -85,11 +108,13 @@ public class QCloudProvider {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                initUrl = initUrl+"?watermark/2/text/"+watermark+"/fill/IzNEM0QzRA/fontsize/18/dissolve/80/gravity/SouthEast/dx/20/dy/10/";
+                initUrl = initUrl+"?imageView2/q/75|watermark/2/text/"+watermark+"/fill/IzNEM0QzRA/fontsize/18/dissolve/80/gravity/SouthEast/dx/20/dy/10/";
                 imgUrl=uploadUrltoBucket(initUrl,"img",contentType,user,fileName);
             }
             imgUrl = imgUrl.replace(objecturl,ciObjecturl);
         }
+
+
         return imgUrl;
     }
 

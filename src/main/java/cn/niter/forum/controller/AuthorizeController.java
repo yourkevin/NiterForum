@@ -75,7 +75,8 @@ public class AuthorizeController {
 
     @Value("${qq.redirect.uri}")
     private String qqRedirectUri;
-
+    @Value("${qq.api.getUnionId}")
+    private int getQqUnionId;
 
     @Autowired
     private UserService userService;
@@ -204,10 +205,15 @@ public class AuthorizeController {
         if (qqUser != null && qqUser.getOpenId() != null) {
             User user = new User();
             UserInfo userInfo = new UserInfo();
+            if(getQqUnionId==1){
+                user.setQqAccountId(qqProvider.getUnionId(access_token));
+            }else{
+                user.setQqAccountId(openid);
+            }
             String token = UUID.randomUUID().toString();
             user.setName(qqUser.getNickname());
             user.setToken(token);
-            user.setQqAccountId(qqUser.getOpenId());
+            //user.setQqAccountId(qqUser.getOpenId());
             user.setAvatarUrl(qqUser.getFigureurl_qq());
             userInfo.setSex(qqUser.getGender());
             if(StringUtils.isBlank(qqUser.getProvince())) qqUser.setProvince("全部");

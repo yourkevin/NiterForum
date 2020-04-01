@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="~{common/header :: head}"></th:block>
+    <script type="text/javascript" src="https://jverification.jiguang.cn/scripts/jverification-web.min.js"></script>
+    <title>认证</title>
+</head>
+<body>
+<h1 id="jverification">JVerification example.</h1>
+<button onclick="init()">初始化</button><br />
+<button onclick="isInitSucc()">是否成功初始化</button><br />
+<button onclick="getToken()">获取token</button><br />
+<button onclick="getTokenFirst()">优先获取某运营商token，电信为例</button><br />
+<button onclick="checkVerifyEnable()">当前网络环境是否支持获取token</button><br />
+<hr>
+
+<button onclick="getService()">获取列表</button><br />
+<button onclick="authLoginQq()">登录qq</button><br />
+<button onclick="authLoginWeibo()">登录微博</button><br />
+<button onclick="authUserInfo()">获取用户信息</button><br />
+<button onclick="alertAuthService()">弹出登录对象属性</button><br />
+<button onclick="queryServer()">请求服务器</button><br />
+<button onclick="authLogout()">退出</button><br />
+</body>
+<script>
+    aqq=null;
+    aweibo=null;
+    var auths = {};
+    function getService(){
+        plus.oauth.getServices(function(services){
+            for(var i in services){
+                auths[services[i].id]=services[i];
+                alert(services[i].id);
+            }
+            aqq = auths['qq'];
+            aweibo=auths['sinaweibo'];
+            //var aaa='qq';
+            //alert("6666"+auths[aaa].id);
+
+        }, function(e){
+            plus.nativeUI.alert("获取登录授权服务列表失败："+JSON.stringify(e));
+        } );
+    }
+
+    function authorize(){
+        if(!aqq.id){
+            alert("当前环境不支持qq登录");
+            plus.nativeUI.alert("当前环境不支持qq登录");
+            return;
+        }
+        aqq.authorize(function(e){
+            alert("授权成功："+JSON.stringify(e));
+            plus.nativeUI.alert("授权成功："+JSON.stringify(e));
+        }, function(e){
+            alert("授权失败："+JSON.stringify(e));
+            plus.nativeUI.alert("授权失败："+JSON.stringify(e));
+        }, {scope:'get_user_info',state:'1',appid:'101859689',redirect_url:'https://niter.cn/callbackqq'});
+        alert("222");
+    }
+
+    function authLoginQq(){
+        if(!aqq){
+            plus.nativeUI.alert("当前环境不支持QQ登录");
+            return;
+        }
+        if(!aqq.authResult){
+            aqq.login(function(e){
+                plus.nativeUI.alert("登录认证成功!");
+            }, function(e){
+                plus.nativeUI.alert("登录认证失败: "+JSON.stringify(e));
+            },{scope:'get_user_info',state:'1',appid:'101859689',redirect_url:'https://niter.cn/callbackqq'});
+        }else{
+            plus.nativeUI.alert("已经登录认证!");
+        }
+    }
+    function authLoginWeibo(){
+        if(!aweibo){
+            plus.nativeUI.alert("当前环境不支持微博登录");
+            return;
+        }
+        if(!aweibo.authResult){
+            aweibo.login(function(e){
+                plus.nativeUI.alert("登录认证成功!");
+            }, function(e){
+                plus.nativeUI.alert("登录认证失败: "+JSON.stringify(e));
+            },{scope:'all',state:'1',appid:'2346150891',redirect_url:'https://niter.cn/callbackweibo'});
+        }else{
+            plus.nativeUI.alert("已经登录认证!");
+        }
+    }
+
+    function authUserInfo(){
+        if((!aqq)&&(!aweibo)){
+            plus.nativeUI.alert("当前环境不支持qq与微博登录");
+            return;
+        }
+        if(aqq.authResult){
+            aqq.getUserInfo( function(e){
+                plus.nativeUI.alert("获取用户信息成功："+JSON.stringify(aqq.userInfo));
+            }, function(e){
+                plus.nativeUI.alert("获取用户信息失败： "+JSON.stringify(e));
+            } );
+        }else if(aweibo.authResult){
+            aweibo.getUserInfo( function(e){
+                plus.nativeUI.alert("获取用户信息成功："+JSON.stringify(aweibo.userInfo));
+            }, function(e){
+                plus.nativeUI.alert("获取用户信息失败： "+JSON.stringify(e));
+            } );
+        }
+        else {
+            plus.nativeUI.alert("未登录认证!");
+        }
+    }
+    function alertAuthService() {
+        if(aqq){
+          alert(JSON.stringify(aqq));
+        }
+        if(aweibo){
+            alert(JSON.stringify(aweibo));
+        }
+
+    }
+    function authLogout(){
+        if((!aqq.authResult)&&(!aweibo.authResult)){
+            plus.nativeUI.alert("当前不需要退出");
+            return;
+        }
+        if(aqq.authResult){
+            aqq.logout(function(e){
+            plus.nativeUI.alert("注销登录认证成功!");
+        }, function(e){
+            plus.nativeUI.alert("注销登录认证失败: "+JSON.stringify(e));
+        });
+        } else if(aweibo.authResult){
+            aweibo.logout(function(e){
+                plus.nativeUI.alert("注销登录认证成功!");
+            }, function(e){
+                plus.nativeUI.alert("注销登录认证失败: "+JSON.stringify(e));
+            });
+        }
+
+    }
+
+    function queryServer(){
+        $.ajax({
+            type:"POST",
+            url:"/api/oauthLogin",
+            dataType:"json",
+            contentType:"application/json",
+            data:JSON.stringify(aweibo),
+            success:function(data){
+                if(data.code==0){
+                    alert(data.msg);
+                }
+                else if(data.token!=null&&data.token!=''){
+                    window.location.href='/registerorLoginWithMailisOk?token='+data.token;
+                }
+            }
+        });
+
+    }
+
+
+
+    function plusReady(){
+        //getService();
+        //authorize();
+       // authLogin();
+     }
+    if(window.plus){
+        plusReady();
+    }else{
+        document.addEventListener('plusready',plusReady,false);
+    }
+</script>
+<script>
+    function init() {
+        window.JVerificationInterface.init({
+            appkey: "8f93869b8e34ea50a8efa39b", // 极光官网中创建应用后分配的 appkey，必填
+            debugMode: true,// 设置是否开启 debug 模式。true 则会打印更多的日志信息。设置 false 则只会输出 w、e 级别的日志
+            fail: function(data) {
+                console.error("JVerificationInterface init fail:"+JSON.stringify(data))
+            }, success: function(data) {
+                console.log("JVerificationInterface init success:"+JSON.stringify(data))
+            } })
+    }
+
+    function isInitSucc(params) {
+        // 是否成功初始化
+        var succ =window.JVerificationInterface.isInitSuccess()
+        alert(succ)
+    }
+
+
+    function getToken() {
+        // 获取运营商token，默认尝试顺序：移动>联通>电信
+        // 实际使用中建议在初始化成功回掉中调用此接口
+        window.JVerificationInterface.getToken({
+            fail: function(data)  {
+                console.error("JVerificationInterface getToken fail:"+JSON.stringify(data))
+            }, success: function(data)  {
+                var token = data.content;
+                console.log("JVerificationInterface getToken success:"+token)
+            }
+        })
+    }
+
+    function getTokenFirst() {
+        // 修改获取运营商token尝试顺序，以下为优先尝试获取电信token示例
+        // 实际使用中建议在初始化成功回掉中调用此接口
+        window.JVerificationInterface.getToken({
+            operater:"CT",//可填 移动：CM，联通：CU，电信：CT
+            fail: function(data)  {
+                console.error("JVerificationInterface getToken fail:"+JSON.stringify(data))
+            }, success: function(data)  {
+                var token = data.content;
+                console.log("JVerificationInterface getToken success:"+token)
+            }
+        })
+    }
+
+    function checkVerifyEnable() {
+        // 当前网络环境是否支持获取token
+        var enable =window.JVerificationInterface.checkVerifyEnable()
+        alert(enable)
+    }
+
+</script>
+</html>

@@ -12,4 +12,5 @@ public class QqUserDTO {
     private String city;
     private String year;
     private String constellation;
+
 }

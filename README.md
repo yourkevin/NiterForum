@@ -5,7 +5,7 @@
  
  [NiterApp（欢迎下载体验）](https://m3w.cn/niter "欢迎下载")。完美适配了NiterForum，支持app端扫码登录！
 ## 在线体验
-[https://niter.cn/](https://niter.cn/ "https://niter.cn/")
+[https://niter.cn/forum](https://niter.cn/forum "https://niter.cn/")
 
 ## 技术栈
 1. SpringBoot框架。
@@ -87,7 +87,7 @@ JDK，Maven
 
 ## 项目演示
 
-更多演示，请移步：[https://niter.cn/](https://niter.cn/) 
+更多演示，请移步：[https://niter.cn/forum](https://niter.cn/forum) 
 
 ## 目录结构
    ```
@@ -112,7 +112,7 @@ JDK，Maven
 
 尼特社区官方交流群：[955295791](https://jq.qq.com/?_wv=1027&k=5uPXrY2 "欢迎加入")
 
-官方交流社区：[https://niter.cn/](https://niter.cn/ "欢迎交流")
+官方交流社区：[https://niter.cn/forum](https://niter.cn/forum "欢迎交流")
 
 更新日志：[https://niter.cn/p/26](https://niter.cn/p/26/ "欢迎订阅")
 

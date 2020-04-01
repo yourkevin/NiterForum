@@ -170,9 +170,7 @@ public class QuestionService {
 
     public String getShortDescription(String description,Long id){
         String shortDescription = description;
-
-        //System.out.println(imgSrc);
-        shortDescription = shortDescription.replaceAll("<p id=\"descriptionP\" class=\"video\">","" );
+       /* shortDescription = shortDescription.replaceAll("<p id=\"descriptionP\" class=\"video\">","" );
         shortDescription = shortDescription.replaceAll("<p class=\"video\" id=\"descriptionP\">","" );
         shortDescription = shortDescription.replaceAll("<p id=\"descriptionP\">", "");
         shortDescription = shortDescription.replaceAll("</p>", "<br>");//去除&nbsp;
@@ -186,20 +184,21 @@ public class QuestionService {
         shortDescription = shortDescription.replaceAll("<p><br></p>", "");//去除&nbsp;
         shortDescription = shortDescription.replaceAll("<p><br>", "<p>");//去除&nbsp;
         shortDescription = shortDescription.replaceAll("<br></p>", "</p>");//去除&nbsp;
-       // shortDescription = shortDescription.replaceAll("<br>", "</br>");//去除&nbsp;
-        // shortDescription = shortDescription.replaceAll("</?[^>]+>", ""); //剔出<html>的标签
         shortDescription = shortDescription.replaceAll("(?!<(br|p|img).*?>)<.*?>", ""); //剔出指定标签外的<iframe>的标签
-        List<String> imgSrc = getHtmlImageSrcList(shortDescription);
-        shortDescription = shortDescription.replaceAll("(?!<(br|p).*?>)<.*?>", ""); //剔出指定标签外的<html>的标签
-        //  shortDescription = shortDescription.replaceAll("<a>\\s*|\t|\r|\n</a>", "");//去除字符串中的空格,回车,换行符,制表符
-
+        */
+       List<String> imgSrc = getHtmlImageSrcList(shortDescription);
+        /*shortDescription = shortDescription.replaceAll("(?!<(br|p).*?>)<.*?>", ""); //剔出指定标签外的<html>的标签
         shortDescription = shortDescription.replaceAll("&nbsp;", "");//去除&nbsp;
         shortDescription = shortDescription.replaceAll("&nbsp;", "");//去除&nbsp;
-
         shortDescription = shortDescription.replaceAll("<pre>", "");
-        shortDescription = shortDescription.replaceAll("</pre>", "");
-        if(shortDescription.length()>200) shortDescription=shortDescription.substring(0,200)+"...";
-        if(imgSrc.size()>0) shortDescription=shortDescription+"<img src=\""+imgSrc.get(0)+"\">";
+        shortDescription = shortDescription.replaceAll("</pre>", "");*/
+        shortDescription = shortDescription.replaceAll("</?[^>]+>", "&nbsp;"); //剔出<html>的标签
+        shortDescription = shortDescription.replaceAll("<a>\\s*|\t|\r|\n</a>", "&nbsp;");//去除字符串中的空格,回车,换行符,制表符
+        if(shortDescription.length()>400) shortDescription=shortDescription.substring(0,400)+"...";
+        if(imgSrc.size()==1) shortDescription=shortDescription+"<br><img style=\"max-width:49%;max-height:300px\" src=\""+imgSrc.get(0)+"\">";
+        else if(imgSrc.size()>1){
+            shortDescription=shortDescription+"<br><img style=\"max-width:49%;max-height:300px\" src=\""+imgSrc.get(0)+"\"><img style=\"max-width:49%;max-height:300px\" src=\""+imgSrc.get(1)+"\">";
+        }
         return shortDescription;
     }
 

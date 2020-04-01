@@ -6,10 +6,8 @@
   <script src="/js/community.js" type="application/javascript"></script>
   <script src="https://community-1251590924.cos.ap-hongkong.myqcloud.com/js/moment.js" type="application/javascript"></script>
 </head>
-<body style="margin-top: 65px;">
-
-<div th:insert="~{common/header :: nav}"></div>
-
+<body style="margin-top: 0px">
+<div th:insert="~{common/header :: nav}" style="margin-top: 61px" class="html5plus-hide"></div>
 
 <div class="fly-home fly-panel" style="background-image: url('https://api.lli.cx/bing/api.php');">
   <img th:src="${user.getAvatarUrl()}" th:alt="${user.getName()}" >
@@ -91,7 +89,8 @@
         </div>
       </div>
     </div>
-    
+
+
     <div class="layui-col-md6 fly-home-da">
       <div class="fly-panel">
         <h3 class="fly-panel-title">贤心 最近的回答</h3>
@@ -104,7 +103,7 @@
           <div class="home-dacontent">
             尝试给layer.photos加上这个属性试试：
 <pre>
-full: true         
+full: true
 </pre>
             文档没有提及
           </div>
@@ -118,15 +117,14 @@ full: true
             Fly社区采用的是NodeJS。分享出来的只是前端模版
           </div>
         </li>
-        
+
           <!-- <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><span>没有回答任何问题</span></div> -->
         </ul>
       </div>
     </div>
+
   </div>
 </div>
-
-
 <th:block th:insert="~{common/footer :: foot}"></th:block>
 <script>
 layui.cache.page = 'user';

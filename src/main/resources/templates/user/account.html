@@ -125,10 +125,12 @@
                             <i class="iconfont icon-qq"></i>
                             <th:block th:if="${session.user.qqAccountId!=null}">
                                 <span>已成功绑定，您可以使用QQ帐号直接登录尼特社区，当然，您也可以</span>
-                                <a th:href="${'https://graph.qq.com/oauth2.0/authorize?client_id='+@environment.getProperty('qq.client.id')+'&redirect_uri='+@environment.getProperty('qq.redirect.uri')+'&response_type=code&state=1'}" class="">更换绑定</a>
+                                <a href="javascript:authLoginQq();" class="html5plus-display" title="更换qq账号" style="display: none">更换绑定</a>
+                                <a th:href="${'https://graph.qq.com/oauth2.0/authorize?client_id='+@environment.getProperty('qq.client.id')+'&redirect_uri='+@environment.getProperty('qq.redirect.uri')+'&response_type=code&state=1'}" class="html5plus-hide">更换绑定</a>
                             </th:block>
                             <th:block th:if="${session.user.qqAccountId==null}">
-                                <a th:href="${'https://graph.qq.com/oauth2.0/authorize?client_id='+@environment.getProperty('qq.client.id')+'&redirect_uri='+@environment.getProperty('qq.redirect.uri')+'&response_type=code&state=1'}" onclick="layer.msg('正在绑定QQ', {icon:16, shade: 0.1, time:0})" class="acc-bind" type="qq_id">立即绑定</a>
+                                <a th:href="${'https://graph.qq.com/oauth2.0/authorize?client_id='+@environment.getProperty('qq.client.id')+'&redirect_uri='+@environment.getProperty('qq.redirect.uri')+'&response_type=code&state=1'}" onclick="layer.msg('正在绑定QQ', {icon:16, shade: 0.1, time:0})" class="acc-bind html5plus-hide" type="qq_id">立即绑定</a>
+                                <a href="javascript:authLoginQq();" class="acc-bind html5plus-display" style="display: none" type="qq_id"  onclick="layer.msg('正在绑定qq', {icon:16, shade: 0.1, time:0})">立即绑定</a>
                                 <span>，即可使用QQ帐号登录尼特社区</span>
                             </th:block>
                         </li>
@@ -136,10 +138,12 @@
                             <i class="iconfont icon-weibo"></i>
                             <th:block th:if="${session.user.weiboAccountId!=null}">
                                 <span>已成功绑定，您可以使用微博账号直接登录尼特社区，当然，您也可以</span>
-                                <a th:href="${'https://api.weibo.com/oauth2/authorize?client_id='+@environment.getProperty('weibo.client.id')+'&redirect_uri='+@environment.getProperty('weibo.redirect.uri')+'&response_type=code&state=1&scope=all'}" >更换绑定</a>
+                                <a href="javascript:authLoginWeibo();" class="html5plus-display" title="更换微博账号" style="display: none">更换绑定</a>
+                                <a th:href="${'https://api.weibo.com/oauth2/authorize?client_id='+@environment.getProperty('weibo.client.id')+'&redirect_uri='+@environment.getProperty('weibo.redirect.uri')+'&response_type=code&state=1&scope=all'}" class="html5plus-hide">更换绑定</a>
                             </th:block>
                             <th:block th:if="${session.user.weiboAccountId==null}">
-                                <a th:href="${'https://api.weibo.com/oauth2/authorize?client_id='+@environment.getProperty('weibo.client.id')+'&redirect_uri='+@environment.getProperty('weibo.redirect.uri')+'&response_type=code&state=1&scope=all'}" class="acc-weibo" type="weibo_id"  onclick="layer.msg('正在绑定微博', {icon:16, shade: 0.1, time:0})" >立即绑定</a>
+                                <a href="javascript:authLoginWeibo();" class="acc-weibo html5plus-display" style="display: none" type="weibo_id"  onclick="layer.msg('正在绑定微博', {icon:16, shade: 0.1, time:0})">立即绑定</a>
+                                <a th:href="${'https://api.weibo.com/oauth2/authorize?client_id='+@environment.getProperty('weibo.client.id')+'&redirect_uri='+@environment.getProperty('weibo.redirect.uri')+'&response_type=code&state=1&scope=all'}" class="acc-weibo html5plus-hide" type="weibo_id"  onclick="layer.msg('正在绑定微博', {icon:16, shade: 0.1, time:0})" >立即绑定</a>
                                 <span>，即可使用微博帐号登录尼特社区</span>
                             </th:block>
                         </li>
@@ -375,7 +379,133 @@
         vaptchaObj.render()// 调用验证实例 vaptchaObj 的 render 方法加载验证按钮
     })
 </script>
-<!--script src="/js/vaptcha.js" type="application/javascript"></script-->
+<script type="text/javascript">
+    aqq=null;
+    aweibo=null;
+    var auths = {};
+    function getService(){
+        plus.oauth.getServices(function(services){
+            for(var i in services){
+                auths[services[i].id]=services[i];
+                //alert(services[i].id);
+            }
+            aqq = auths['qq'];
+            aweibo=auths['sinaweibo'];
+            //var aaa='qq';
+            //alert("6666"+auths[aaa].id);
+            authLogout();
+        }, function(e){
+            plus.nativeUI.alert("获取登录授权服务列表失败："+JSON.stringify(e));
+        } );
+    }
+
+    function authLoginQq(){
+        if(!aqq){
+            plus.nativeUI.alert("当前环境不支持QQ登录");
+            return;
+        }
+        if(!aqq.authResult){
+            aqq.login(function(e){
+                //plus.nativeUI.alert("登录认证成功!");
+                aqq.getUserInfo( function(e){
+                    queryServer('qq');
+                }, function(e){
+                    plus.nativeUI.alert("获取用户信息失败： "+JSON.stringify(e));
+                } );
+            }, function(e){
+                plus.nativeUI.alert("登录认证失败: "+JSON.stringify(e));
+            },{scope:'get_user_info',state:'1',appid:'101859689',redirect_url:'https://niter.cn/callbackqq'});
+        }else{
+            //plus.nativeUI.alert("已经登录认证!");
+            queryServer('qq');
+        }
+    }
+    function authLoginWeibo(){
+        if(!aweibo){
+            plus.nativeUI.alert("当前环境不支持微博登录");
+            return;
+        }
+        if(!aweibo.authResult){
+            aweibo.login(function(e){
+                //plus.nativeUI.alert("登录认证成功!");
+                aweibo.getUserInfo( function(e){
+                    queryServer('weibo');
+                }, function(e){
+                    plus.nativeUI.alert("获取用户信息失败： "+JSON.stringify(e));
+                } );
+
+                //authLogout();
+            }, function(e){
+                plus.nativeUI.alert("登录认证失败: "+JSON.stringify(e));
+            },{scope:'all',state:'1',appid:'2346150891',redirect_url:'https://niter.cn/callbackweibo'});
+        }else{
+            //plus.nativeUI.alert("已经登录认证!");
+            queryServer('weibo');
+        }
+    }
+
+    function authLogout(){
+        if((!aqq.authResult)&&(!aweibo.authResult)){
+            //plus.nativeUI.alert("当前不需要退出");
+            return;
+        }
+        if(aqq.authResult){
+            aqq.logout(function(e){
+                //plus.nativeUI.alert("注销登录认证成功!");
+            }, function(e){
+                //plus.nativeUI.alert("注销登录认证失败: "+JSON.stringify(e));
+            });
+        } else if(aweibo.authResult){
+            aweibo.logout(function(e){
+                //plus.nativeUI.alert("注销登录认证成功!");
+            }, function(e){
+                //plus.nativeUI.alert("注销登录认证失败: "+JSON.stringify(e));
+            });
+        }
+
+    }
+
+    function queryServer(service){
+        if('weibo'==service) var sdata=JSON.stringify(aweibo);
+        else if('qq'==service) var sdata=JSON.stringify(aqq);
+        // alert("sdata"+sdata);
+        $.ajax({
+            type:"POST",
+            url:"/api/oauthLogin",
+            dataType:"json",
+            contentType:"application/json",
+            data:sdata,
+            success:function(data){
+                if(data.code==0){
+                    alert("错误："+data.msg);
+                }
+                else if(data.token!=null&&data.token!=''){
+                    //alert(data.token);
+                    window.location.href='/registerorLoginWithMailisOk?token='+data.token;
+                }
+                else alert("else:未知错误");
+            },
+            error:function(data){
+                alert("error");
+            }
+        });
+    }
+
+    function plusReady(){
+        getService();
+        //authLogout();
+    }
+    if(window.plus){
+        plusReady();
+    }else{
+        document.addEventListener('plusready',plusReady,false);
+    }
+
+
+
+
+
+</script>
 <script type="text/javascript">
     isValid=0;//是否可以发送验证码
     var InterValObj; //timer变量，控制时间

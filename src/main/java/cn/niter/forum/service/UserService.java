@@ -201,6 +201,11 @@ public class UserService {
         return user;
     }
 
+    public User selectUserByUserId(Long userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        return user;
+    }
+
     public Object updateUserMailById(String userId,String mail) {
         UserExample userExample = new UserExample();
         userExample.createCriteria()

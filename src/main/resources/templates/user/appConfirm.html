@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="~{common/header :: head}"></th:block>
+    <title th:text="${'登录授权'+@environment.getProperty('site.main.titleInfo')}"></title>
+</head>
+
+<body>
+
+
+<div class="" style="text-align: center">
+    <img id="appConfirm-img" src="/images/other/appConfirming.png" style="max-width: 80%">
+    <br>
+    <span>尼特IT网页版登录确认</span>
+    <br>
+    <span style="opacity: 0.6">为保护您的账户安全，请确认是本人操作</span>
+    <br>
+    <a id="appConfirm-a" class="layui-btn layui-btn-radius layui-btn-primary layui-btn-fluid" href="javascript:confirm()" style="color: red">我已知悉，确认登录 </a>
+</div>
+
+
+<script type="text/javascript">
+
+    function confirm() {
+        var qrcodeStr='[[${qrcodeStr}]]';
+        $.ajax({
+            type: "post",
+            url: "/sso/putQrcodeStr",
+            ContentType: "application/json",
+            CacheControl: "no-cache",
+            data:{
+                qrcodeStr:qrcodeStr
+            },
+            //  dataType: "json",
+            success: function(data) {
+                if(data.success==1){
+                    document.getElementById('appConfirm-img').src = "/images/other/appConfirm.png" ;
+                    document.getElementById('appConfirm-a').textContent="已完成授权，请留言网页端" ;
+                    document.getElementById('appConfirm-a').style="color: green" ;
+                    document.getElementById('appConfirm-a').href="#";
+                }
+                else if(data.success==0){
+                    // alert(this.userIp)
+                    swal({
+                        title: ""+data.msg,
+                        text: "服务器未能取得响应，请稍后再试",
+                        icon: "error",
+                        button: "确认",
+                    });
+                    //vaptchaObj.reset();
+                }
+            },
+            error: function(msg) {
+                console.log(msg)
+            }
+        })
+
+    }
+</script>
+
+</body>
+
+</html>
