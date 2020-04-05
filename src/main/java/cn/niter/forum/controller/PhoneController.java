@@ -1,5 +1,6 @@
 package cn.niter.forum.controller;
 
+import cn.niter.forum.cache.IpLimitCache;
 import cn.niter.forum.dto.ResultDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.model.User;
@@ -21,11 +22,19 @@ public class PhoneController {
 
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private IpLimitCache ipLimitCache;
     @ResponseBody//@ResponseBody返回json格式的数据
-    @RequestMapping(value = "/phone/getPhoneCode", method = RequestMethod.GET)
-    public Object getPhoneCode(@RequestParam("phone") String phone){
-        //  System.out.println("mail:"+mail);
+    @RequestMapping(value = "/phone/getPhoneCode", method = RequestMethod.POST)
+    public Object getPhoneCode(@RequestParam("phone") String phone,
+                               @RequestParam("ip") String ip,
+                               @RequestParam("token") String token){
+
+        if((!token.equals(ipLimitCache.getInterval(ip)))||ipLimitCache.showIpScores(ip)>=100){
+            ipLimitCache.addIpScores(ip,20);
+            return ResultDTO.errorOf(CustomizeErrorCode.SEND_PHONE_FAILED);
+        }
+        ipLimitCache.addIpScores(ip,10);
         // TODO 自动生成的方法存根
         try {
             String jsonString = JiGuangProvider.testSendSMSCode(phone);
@@ -47,7 +56,7 @@ public class PhoneController {
             System.out.println(e.getMessage());
 
         }
-        return ResultDTO.errorOf(CustomizeErrorCode.SEND_MAIL_FAILED);
+        return ResultDTO.errorOf(CustomizeErrorCode.SEND_PHONE_FAILED);
     }
 
     @ResponseBody//@ResponseBody返回json格式的数据

@@ -1,5 +1,6 @@
 package cn.niter.forum.controller;
 
+import cn.niter.forum.cache.IpLimitCache;
 import cn.niter.forum.dto.ResultDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
@@ -7,6 +8,7 @@ import cn.niter.forum.model.User;
 import cn.niter.forum.service.UserService;
 import cn.niter.forum.util.JavaMailUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,11 @@ public class MailController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private IpLimitCache ipLimitCache;
+
+    @Value("${site.main.title}")
+    private String siteTitle;
 
     @GetMapping("/profile/regmail")
     public String hello(HttpServletRequest request) {
@@ -34,12 +41,22 @@ public class MailController {
 
 
     @ResponseBody//@ResponseBody返回json格式的数据
-    @RequestMapping(value = "/mail/getMailCode", method = RequestMethod.GET)
-    public Object getMailCode(@RequestParam("username") String username,
-                              @RequestParam("mail") String mail){
-      //  System.out.println("mail:"+mail);
+    @RequestMapping(value = "/mail/getMailCode", method = RequestMethod.POST)
+    public Object getMailCode(@RequestParam(name="username",required = false) String username,
+                              @RequestParam("mail") String mail,
+                              @RequestParam("ip") String ip,
+                              @RequestParam("token") String token){
+        if((!token.equals(ipLimitCache.getInterval(ip)))||(ipLimitCache.showIpScores(ip)>=100)){
+            ipLimitCache.addIpScores(ip,10);
+            return ResultDTO.errorOf(CustomizeErrorCode.SEND_MAIL_FAILED);
+        }
+        /*System.out.println("token"+ipLimitCache.get(ip));
+        System.out.println("ExpectedExpiration:"+ipLimitCache.getInterval().getExpectedExpiration(ip));
+        System.out.println("Expiration:"+ipLimitCache.getInterval().getExpiration(ip));
+        System.out.println("ip:"+ip+"-token:"+token);*/
         // TODO 自动生成的方法存根
-        try {
+       try {
+            if(username==null) username=siteTitle;
             JavaMailUtils.setUserName(username);
             JavaMailUtils.setReceiveMailAccount(mail);
             JavaMailUtils.send();
@@ -50,6 +67,7 @@ public class MailController {
             System.out.println(e.getMessage());
             return ResultDTO.errorOf(CustomizeErrorCode.SEND_MAIL_FAILED);
         }
+
 
     }
 

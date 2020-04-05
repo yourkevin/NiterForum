@@ -1,8 +1,10 @@
 package cn.niter.forum.controller;
 
+import cn.niter.forum.cache.IpLimitCache;
 import cn.niter.forum.dto.ValidateDTO;
 import cn.niter.forum.provider.VaptchaProvider;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,6 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ValidateController {
+
+    @Autowired
+    private IpLimitCache ipLimitCache;
 
     @ResponseBody//@ResponseBody返回json格式的数据
     @RequestMapping(value = "/validate", method = RequestMethod.POST)
@@ -22,7 +27,15 @@ public class ValidateController {
         validateDTO.setId("5d807776fc650fd878051c24");
         validateDTO.setSecretkey("0758d7dab2674d5c8e4e003cf16c4558");
         validateDTO.setToken(token);*/
-        //System.out.println("token:"+token+"scene:"+scene+"ip:"+ip);
+        System.out.println("token:"+token+"scene:"+scene+"ip:"+ip);
+        if(ipLimitCache.putInterval(ip, token)==0) {
+            ipLimitCache.addIpScores(ip,10);
+            ValidateDTO validateDTO = new ValidateDTO();
+            validateDTO.setMsg("请勿反复验证，1分钟后再试");
+            validateDTO.setSocre(100);
+            validateDTO.setSuccess(0);
+            return validateDTO;
+        }
         String json = VaptchaProvider.getValidateResult(token,scene,ip);
 
         JSONObject obj = JSONObject.parseObject(json);
