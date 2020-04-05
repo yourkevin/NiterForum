@@ -88,10 +88,10 @@
 <script type="text/javascript">
     function myPlusShare() {
         window.plusShare({
-            title: "尼特IT",//应用名字
-            content: '我在尼特IT看到一篇新鲜的资讯《'+document.title+'》，你也来看看吧！---'+this.location.href+' ',
+            title: document.title,//应用名字
+            content: '我在尼特IT看到一篇新鲜的资讯《'+document.title+'》，你也来看看吧！--- ',
             href: location.href,//分享出去后，点击跳转地址
-            thumbs: ["http://m.example.com/imgs/1.png"] //分享缩略图
+            thumbs: ["https://niter.cn/images/N80.png"] //分享缩略图
         }, function(result) {
             //分享回调
         });  }
@@ -117,7 +117,7 @@
         version: "3.0.0"
         ,base: '/mods/'
     }).extend({
-        fly: 'index'
+        fly: 'index2'
     }).use(['fly', 'face'], function(){
         var $ = layui.$
             ,fly = layui.fly;

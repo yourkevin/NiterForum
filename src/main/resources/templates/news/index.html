@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/community.css">
     <link rel="stylesheet" href="/css/t-global.css">
 
-    <title th:text="${@environment.getProperty('site.main.title')}"></title>
+    <title th:text="${'资讯-'+@environment.getProperty('site.main.title')}"></title>
 </head>
 <body>
 
@@ -94,7 +94,7 @@
         version: "3.0.0"
         ,base: '/mods/'  //这里实际使用时，建议改成绝对路径
     }).extend({
-        fly: 'index'
+        fly: 'index2'
     }).use(['fly','flow','layer'], function() {
 
         var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
