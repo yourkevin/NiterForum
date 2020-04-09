@@ -30,7 +30,7 @@ public class TagCache {
 
         TagDTO server = new TagDTO();
         server.setCategoryName("服务器");
-        server.setTags(Arrays.asList("tomcat", "linux", "nginx", "docker", "apache", "ubuntu", "centos", "缓存 tomcat", "负载均衡", "unix", "hadoop", "windows-server"));
+        server.setTags(Arrays.asList("tomcat", "linux", "nginx", "docker", "apache", "ubuntu", "centos", "缓存", "负载均衡", "unix", "hadoop", "windows-server"));
         tagDTOS.add(server);
 
         TagDTO db = new TagDTO();

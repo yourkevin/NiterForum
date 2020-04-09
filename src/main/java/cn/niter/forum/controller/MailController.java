@@ -1,6 +1,7 @@
 package cn.niter.forum.controller;
 
 import cn.niter.forum.cache.IpLimitCache;
+import cn.niter.forum.cache.TemporaryCache;
 import cn.niter.forum.dto.ResultDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
@@ -25,6 +26,8 @@ public class MailController {
     private UserService userService;
     @Autowired
     private IpLimitCache ipLimitCache;
+    @Autowired
+    private TemporaryCache temporaryCache;
 
     @Value("${site.main.title}")
     private String siteTitle;
@@ -60,6 +63,7 @@ public class MailController {
             JavaMailUtils.setUserName(username);
             JavaMailUtils.setReceiveMailAccount(mail);
             JavaMailUtils.send();
+            temporaryCache.putMailCode(mail,JavaMailUtils.code);
             return ResultDTO.okOf(JavaMailUtils.code);
         } catch (Exception e) {
             // TODO 自动生成的 catch 块
@@ -72,20 +76,24 @@ public class MailController {
     }
 
     @ResponseBody//@ResponseBody返回json格式的数据
-    @RequestMapping(value = "/mail/submitMail", method = RequestMethod.GET)
+    @RequestMapping(value = "/mail/submitMail", method = RequestMethod.POST)
     public Object submitMail(@RequestParam("id") String id,
-                              @RequestParam("mail") String mail){
-        //  System.out.println("mail:"+mail);
-        // TODO 自动生成的方法存根
+                              @RequestParam("mail") String mail,
+                             @RequestParam("code") String code){
+        if(!code.equals(temporaryCache.getMailCode(mail)))
+            return ResultDTO.errorOf("验证码不匹配，可能已经超过5分钟，请重试");        // TODO 自动生成的方法存根
            return userService.updateUserMailById(id,mail);
     }
 
     @ResponseBody//@ResponseBody返回json格式的数据
-    @RequestMapping(value = "/mail/registerOrLoginWithMail", method = RequestMethod.GET)
+    @RequestMapping(value = "/mail/registerOrLoginWithMail", method = RequestMethod.POST)
     public Object registerOrLoginWithMail(
                              @RequestParam("mail") String mail,
-                                          HttpServletResponse response){
+                             @RequestParam("code") String code){
         //  System.out.println("mail:"+mail);
+        if(!code.equals(temporaryCache.getMailCode(mail)))
+            return ResultDTO.errorOf("验证码不匹配，可能已经超过5分钟，请重试");
+
         String token = UUID.randomUUID().toString();
       //  Cookie cookie = new Cookie("token", token);
        // cookie.setMaxAge(60 * 60 * 24 * 30 * 6);

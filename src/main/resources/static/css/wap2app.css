@@ -3,7 +3,7 @@ margin-top: 0px;
 }
 
 .html5plus .html5plus-hide {
-    display: none
+    display: none!important;
 }
 
 .html5plus .html5plus-display {

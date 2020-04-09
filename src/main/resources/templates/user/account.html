@@ -44,7 +44,7 @@
                         <div class="layui-form-item">
                             <label for="phone" class="layui-form-label">手机号</label>
                             <div class="layui-input-inline">
-                                <input type="text" id="phone" name="phone" placeholder="请输入您需要绑定的手机号" th:value="${session.user.phone}" required lay-verify="required" autocomplete="off" class="layui-input">
+                                <input type="text" id="phone" name="phone" placeholder="请输入您需要绑定的手机号" th:value="${session.user.phone}" required lay-verify="phone" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-form-mid layui-word-aux">
                                 11位大陆地区手机号，可修改换绑
@@ -87,7 +87,7 @@
                     <div class="layui-form-item">
                         <label for="mail" class="layui-form-label">邮箱号</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="mail" name="mail" placeholder="请输入您需要绑定的邮箱号" th:value="${session.user.email}" required lay-verify="required" autocomplete="off" class="layui-input">
+                            <input type="text" id="mail" name="mail" placeholder="请输入您需要绑定的邮箱号" th:value="${session.user.email}" required lay-verify="email" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-form-mid layui-word-aux">
                             请输入正确的邮箱号，可修改换绑
@@ -182,7 +182,7 @@
 </div>
 
 <th:block th:insert="~{common/footer :: foot}"></th:block>
-
+<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
 <script>
     layui.cache.page = 'user';
     layui.cache.user = {
@@ -215,7 +215,23 @@
                 icon: "error",
                 button: "确认",
             });
+        }else if(token == ''||vaptchaObj6==null) {
+            swal({
+                title: "哎哟...",
+                text: "请先完成人机验证再提交哦!",
+                icon: "error",
+                button: "确认",
+            });
         } else {
+            var username = $("#username").val();
+            var mail = $("#mail").val();
+            var reg = new RegExp("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$");
+            if(!reg.test(mail)){
+                layer.msg("邮箱不合法");
+                return false;
+            }
+
+
             isValid == 0
             curCount = count;
             $("#btnSendCode").attr("disabled", "true");
@@ -224,30 +240,29 @@
             InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
 
             //  console.log(obj2.getToken());
-            var username = $("#username").val();
-            var mail = $("#mail").val();
-//if(phone.length!=11) {sweetAlert("哎哟...", "手机号长度不合法！请重新输入!", "error");return;}
-            $.getJSON(
-                "/mail/getMailCode",
-                "mail=" + mail + "&&username=" + username,
-                function (result) {
-                    if (result.code == 2030) {
-                        swal({
-                            title: "哎哟...",
-                            text: "" + result.message,
-                            icon: "error",
-                            button: "确认",
-                        });
-                        //vaptchaObj.reset();
-                    } else {
-                        code = result.message;
-                        sweetAlert("请耐心等待", "验证码已发送成功!", "info");
-                        $('#mail').attr("disabled", "disabled");
 
-                    }
-                },
-                "text"//xml,json,text或不写
-            );
+//if(phone.length!=11) {sweetAlert("哎哟...", "手机号长度不合法！请重新输入!", "error");return;}
+            $.post('/mail/getMailCode', {
+                mail:mail,
+                username:username,
+                token:token,
+                ip:userIp
+            }, function(result){
+                if (result.code == 2030) {
+                    swal({
+                        title: "哎哟...",
+                        text: "" + result.message,
+                        icon: "error",
+                        button: "确认",
+                    });
+                    //vaptchaObj.reset();
+                } else {
+                    sessionStorage.setItem("code", result.message);
+                    sweetAlert("请耐心等待", "验证码已发送成功!", "info");
+                    $('#mail').attr("disabled", "disabled");
+
+                }
+            });
             // alert(phone+"1111"+username);
         }
     }
@@ -271,7 +286,39 @@
         var id = $("#id").val();
         var mail = $("#mail").val();
 //alert(verifyCode+"----"+code);
-        if(verifyCode==code){
+        if(verifyCode==sessionStorage.getItem("code")){
+            $.post('/mail/submitMail', {
+                mail:mail,
+                code:verifyCode,
+                id:id
+            }, function(result){
+                if(result.code==200){
+
+                    swal({
+                        title: "绑定成功!",
+                        text: "邮箱绑定成功，刷新后可查看绑定状态!",
+                        icon: "success",
+                        button: "好的!",
+                    }).then((value) => {
+                        window.location.href='/user/set/account#email';
+                });
+                    // alert("手机号绑定成功，将为您跳转至首页");
+                    // window.location.href='../index.jsp';
+                }
+
+                else   {
+                    sweetAlert("哎哟...", "绑定失败，可能该号码已在其他账号上绑定。请刷新后重试！", "error");
+                    swal({
+                        title: "绑定失败!",
+                        text: ""+result.message,
+                        icon: "error",
+                        button: "确认",
+                    });
+                }
+            });
+
+
+           /*
             $.getJSON(
                 "/mail/submitMail",
                 "mail="+mail+"&&id="+id,
@@ -301,7 +348,10 @@
                     }
                 },
                 "text"//xml,json,text或不写
-            ); }
+            ); */
+
+
+        }
         else
             swal({
                 title: "验证失败!",
@@ -319,53 +369,44 @@
         scene:1,                //场景值01，即邮箱注册
         offline_server: '/validateOffline' //离线模式服务端地址
     }).then(function (vaptchaObj) {
-        // obj2=vaptchaObj;
+        vaptchaObj6=vaptchaObj;
         vaptchaObj.listen('pass', function() {
-            // 验证成功， 进行登录操作
-            // console.log(vaptchaObj.getToken());
-            //getCode();
+            token=vaptchaObj.getToken();
+            userIp=returnCitySN["cip"];
+            console.log(userIp);
             $.ajax({
-                type: "get",
-                url: "/getIp",
+                type: "post",
+                url: "/validate",
                 ContentType: "application/json",
                 CacheControl: "no-cache",
+                data:{
+                    scene:1,
+                    //token:vaptchaObj.getToken(),
+                    token:token,
+                    ip:userIp
+                },
                 //  dataType: "json",
                 success: function(data) {
-                    // userIp=data;
-                    $.ajax({
-                        type: "post",
-                        url: "/validate",
-                        ContentType: "application/json",
-                        CacheControl: "no-cache",
-                        data:{
-                            scene:1,
-                            token:vaptchaObj.getToken(),
-                            ip:data
-                        },
-                        //  dataType: "json",
-                        success: function(data) {
-                            if(data.success==1){
-                                //成功
-                                isValid=1;
-                            }
-                            else if(data.success==0){
-                                swal({
-                                    title: ""+data.msg,
-                                    text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
-                                    icon: "error",
-                                    button: "确认",
-                                });
-                                //vaptchaObj.reset();
-                            }
-                        },
-                        error: function(msg) {
-                            console.log(msg)
-                        }
-                    })
+                    if(data.success==1){
+                        //成功
+                        isValid=1;
+                        // console.log("成功"+token);
+                    }
+                    else if(data.success==0){
+                        // alert(this.userIp)
+                        swal({
+                            title: ""+data.msg,
+                            text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
+                            icon: "error",
+                            button: "确认",
+                        });
+                        //vaptchaObj.reset();
+                    }
                 },
                 error: function(msg) {
                     console.log(msg)
-                }})
+                }
+            });
         })
         vaptchaObj.listen('close', function() {
             //验证弹窗关闭触发
@@ -511,12 +552,13 @@
     var InterValObj; //timer变量，控制时间
     var count = 60; //间隔函数，1秒执行
     var curCount;//当前剩余秒数
+    var msg_id;
     function getPhoneCode() {
         var phone = $("#phone").val();{
-            if(phone.length!=11){
+            if(phone.length!=11||!(/^1[3456789]\d{9}$/.test(phone))){
                 swal({
                     title: "哎哟...",
-                    text: "长度不合法，手机号是11位呀~",
+                    text: "手机号码有误，请重填",
                     icon: "error",
                     button: "确认",
                 });
@@ -527,6 +569,13 @@
             swal({
                 title: "哎哟...",
                 text: "请先完成人机验证再提交哦~",
+                icon: "error",
+                button: "确认",
+            });
+        }else if(token == ''||vaptchaObj6==null) {
+            swal({
+                title: "哎哟...",
+                text: "请先完成人机验证再提交哦!",
                 icon: "error",
                 button: "确认",
             });
@@ -541,27 +590,26 @@
             //  console.log(obj2.getToken());
             // var username = $("#username").val();
 //if(phone.length!=11) {sweetAlert("哎哟...", "手机号长度不合法！请重新输入!", "error");return;}
-            $.getJSON(
-                "/phone/getPhoneCode",
-                "phone=" + phone,
-                function (result) {
-                    if (result.code == 5000) {
-                        swal({
-                            title: "哎哟，验证码发送失败",
-                            text: "" + result.message,
-                            icon: "error",
-                            button: "确认",
-                        });
-                        //vaptchaObj.reset();
-                    } else {
-                        msg_id = result.message;
-                        sweetAlert("请耐心等待", "验证码已发送成功!", "info");
-                        $('#phone').attr("disabled", "disabled");
+            $.post('/phone/getPhoneCode', {
+                phone:phone,
+                token:token,
+                ip:userIp
+            }, function(result){
+                if (result.code == 2032) {
+                    swal({
+                        title: "哎哟，验证码发送失败",
+                        text: "" + result.message,
+                        icon: "error",
+                        button: "确认",
+                    });
+                    //vaptchaObj.reset();
+                } else {
+                    msg_id = result.message;
+                    sweetAlert("请耐心等待", "验证码已发送成功!", "info");
+                    $('#phone').attr("disabled", "disabled");
 
-                    }
-                },
-                "text"//xml,json,text或不写
-            );
+                }
+            });
             // alert(phone+"1111"+username);
         }
     }
@@ -593,6 +641,20 @@
                 button: "确认",
             });
             return;
+        }else if(token == ''||vaptchaObj6==null) {
+            swal({
+                title: "哎哟...",
+                text: "请先完成人机验证再提交哦!",
+                icon: "error",
+                button: "确认",
+            });
+        }else if(msg_id==null) {
+            swal({
+                title: "哎哟...",
+                text: "请先获取验证码再提交哦!",
+                icon: "error",
+                button: "确认",
+            });
         }else{
             $.getJSON(
                 "/phone/ValidCode",
@@ -632,53 +694,47 @@
         scene:4,              //场景值04，即手机
         offline_server: '/validateOffline' //离线模式服务端地址
     }).then(function (vaptchaObj) {
-        // obj2=vaptchaObj;
+        vaptchaObj6=vaptchaObj;
         vaptchaObj.listen('pass', function() {
             // 验证成功， 进行登录操作
             // console.log(vaptchaObj.getToken());
             //getCode();
+            token=vaptchaObj.getToken();
+            userIp=returnCitySN["cip"];
+            console.log(userIp);
             $.ajax({
-                type: "get",
-                url: "/getIp",
+                type: "post",
+                url: "/validate",
                 ContentType: "application/json",
                 CacheControl: "no-cache",
+                data:{
+                    scene:4,
+                    //token:vaptchaObj.getToken(),
+                    token:token,
+                    ip:userIp
+                },
                 //  dataType: "json",
                 success: function(data) {
-                   // userIp=data;
-                    $.ajax({
-                        type: "post",
-                        url: "/validate",
-                        ContentType: "application/json",
-                        CacheControl: "no-cache",
-                        data:{
-                            scene:4,
-                            token:vaptchaObj.getToken(),
-                            ip:data
-                        },
-                        //  dataType: "json",
-                        success: function(data) {
-                            if(data.success==1){
-                                //成功
-                                isValid=1;
-                            }
-                            else if(data.success==0){
-                                swal({
-                                    title: ""+data.msg,
-                                    text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
-                                    icon: "error",
-                                    button: "确认",
-                                });
-                                //vaptchaObj.reset();
-                            }
-                        },
-                        error: function(msg) {
-                            console.log(msg)
-                        }
-                    })
+                    if(data.success==1){
+                        //成功
+                        isValid=1;
+                        // console.log("成功"+token);
+                    }
+                    else if(data.success==0){
+                        // alert(this.userIp)
+                        swal({
+                            title: ""+data.msg,
+                            text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
+                            icon: "error",
+                            button: "确认",
+                        });
+                        //vaptchaObj.reset();
+                    }
                 },
                 error: function(msg) {
                     console.log(msg)
-                }})
+                }
+            });
 
 
         })

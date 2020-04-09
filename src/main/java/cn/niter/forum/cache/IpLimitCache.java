@@ -26,7 +26,7 @@ public class IpLimitCache {
         if(ipScores.get(ip)==null){
             ipScores.put(ip,score);
         }else{
-            System.out.println("ipScores:"+ipScores.get(ip));
+            System.out.println(ip+"_ipScores:"+ipScores.get(ip));
             ipScores.put(ip,ipScores.get(ip)+score);
         } return 1;
     }
