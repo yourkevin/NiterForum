@@ -1,5 +1,5 @@
- 
- 
+
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -7,6 +7,7 @@
   <th:block th:insert="~{common/header :: head}"></th:block>
   <!--script src="/js/community.js" type="application/javascript"></script-->
   <script src="/js/moment.js" type="application/javascript"></script>
+  <script src="/js/xss.min.js" type="application/javascript"></script>
   <script src="/js/clipboard.js" type="application/javascript"></script>
   <!--link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">
   <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script-->
@@ -33,22 +34,22 @@
           <a class="layui-badge layui-bg-green" th:if="${question.column2==9}">其它</a>
           <span class="layui-badge" style="background-color: #999;">未结</span>
           <!-- <span class="layui-badge" style="background-color: #5FB878;">已结</span> -->
-          
+
           <span th:if="${question.sticky}" class="layui-badge layui-bg-orange">置顶</span>
           <span th:if="${question.essence}" class="layui-badge layui-bg-red">精帖</span>
-          
+
           <div class="fly-admin-box" th:data-id="${question.id}" th:if="${session.user!=null}">
             <span th:if="${question.canDelete}" class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
-            
+
             <span th:if="${question.canSticky&&(!question.sticky)}" class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span>
             <span th:if="${question.sticky&&question.canSticky}" class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="0" style="background-color:#ccc;">取消置顶</span>
-            
+
             <span th:if="${question.canEssence&&(!question.essence)}" class="layui-btn layui-btn-xs jie-admin" type="set" field="essence" rank="1">加精</span>
             <span th:if="${question.canEssence&&(question.essence)}" class="layui-btn layui-btn-xs jie-admin" type="set" field="essence" rank="0" style="background-color:#ccc;">取消加精</span>
             <span th:if="${question.canPromote}" class="layui-btn layui-btn-xs jie-admin" type="set" field="promote" rank="1">提升</span>
             <span th:if="${question.canClassify}" class="layui-btn layui-btn-xs jie-admin" id="admin-btn">快改</span>
           </div>
-          <span class="fly-list-nums"> 
+          <span class="fly-list-nums">
             <a href="#comment"><i class="iconfont" title="回复">&#xe60c;</i><span th:text="${question.commentCount}"></span></a>
             <i class="iconfont" title="浏览">&#xe60b;</i><span th:text="${question.viewCount}"></span>
           </span>
@@ -84,7 +85,7 @@
         <div style="margin-top: 10px">
           相关标签：
           <span class="layui-badge-rim" th:each="tag : ${question.tag.split(',')}">
-                        <a th:href="@{/(page=1,tag=${tag})}"
+                        <a th:href="@{/forum/(page=1,tag=${tag})}"
                            th:text="${tag}" class="community-tag"></a>
           </span>
         </div><!--标签-->
@@ -158,22 +159,22 @@
         </ul>
         <!-- 无数据时 -->
         <ul class="jieda">
-        <li th:if="${question.commentCount==0}" class="fly-none">消灭零回复</li>
+          <li th:if="${question.commentCount==0}" class="fly-none">消灭零回复</li>
         </ul>
-        
+
         <div class="layui-form layui-form-pane">
           <!--form action="/jie/reply/" method="post"-->
           <input type="hidden" id="question_id" th:value="${question.id}">
-            <div class="layui-form-item layui-form-text">
-              <a name="comment"></a>
-              <div class="layui-input-block">
-                <textarea id="comment_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
-              </div>
+          <div class="layui-form-item layui-form-text">
+            <a name="comment"></a>
+            <div class="layui-input-block">
+              <textarea id="comment_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
             </div>
-            <div class="layui-form-item">
-              <input type="hidden" name="jid" value="123">
-              <button class="layui-btn" lay-filter="*"  onclick="commentQ()">回复</button>
-            </div>
+          </div>
+          <div class="layui-form-item">
+            <input type="hidden" name="jid" value="123">
+            <button class="layui-btn" lay-filter="*"  onclick="commentQ()">回复</button>
+          </div>
           <div id="commentQBtn" style="width: 100px;height: 36px;">
             <div class="vaptcha-init-main">
               <div class="vaptcha-init-loading">
@@ -188,93 +189,91 @@
         </div>
       </div>
 
-        <form class="layui-form" id="admin-panel" style="display:none">
+      <form class="layui-form" id="admin-panel" style="display:none">
         <input style="display: none" name="id" th:value="${question.id}">
         <div class="layui-form-item" >
-            <label class="layui-form-label" style="padding: 9px 0px;text-align: center">所在专栏</label>
-            <div class="layui-input-block" style="margin-left: 80px">
-                <select lay-verify="required" id="column2" name="column2"  >
-                    <option></option>
-                    <option value="1" th:selected="${question.column2==1}">提问</option>
-                    <option value="2" th:selected="${question.column2==2}" >分享</option>
-                    <option value="3" th:selected="${question.column2==3}">建议</option>
-                    <option value="4" th:selected="${question.column2==4}">讨论</option>
-                    <option th:if="${question.canSticky}" th:selected="${question.column2==5}" value="5">公告</option>
-                    <option value="6" th:selected="${question.column2==6}">动态</option>
-                    <option value="9" th:selected="${question.column2==9}">其它</option>
-                </select>
+          <label class="layui-form-label" style="padding: 9px 0px;text-align: center">所在专栏</label>
+          <div class="layui-input-block" style="margin-left: 80px">
+            <select lay-verify="required" id="column2" name="column2"  >
+              <option></option>
+              <option value="1" th:selected="${question.column2==1}">提问</option>
+              <option value="2" th:selected="${question.column2==2}" >分享</option>
+              <option value="3" th:selected="${question.column2==3}">建议</option>
+              <option value="4" th:selected="${question.column2==4}">讨论</option>
+              <option th:if="${question.canSticky}" th:selected="${question.column2==5}" value="5">公告</option>
+              <option value="6" th:selected="${question.column2==6}">动态</option>
+              <option value="9" th:selected="${question.column2==9}">其它</option>
+            </select>
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label" style="padding: 9px 0px;text-align: center">阅读权限</label>
+            <div class="layui-input-block" style="margin-left: 80px;">
+              <select lay-verify="required" id="permission" name="permission">
+                <option value="0" th:selected="${question.permission==0}">默认，所有用户可见</option>
+                <option value="1" th:selected="${question.permission==1}">LV1及以上用户可见</option>
+                <option value="2" th:selected="${question.permission==2}">LV2及以上用户可见</option>
+                <option value="3" th:selected="${question.permission==3}">LV3及以上用户可见</option>
+                <option value="4" th:selected="${question.permission==4}">LV4及以上用户可见</option>
+                <option value="5" th:selected="${question.permission==5}">LV5及以上用户可见</option>
+                <option value="6" th:selected="${question.permission==6}">LV6及以上用户可见</option>
+                <option value="10" th:selected="${question.permission==10}">会员专享</option>
+                <option value="19" th:selected="${question.permission==19}">管理员可见</option>
+              </select>
             </div>
+          </div>
         </div>
         <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label" style="padding: 9px 0px;text-align: center">阅读权限</label>
-                    <div class="layui-input-block" style="margin-left: 80px;">
-                        <select lay-verify="required" id="permission" name="permission">
-                            <option value="0" th:selected="${question.permission==0}">默认，所有用户可见</option>
-                            <option value="1" th:selected="${question.permission==1}">LV1及以上用户可见</option>
-                            <option value="2" th:selected="${question.permission==2}">LV2及以上用户可见</option>
-                            <option value="3" th:selected="${question.permission==3}">LV3及以上用户可见</option>
-                            <option value="4" th:selected="${question.permission==4}">LV4及以上用户可见</option>
-                            <option value="5" th:selected="${question.permission==5}">LV5及以上用户可见</option>
-                            <option value="6" th:selected="${question.permission==6}">LV6及以上用户可见</option>
-                            <option value="10" th:selected="${question.permission==10}">会员专享</option>
-                            <option value="19" th:selected="${question.permission==19}">管理员可见</option>
-                        </select>
-                    </div>
-                </div>
-         </div>
-        <div class="layui-form-item">
-            <button style="float: right" class="layui-btn" lay-filter="submitAdmin" lay-submit>确认修改</button>
+          <button style="float: right" class="layui-btn" lay-filter="submitAdmin" lay-submit>确认修改</button>
         </div>
-        </form>
+      </form>
     </div>
     <th:block th:insert="~{common/sider :: p_detail}"></th:block>
   </div>
-  </div>
+</div>
 
 <script type="text/javascript">
   var obj = document.getElementById("descriptionP");
   //alert(obj.innerText);//这样就自动解析了
   obj.innerHTML = obj.innerText;//这样重新设置html代码为解析后的格式
+  //开始设置iframe高度
+  //document.domain = "niter.cn";
+  function setIframeHeight(iframe) {
+    if (iframe) {
+      var iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
+      try{
+        if (iframeWin.document.body) {
+          iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
+        }
+      }catch (err) {
+        var ua = navigator.userAgent,
+                isWindowsPhone = /(?:Windows Phone)/.test(ua),
+                isSymbian = /(?:SymbianOS)/.test(ua) || isWindowsPhone,
+                isAndroid = /(?:Android)/.test(ua),
+                isFireFox = /(?:Firefox)/.test(ua),
+                isChrome = /(?:Chrome|CriOS)/.test(ua),
+                isTablet = /(?:iPad|PlayBook)/.test(ua) || (isAndroid && !/(?:Mobile)/.test(ua)) || (isFireFox && /(?:Tablet)/.test(ua)),
+                isIPhone = /(?:iPhone)/.test(ua) && !isTablet,
+                isPc = !isIPhone && !isAndroid && !isSymbian;
+        if(isPc) iframe.height=460;
+        else if(isIPhone||isAndroid) iframe.height=200;
+
+      }finally {
+        console.log(iframe.height);
+      }
+
+
+    }
+  };
+  /*var iframes = document.getElementsByTagName("iframe");
+  var i;
+  for (i = 0; i < iframes.length; i++) {
+    setIframeHeight(iframes[i]);
+  }*/
+  //iframe高度设置结束。
 </script>
 <script src="https://v.vaptcha.com/v3.js"></script>
-<script type="text/javascript">
-  //addHtml5Plus();
-  var con = '我在尼特社区找到一篇好文章《'+document.title+'》，快来戳后面的链接来围观吧！---'+this.location.href;
-  function myPlusShare() {
-    window.plusShare({
-      title: "尼特社区",//应用名字
-      content: con,
-      href: location.href,//分享出去后，点击跳转地址
-      thumbs: ["http://m.example.com/imgs/1.png"] //分享缩略图
-    }, function(result) {
-      //分享回调
-    });  }
-  var clipboard = new ClipboardJS('.copyshare', {
-    text: function() {
-      //     var con = '我在凯文社区找到一篇好文章《'+document.title+'》，快来围观吧！---'+this.location.href;
-      //alert("进来了"+document.title+this.location.href);
-      //alert(con);
-      if(navigator.userAgent.indexOf("Html5Plus") > -1) {
-        //5+ 原生分享
-        myPlusShare();
-      } else {
-        //原有wap分享实现
-        swal("复制成功!", "赶快去粘贴分享文章吧~", "success");
-      }
-      //swal("复制成功!", "赶快去分享文章吧~", "success");
-      return ''+con;
-    }
-  });
-
-  clipboard.on('success', function(e) {
-    console.log(e);
-  });
-
-  clipboard.on('error', function(e) {
-    console.log(e);
-  });
-</script>
 <script type="text/javascript">
   token = '';
   userIp='';
@@ -364,53 +363,97 @@
     vaptchaObj.render()// 调用验证实例 vaptchaObj 的 render 方法加载验证按钮
   })
 </script>
-<th:block th:insert="~{common/footer :: foot}"></th:block>
+<script type="text/javascript">
+    //addHtml5Plus();
+    var con = '我在尼特社区找到一篇好文章《'+document.title+'》，快来戳后面的链接来围观吧！---';
+    function myPlusShare() {
+        window.plusShare({
+            title: document.title,//应用名字或者文章标题
+            content: con,
+            href: location.href,//分享出去后，点击跳转地址
+            thumbs: ["https://niter.cn/images/N80.png"], //分享缩略图
+            //pic :["https://niter.cn/images/N80.png"],//分享图片
+        }, function(result) {
+            //分享回调
+        });  }
+    var clipboard = new ClipboardJS('.copyshare', {
+        text: function() {
+            //     var con = '我在凯文社区找到一篇好文章《'+document.title+'》，快来围观吧！---'+this.location.href;
+            //alert("进来了"+document.title+this.location.href);
+            //alert(con);
+            if(navigator.userAgent.indexOf("Html5Plus") > -1) {
+                //5+ 原生分享
+                myPlusShare();
+            } else {
+                //原有wap分享实现
+                swal("复制成功!", "赶快去粘贴分享文章吧~", "success");
+            }
+            //swal("复制成功!", "赶快去分享文章吧~", "success");
+            return con+location.href+' ';
+        }
+    });
 
-<script>
-layui.cache.page = 'jie';
-layui.cache.user = {
-  username: '匿名用户'
-  ,uid: -1
-  ,avatar: '/images/avatar/00.jpg'
-  ,experience: 83
-  ,sex: '男'
-};
-layui.config({
-  version: "3.0.0"
-  ,base: '/mods/'
-}).extend({
-  fly: 'index'
-}).use(['fly', 'face'], function(){
-  var $ = layui.$
-  ,fly = layui.fly;
-  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+    clipboard.on('success', function(e) {
+        console.log(e);
+    });
 
-  $('.detail-body').each(function(){
-    var othis = $(this), html = othis.html();
-    othis.html(fly.content(html));
-  });
-
-
-
-});
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
 </script>
+<th:block th:insert="~{common/footer :: foot}"></th:block>
+<script src="/layui/layui.js"></script>
 <script>
+  layui.cache.page = 'jie';
+  layui.cache.user = {
+    username: '匿名用户'
+    ,uid: -1
+    ,avatar: '/images/avatar/00.jpg'
+    ,experience: 83
+    ,sex: '男'
+  };
+  layui.config({
+    version: "3.0.0"
+    ,base: '/mods/'
+  }).extend({
+    fly: 'index'
+  }).use(['fly', 'face','element', 'layer'], function(){
+    var $ = layui.$
+            ,fly = layui.fly;
+      var element = layui.element;
+      var layer = layui.layer;
+    //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+
+    $('.detail-body').each(function(){
+      var othis = $(this), html = othis.html();
+      othis.html(fly.content(html));
+    });
+
+      //监听折叠
+      element.on('collapse(sub-comments)', function(data){
+          layer.msg('展开状态：'+ data.show);
+      });
+
+  });
+</script>
+
+<!--script>
   layui.use(['element', 'layer'/*,'code'*/], function(){
     var element = layui.element;
     var layer = layui.layer;
-   /*layui.code({
-      elem: 'pre', //默认值为.layui-code
-      height:500,
-      about: false,
-    }); //引用code方法
-*/
+    /*layui.code({
+       elem: 'pre', //默认值为.layui-code
+       height:500,
+       about: false,
+     }); //引用code方法
+ */
 
     //监听折叠
     element.on('collapse(sub-comments)', function(data){
       layer.msg('展开状态：'+ data.show);
     });
   });
-</script>
+</script-->
 
 </body>
 </html>

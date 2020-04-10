@@ -110,6 +110,7 @@ function comment(e) {
     var commentType = e.getAttribute("data-type");
     var inputBtn = $("#input-" + inputId);
     var content = inputBtn.attr('placeholder')+inputBtn.val();
+    content=filterXSS(content);
     console.log('inputId:'+inputId+'commentId:'+commentId+'placeholder:'+inputBtn.attr('placeholder')+'c:'+content);
     if(content.length>1024)
         swal({
@@ -335,10 +336,10 @@ function collapseComments(e) {
                   }).append($("<i/>", {
                       "class": "iconfont icon-svgmoban53"
                   })));
-
+                    var filterHtml = filterXSS(comment.content);
                     var contentElement = $("<div/>", {
                         "class": "detail-body jieda-body photos",
-                        "html":comment.content
+                        "html":filterHtml
                     });
 
                     var infoElement = $("<div/>", {

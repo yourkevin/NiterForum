@@ -136,7 +136,7 @@
         <dependency>
             <groupId>com.tinify</groupId>
             <artifactId>tinify</artifactId>
-            <version>RELEASE</version>
+            <version>1.6.4</version>
         </dependency>
 
     </dependencies>

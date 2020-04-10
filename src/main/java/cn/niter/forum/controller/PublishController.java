@@ -103,7 +103,7 @@ public class PublishController {
         //question.setGmtModified(question.getGmtCreate());
         // questionMapper.creat(question);
         questionService.createOrUpdate(question,userAccount);
-        return "redirect:/";
+        return "redirect:/forum";
     }
 
     @GetMapping("p/publish/{id}")
