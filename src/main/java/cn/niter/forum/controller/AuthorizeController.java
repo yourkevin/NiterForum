@@ -75,7 +75,7 @@ public class AuthorizeController {
 
     @Value("${qq.redirect.uri}")
     private String qqRedirectUri;
-    @Value("${qq.api.getUnionId}")
+    @Value("${qq.api.unionId}")
     private int getQqUnionId;
 
     @Autowired
