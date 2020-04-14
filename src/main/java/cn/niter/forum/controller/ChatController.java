@@ -20,6 +20,8 @@ public class ChatController {
     private String sso_key;
     @Value("${xianliao.xlm.wid}")
     private String xlm_wid;
+    @Value("${site.main.domain}")
+    private String domain;
 
 
     @GetMapping("/chat")
@@ -34,9 +36,10 @@ public class ChatController {
         String xlm_name = user.getName();
         String xlm_avatar = ""+user.getAvatarUrl();
         String xlm_time = ""+(int)(System.currentTimeMillis()/1000);
-
-        String xlm_name_encode = URLEncoder.encode(xlm_name);
-        String xlm_avatar_encode = URLEncoder.encode(xlm_avatar);
+        if(!("http".equals(xlm_avatar.substring(0,4))))
+            xlm_avatar = "http://"+domain+"/"+xlm_avatar;
+       // String xlm_name_encode = URLEncoder.encode(xlm_name);
+       // String xlm_avatar_encode = URLEncoder.encode(xlm_avatar);
         String s = xlm_wid+"_"+xlm_uid+"_"+xlm_time+"_"+sso_key;
         String xlm_hash = SHA(s, "SHA-512");
        // String go = "https://xianliao.me/s/14875?mobile=1&uid="+xlm_uid+"&username="+xlm_name_encode+"&avatar="+xlm_avatar_encode+"&ts="+xlm_time+"&token="+xlm_hash;
@@ -44,7 +47,7 @@ public class ChatController {
         model.addAttribute("xlm_wid",xlm_wid);
         model.addAttribute("xlm_uid",xlm_uid);
         model.addAttribute("xlm_name",xlm_name);
-        model.addAttribute("xlm_avatar",xlm_avatar_encode);
+        model.addAttribute("xlm_avatar",xlm_avatar);
         model.addAttribute("xlm_time",xlm_time);
         model.addAttribute("xlm_hash",xlm_hash);
         model.addAttribute("navtype", "chatnav");
@@ -58,12 +61,13 @@ public class ChatController {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
         //String xlm_wid ="14875";
-        String xlm_url="https://www.xianliao.me/";
+        //String xlm_url="https://www.xianliao.me/";
         String xlm_uid = ""+user.getId();
         String xlm_name = user.getName();
         String xlm_avatar = ""+user.getAvatarUrl();
         String xlm_time = ""+(int)(System.currentTimeMillis()/1000);
-
+        if(!("http".equals(xlm_avatar.substring(0,4))))
+            xlm_avatar = "http://"+domain+"/"+xlm_avatar;
         String xlm_name_encode = URLEncoder.encode(xlm_name);
         String xlm_avatar_encode = URLEncoder.encode(xlm_avatar);
         String s = xlm_wid+"_"+xlm_uid+"_"+xlm_time+"_"+sso_key;
