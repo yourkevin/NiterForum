@@ -8,6 +8,7 @@ import cn.niter.forum.model.User;
 import cn.niter.forum.model.UserAccount;
 import cn.niter.forum.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +29,11 @@ public class IndexController {
     @Autowired
     private LoginUserCache loginUserCache;
 
-    @GetMapping("/")
-    public String index(HttpServletRequest request,
+    @Value("${site.main.index}")
+    private int indexId;
+
+    @GetMapping(value = {"/forum"})
+    public String forum(HttpServletRequest request,
                         Model model,
                         @RequestParam(name = "page",defaultValue = "1")Integer page,
                         @RequestParam(name = "size",defaultValue = "15")Integer size,
@@ -53,6 +57,13 @@ public class IndexController {
         model.addAttribute("topQuestions", topQuestions);
         model.addAttribute("navtype", "communitynav");
         return "index";
+    }
+
+    @GetMapping(value = {"/"})
+    public String index(HttpServletRequest request,
+                        Model model) {
+     if(indexId==2) return "redirect:/home";
+      else  return "redirect:/forum";
     }
 
 
