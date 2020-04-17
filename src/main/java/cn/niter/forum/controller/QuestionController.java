@@ -43,8 +43,8 @@ public class QuestionController {
     }
 
 
-    @GetMapping("/p/{id}")
-    public String po(@PathVariable(name = "id") Long id, HttpServletRequest request,Model model){
+    @GetMapping(value = {"/p/{id}","/article/{id}"})
+    public String po(@PathVariable(name = "id") Long id, HttpServletRequest request,Model model,@RequestParam(name = "to",required = false)String to){
         User viewUser = (User)request.getSession().getAttribute("user");
         Long viewUser_id;
         if(viewUser==null) viewUser_id=0L;
@@ -80,6 +80,7 @@ public class QuestionController {
         model.addAttribute("relatedQuestions", relatedQuestions);
         model.addAttribute("navtype", "communitynav");
         model.addAttribute("vaptcha_vid", vaptcha_vid);
+        if("article".equals(to)) return "home/detail";
         return "p/detail";
     }
 

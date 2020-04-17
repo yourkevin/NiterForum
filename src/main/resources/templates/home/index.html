@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title th:text="${@environment.getProperty('site.home.title')}"></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="/layui/css/layui.css">
+	<link rel="stylesheet" href="/css/home.css">
+</head>
+<body class="lay-blog">
+<div th:insert="~{common/header :: home_nav}"></div>
+		<div class="container-wrap">
+			<div class="container">
+					<div class="contar-wrap">
+						<h4 class="item-title">
+							<p><i class="layui-icon layui-icon-speaker"></i>公告：<span th:text="${'欢迎来到'+@environment.getProperty('site.home.title')}"></span></p>
+						</h4>
+                        <ul class="t-list" id="t-index2">
+
+                        </ul>
+					</div>
+			</div>
+		</div>
+		<div class="footer">
+            <th:block th:insert="~{common/footer :: home-foot}"></th:block>
+		</div>
+	<script src="/layui/layui.js"></script>
+	<script>
+		layui.config({
+		  base: '/mods/'
+		}).use(['blog','flow','layer'], function() {
+
+            var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+            var flow = layui.flow;
+            var layer = layui.layer;
+            //var page=[[${page}]];
+            flow.load({
+                elem: '#t-index2' //指定列表容器
+                ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+
+                    var column = [[${column}]];
+                   // var search = [[${search}]];
+                    // alert(tag);
+                    var lis = [];
+                    //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                    $.get('/t/list?page='+page+'&column='+column, function(res){
+                        //假设你的列表返回在data集合中
+                        layui.each(res.questions, function(index, item){
+                            var str="<div class=\"item\">\n" +
+                                "<div class=\"item-box  layer-photos-demo3 layer-photos-demo t-photos\">\n" +
+                                "<h3><a target='_blank' href=\"/article/"+item.id+"?to=article\">"+item.title+"</a></h3>\n" +
+                                "<h5>更新于：<span>"+item.gmtLatestCommentStr+"</span></h5>\n" +
+                                "<p>"+item.shortDescription+"</p>\n" +
+                                "</div>\n"+
+                                "<div class=\"comment count\">\n" +
+                                "<a target='_blank' href=\"/article/"+item.id+"?to=article#comment\">评论 "+item.commentCount+"</a>\n" +
+                                "<a href=\"javascript:;\" class=\"like\">点赞 "+item.likeCount+"</a>\n" +
+                                "</div>\n" +
+                                "</div>";
+                            if(item.permission>=0) lis.push(str);
+                        });
+
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.totalPage);
+                    });
+                    /*lis.push('<li>'+ 'item.title' +'</li>');
+                    next(lis.join(''), 1 < 2);*/
+                }
+            });
+
+            $('body').on('click', '.t-photos img', function(){
+                //window.open(this.src);
+                layer.photos({
+                    photos: {
+                        "data": [{
+                            "src": this.src
+                        }]},
+                    anim:1
+                });
+            });
+
+        });
+	</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta name="description" th:content="${textDescription==null?@environment.getProperty('site.meta.description'):textDescription}">
+	<meta name="Copyright" th:content="${'本页版权归'+@environment.getProperty('site.home.title')+'所有'}">
+	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title th:text="${'留言-'+@environment.getProperty('site.home.title')}"></title>
+	<link rel="stylesheet" href="/layui/css/layui.css">
+	<link rel="stylesheet" href="/css/home.css?v=1.1">
+	<script src="/js/jquery-3.4.1.min.js"></script>
+</head>
+<body class="lay-blog">
+<div th:insert="~{common/header :: home_nav}"></div>
+		<div class="container-wrap">
+			<div class="container container-message">
+				<div class="contar-wrap" id="contar-wrap">
+					<form class="layui-form" action="">
+						<div class="layui-form-item layui-form-text">
+							  <textarea  class="layui-textarea" id="LAY-msg-content" style="resize:none"></textarea>
+						</div>
+					</form>
+					<div class="item-btn">
+						<button class="layui-btn layui-btn-normal" id="item-btn">提交</button>
+					</div>
+					
+					<div id="LAY-msg-box">
+						<div class="info-box">
+							<div class="info-item">
+								<img class="info-img" style="height: 68px" src="/images/avatar/default.png" alt="">
+								<div class="info-text">
+									<p class="title count">
+										<span class="name">尼特IT热心用户</span>
+										<span class="info-img like"><i class="layui-icon">&#xe6c6;</i>5.8万</span>
+									</p>
+									<p class="info-intr">父爱如山，不善表达。回想十多年前，总记得父亲有个宽厚的肩膀，小小的自己跨坐在上面，越过人山人海去看更广阔的天空，那个时候期望自己有一双翅膀，能够像鸟儿一样飞得高，看得远。虽然父亲有时会和自己开玩笑，但在做错事的时候会受到严厉的训斥。父亲有双粗糙的大手掌。</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div id="test1" class="paging"></div>
+				</div>
+			</div>
+		</div>
+		<div class="footer">
+			<th:block th:insert="~{common/footer :: home-foot}"></th:block>
+		</div>
+	</div>
+
+	<script>		
+		layui.config({
+		  base: '/mods/'
+		}).use('blog');
+	</script>
+
+	<script id="LAY-msg-tpl" type="text/html">
+		<div class="info-box">
+			<div class="info-item">
+				<img class="info-img" style="height: 68px" src="{{ d.avatar }}" alt="">
+			  <div class="info-text">
+					<p class="title">
+					  <span class="name">{{ d.username }}</span>
+					  <span class="info-img">
+					  	<i class="layui-icon">&#xe6c6;</i>
+					  	{{ d.praise }}
+					 	</span>
+					</p>
+					<p class="info-intr">
+						{{ d.content }}
+					</p>
+			  </div>
+			</div>
+		</div>
+	</script>
+
+</body>

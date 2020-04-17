@@ -47,6 +47,14 @@
     background-color:#f8f8f8;
 }
 
+.p-detail p{
+margin-bottom: 5px;
+}
+
+.p-detail h1, h2, h3, h4, h5, h6{
+    margin-bottom: 0.5em;
+}
+
 .layui-clear img{
     max-height: 22px;
 }

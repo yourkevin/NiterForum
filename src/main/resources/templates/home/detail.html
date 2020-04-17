@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta name="description" th:content="${textDescription==null?@environment.getProperty('site.meta.description'):textDescription}">
+	<meta name="Copyright" th:content="${'本页版权归'+@environment.getProperty('site.home.title')+'所有'}">
+	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta th:if="${question!=null}" name="keywords" th:content="${question.tag+','+@environment.getProperty('site.meta.keywords')}">
+	<title th:text="${question.title+'-'+@environment.getProperty('site.home.title')}"></title>
+	<link rel="stylesheet" href="/layui/css/layui.css">
+	<link rel="stylesheet" href="/css/home.css">
+	<script src="/js/jquery-3.4.1.min.js"></script>
+</head>
+<body class="lay-blog">
+<div th:insert="~{common/header :: home_nav}"></div>
+		<div class="container-wrap">
+			<div class="container container-message container-details">
+					<div class="contar-wrap">
+						<div class="item">
+							<div class="item-box  layer-photos-demo1 layer-photos-demo">
+								<h3 th:text="${question.title}"></h3>
+								<h5><span th:text="${question.user.name+' 于 '+#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></span><th:block th:text="${question.edited?' 编辑':' 发表'}"></th:block></h5>
+								<p id="descriptionP" th:text="${question.description}"></p>
+								<div class="count layui-clear">
+									<span class="pull-left">阅读 <em th:text="${question.viewCount}"></em></span>
+									<span class="pull-right like"><i class="layui-icon layui-icon-praise"></i><em>999</em></span>
+								</div>
+							</div>
+						</div>	
+						<a name="comment"> </a>
+						<div class="comt">
+							<a href="#comment" class="pull-left">评论 <em th:text="${question.commentCount}"></em></a>
+							<a th:href="${'/p/'+question.id+'#comment'}" class="pull-right">写评论</a>
+						</div>
+						<div id="LAY-msg-box" th:each="comment : ${comments}">
+							<div class="info-item">
+								<img class="info-img" th:src="${comment.user.avatarUrl}" th:alt="${comment.user.name}" style="height: 68px">
+								<div class="info-text">
+									<p class="title count">
+										<span class="name" th:text="${comment.user.name}"></span>
+										<span class="info-img like"><i class="layui-icon">&#xe6c6;</i><th:block th:text="${comment.likeCount}"></th:block></span>
+									</p>
+									<p class="info-intr detail-body jieda-body photos" th:text="${comment.content}"></p>
+								</div>
+							</div>
+						</div>
+
+					</div>
+			</div>
+		</div>
+		<div class="footer">
+			<th:block th:insert="~{common/footer :: home-foot}"></th:block>
+		</div>
+
+	<script type="text/javascript">
+		var obj = document.getElementById("descriptionP");
+		//alert(obj.innerText);//这样就自动解析了
+		obj.innerHTML = obj.innerText;//这样重新设置html代码为解析后的格式
+	</script>
+	<script>
+		//layui.cache.page = 'jie';
+		layui.cache.user = {
+			username: '匿名用户'
+			,uid: -1
+			,avatar: '/images/avatar/00.jpg'
+			,experience: 83
+			,sex: '男'
+		};
+		layui.config({
+			version: "3.0.0"
+			,base: '/mods/'
+		}).extend({
+			fly: 'index2'
+		}).use(['blog','fly', 'face'], function(){
+			var $ = layui.$
+					,fly = layui.fly;
+			//如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+
+			$('.detail-body').each(function(){
+				var othis = $(this), html = othis.html();
+				othis.html(fly.content(html));
+			});
+
+
+
+		});
+
+
+		/*layui.config({
+		  base: '/mods/'
+		}).use(['blog','fly', 'face'], function(){
+			var $ = layui.$
+			,fly = layui.fly;
+			//如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+
+			$('.detail-body').each(function(){
+				var othis = $(this), html = othis.html();
+				othis.html(fly.content(html));
+			});
+
+
+
+		});*/
+	</script>
+</body>
+</html>
