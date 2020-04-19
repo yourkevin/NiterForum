@@ -63,6 +63,18 @@ public class QuestionService {
     @Autowired
     private Environment env;
 
+    public PaginationDTO listByQuestionQueryDTO(QuestionQueryDTO questionQueryDTO) {
+
+
+
+
+        return null;
+    }
+
+
+
+
+
     public PaginationDTO listwithColumn(String search, String tag, String sort, Integer page, Integer size, Integer column2,UserAccount userAccount) {
 
         if (StringUtils.isNotBlank(search)) {
@@ -135,7 +147,7 @@ public class QuestionService {
             questionDTO.setUser(userDTO);
             questionDTO.setUserAccount(userAccounts.get(0));
             questionDTO.setUserGroupName(env.getProperty("user.group.r"+userAccounts.get(0).getGroupId()));
-            questionDTO.setGmtLatestCommentStr(timeUtils.timeStamp2Date(questionDTO.getGmtLatestComment(),null));
+            questionDTO.setGmtLatestCommentStr(timeUtils.getTime(questionDTO.getGmtLatestComment(),null));
             String shortDescription=getShortDescription(questionDTO.getDescription(),questionDTO.getId());
             questionDTO.setShortDescription(shortDescription);
             if(questionDTO.getPermission()==0) questionDTO.setIsVisible(1);
@@ -328,6 +340,7 @@ public class QuestionService {
             BeanUtils.copyProperties(user,userDTO);
             questionDTO.setUser(userDTO);
             questionDTO.setUserAccount(userAccounts.get(0));
+            questionDTO.setGmtLatestCommentStr(timeUtils.getTime(questionDTO.getGmtLatestComment(),null));
             questionDTOList.add(questionDTO);
         }
 
@@ -426,23 +439,10 @@ public class QuestionService {
             UserDTO userDTO = new UserDTO();
             BeanUtils.copyProperties(user,userDTO);
             questionDTO.setUser(userDTO);
+            questionDTO.setGmtModifiedStr(timeUtils.getTime(questionDTO.getGmtModified(),null));
             questionDTOList.add(questionDTO);
         }
 
-     /*   QuestionExample example = new QuestionExample();
-        example.createCriteria()
-                .andCreatorEqualTo(userId);
-        example.setOrderByClause("gmt_modified desc");
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
-        List<QuestionDTO> questionDTOList = new ArrayList<>();
-        PaginationDTO paginationDTO = new PaginationDTO();*/
-       /* for (Question question : questions) {
-            User user = userMapper.selectByPrimaryKey(question.getCreator());
-            QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(question,questionDTO);
-            questionDTO.setUser(user);
-            questionDTOList.add(questionDTO);
-        }*/
         paginationDTO.setData(questionDTOList);
         paginationDTO.setTotalCount(totalCount);
         paginationDTO.setPagination(totalPage,page);
@@ -485,6 +485,7 @@ public class QuestionService {
             UserDTO userDTO = new UserDTO();
             BeanUtils.copyProperties(user,userDTO);
             questionDTO.setUser(userDTO);
+            questionDTO.setGmtModifiedStr(timeUtils.getTime(questionDTO.getGmtModified(),null));
             questionDTOList.add(questionDTO);
         }
         paginationDTO.setData(questionDTOList);
@@ -511,6 +512,7 @@ public class QuestionService {
         questionDTO.setUser(userDTO);
         questionDTO.setUserAccount(userAccount);
         questionDTO = setStatuses(questionDTO,viewUser_id);
+        questionDTO.setGmtModifiedStr(timeUtils.getTime(questionDTO.getGmtModified(),null));
         return questionDTO;
     }
 
@@ -552,15 +554,6 @@ public class QuestionService {
         }
     }
 
-/*
-    public void incScore(UserAccount userAccount) {
-        Question question = new Question();
-        question.setId(id);
-        question.setViewCount(1);
-        questionExtMapper.incView(question);
-
-    }*/
-
     public void incView(Long id) {
         Question question = new Question();
         question.setId(id);
@@ -593,7 +586,6 @@ public class QuestionService {
         return questionDTOS;
     }
 
-
     public int delQuestionById(Long user_id, Integer group_id,Long id) {
         int c=0;
         Question question = questionMapper.selectByPrimaryKey(id);
@@ -616,8 +608,6 @@ public class QuestionService {
 
          return c;
     }
-
-
 
     public QuestionDTO setStatuses(QuestionDTO questionDTO,Long viewUser_id){
         questionDTO.setEdited(questionDTO.getGmtCreate().longValue()!=questionDTO.getGmtModified().longValue());
@@ -649,4 +639,6 @@ public class QuestionService {
     public int updateQuestion(Question question){
         return questionMapper.updateByPrimaryKeySelective(question);
     }
+
+
 }

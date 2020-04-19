@@ -56,7 +56,7 @@
                 <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
                 <i class="layui-badge fly-badge-vip layui-bg-gray layui-hide-xs" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
               </a>
-              <span th:text="${#dates.format(question.gmtLatestComment,'yyyy-MM-dd HH:mm')}">刚刚</span>
+              <span th:text="${question.gmtLatestCommentStr}"></span>
               
               <!--span class="fly-list-kiss layui-hide-xs" title="浏览"><i class="iconfont icon-kiss"></i><span th:text="${question.viewCount}"></span></span-->
               <span class="fly-list-like layui-hide-xs" title="收藏"><i class="layui-icon">&#xe600;</i><span th:text="${question.LikeCount}"></span></span>
@@ -120,7 +120,7 @@
                     <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
                     <i class="layui-badge fly-badge-vip layui-bg-gray layui-hide-xs" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
                 </a>
-              <span th:text="${#dates.format(question.gmtLatestComment,'yyyy-MM-dd HH:mm')}"></span>
+              <span th:text="${question.gmtLatestCommentStr}"></span>
 
                 <!--span class="fly-list-kiss layui-hide-xs" title="浏览"><i class="iconfont icon-kiss"></i><span th:text="${question.viewCount}"></span></span-->
                 <span class="fly-list-like layui-hide-xs" title="收藏"><i class="layui-icon">&#xe600;</i><span th:text="${question.LikeCount}"></span></span>

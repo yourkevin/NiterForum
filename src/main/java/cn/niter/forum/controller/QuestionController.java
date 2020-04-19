@@ -1,7 +1,6 @@
 package cn.niter.forum.controller;
 
-import cn.niter.forum.dto.CommentDTO;
-import cn.niter.forum.dto.QuestionDTO;
+import cn.niter.forum.dto.*;
 import cn.niter.forum.enums.CommentTypeEnum;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
@@ -114,6 +113,24 @@ public class QuestionController {
         return map;
 
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/api/question/list", method = RequestMethod.POST)
+    public ResultDTO<List<CommentDTO>> questionList(
+            /*@RequestParam(name = "commentator",required = false) Long commentator
+            ,@RequestParam(name = "type",required = false) Integer type
+            ,@RequestParam(name = "id",required = false) Long id
+            ,@RequestParam(name = "parentId",required = false) Long parentId*/
+            @RequestBody QuestionQueryDTO questionQueryDTO
+    ) {
+        PaginationDTO paginationDTO = questionService.listByQuestionQueryDTO(questionQueryDTO);
+
+
+        return ResultDTO.okOf(paginationDTO);
+    }
+
+
+
 
     @PostMapping("/p/set/id")
     @ResponseBody

@@ -421,7 +421,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
 
 /*.home-jieda li{margin-bottom:20px; padding-bottom:10px; line-height:24px; border-bottom: 1px dotted #DFDFDF;}*/
 .home-jieda li{ margin-bottom:20px; line-height:24px;}
-.home-dacontent{margin-top:10px; padding:10px 15px; background-color:#F2F2F5; border-radius:5px; word-wrap: break-word;;}
+.home-dacontent{ padding:10px 15px; background-color:#F2F2F5; border-radius:5px; word-wrap: break-word;;}
 .home-dacontent pre{ background-color:#F2F2F5;}
 .home-dacontent img{max-width:100%;}
 .home-jieda li a{padding:0 5px; color:#4F99CF;}

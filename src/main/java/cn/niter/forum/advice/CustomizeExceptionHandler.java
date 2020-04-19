@@ -20,7 +20,7 @@ public class CustomizeExceptionHandler {
     @ExceptionHandler(Exception.class)
     ModelAndView handle(Throwable e, Model model, HttpServletRequest request, HttpServletResponse response) {
         String contentType = request.getContentType();
-        if ("application/json".equals(contentType)) {//访问接口异常时弹出异常信息，非跳转
+        if ("application/json".equals(contentType)||request.getServletPath().contains("api")) {//访问接口异常时弹出异常信息，非跳转
             ResultDTO resultDTO;
             // 返回 JSON
             if (e instanceof CustomizeException) {//已知自定义异常

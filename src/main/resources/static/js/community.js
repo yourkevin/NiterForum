@@ -325,7 +325,7 @@ function collapseComments(e) {
                         "class": "detail-hits"
                     }).append($("<span/>", {
                         "class": "",
-                        "html": moment(comment.gmtCreate).format('YYYY-MM-DD  HH:mm')
+                        "html": comment.gmtModifiedStr
                     })).append($("<span/>", {
                       "class": "rightbtn",
                       "style":"cursor: pointer;",
