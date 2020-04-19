@@ -48,8 +48,25 @@ public class SessionInterceptor implements HandlerInterceptor {
         request.getServletContext().setAttribute("weiboRedirectUri", weiboRedirectUri);
         request.getServletContext().setAttribute("qqRedirectUri", qqRedirectUri);
 */
-       if (handler instanceof ResourceHttpRequestHandler)
-            return true;
+        String referer = request.getHeader("referer");//告知服务器请求的原始资源的URI，其用于所有类型的请求，并且包括：协议+域名+查询参数（注意，不包含锚点信息）。因为原始的URI中的查询参数可能包含ID或密码等敏感信息，如果写入referer，则可能导致信息泄露。
+
+        String host = request.getHeader("host");//客户端指定自己想访问的WEB服务器的域名/IP 地址和端口号。 在任何类型请求中，request都会包含此header信息。
+       //处理静态资源
+       if (handler instanceof ResourceHttpRequestHandler){
+           if(referer!=null&&(!host.equals(referer.split("//")[1].split("/")[0]))){//静态资源防盗链,请务必确保配置文件中的site.main.domain填写正确
+               response.setStatus(403);
+               return false;
+           }
+           return true;
+       }
+
+       //拦截非本站post请求，如果你需要改造为前后端分离项目，请留意这里
+       String origin = request.getHeader("origin");//用来说明请求从哪里发起的，包括，且仅仅包括协议和域名。post请求才有，这个参数一般只存在于CORS跨域请求中，可以看到response有对应的header：Access-Control-Allow-Origin。
+       if(origin!=null&&(!host.equals(origin.split("//")[1])||referer==null)){
+           response.setStatus(406);
+           return false;
+       }
+
         //设置广告
         for (AdPosEnum adPos : AdPosEnum.values()) {
             request.getServletContext().setAttribute(adPos.name(), adService.list(adPos.name()));
