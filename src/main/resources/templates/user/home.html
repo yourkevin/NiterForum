@@ -54,7 +54,7 @@
           <li>
             <span th:if="${question.status==1||question.status==3}" class="fly-jing">精</span>
             <a th:href="'/p/' + ${question.getId()}" th:text="${question.getTitle()}" class="jie-title"></a>
-            <i th:text="${'于 '+#dates.format(question.gmtModified,'yyyy-MM-dd HH:mm')}"></i>
+            <i th:text="${'于 '+question.gmtModifiedStr}"></i>
             <!--em class="layui-hide-xs" th:text="${question.commentCount+'个回复 •'+question.viewCount+'次浏览 •'+question.LikeCount+'人收藏'}"></em-->
           </li>
           </th:block>
@@ -93,32 +93,9 @@
 
     <div class="layui-col-md6 fly-home-da">
       <div class="fly-panel">
-        <h3 class="fly-panel-title">贤心 最近的回答</h3>
-        <ul class="home-jieda">
-          <li>
-          <p>
-          <span>1分钟前</span>
-          在<a href="" target="_blank">tips能同时渲染多个吗?</a>中回答：
-          </p>
-          <div class="home-dacontent">
-            尝试给layer.photos加上这个属性试试：
-<pre>
-full: true
-</pre>
-            文档没有提及
-          </div>
-        </li>
-        <li>
-          <p>
-          <span>5分钟前</span>
-          在<a href="" target="_blank">在Fly社区用的是什么系统啊?</a>中回答：
-          </p>
-          <div class="home-dacontent">
-            Fly社区采用的是NodeJS。分享出来的只是前端模版
-          </div>
-        </li>
+        <h3 class="fly-panel-title" ><th:block th:text="${user.getName()+' 回复了主题 '}"></th:block><span id="comment_count"></span> 次</h3>
+        <ul class="home-jieda" id="jieda-list">
 
-          <!-- <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><span>没有回答任何问题</span></div> -->
         </ul>
       </div>
     </div>
@@ -139,9 +116,98 @@ layui.config({
   version: "3.0.0"
   ,base: '/mods/'
 }).extend({
-  fly: 'index'
-}).use('fly');
+  fly: 'index2'
+}).use(['fly','flow','layer'], function() {
+
+  var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+  var flow = layui.flow;
+  var layer = layui.layer;
+  var fly = layui.fly;
+  //var page=[[${page}]];
+  flow.load({
+    elem: '#jieda-list' //指定列表容器
+    ,isAuto:false//懒加载
+    ,end:"咱可是有底线滴~"//底部文字
+    ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+      var lis = [];
+      //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+      $.ajax({
+        type: "POST",
+        url: "/api/comment/list",
+        contentType: 'application/json',
+        data: JSON.stringify({
+          "type": 1,
+          "commentator": [[${user.id}]],
+          "page": page
+        }),
+        success: function (response) {
+          if (response.code == 200) {
+            if(page==1){
+              var comment_count = $("#comment_count");
+              comment_count.html(response.data.totalCount);
+            }
+            layui.each(response.data.data, function(index, item){
+              var titleLabel ="<p>\n" +
+                      "   <span>他在 "+item.gmtModifiedStr+"</span>\n" +
+                      "   回答了以下内容，快去<a href=\"/p/"+item.parentId+"#comment-body-"+item.id+"\" target=\"_blank\" class='fly-link'>围观</a>吧：\n" +
+                      "   </p>";
+              var ContentLabel="          <div class=\"reply-body-"+page+" home-dacontent \">" +
+                      item.content +
+                      "          </div>";
+              var str="<li>"+titleLabel+ContentLabel+"</li>";
+              lis.push(str);
+            });
+
+            //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+            //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+            next(lis.join(''), page < response.data.totalPage);
+
+
+          } else {
+            var str="<div class=\"fly-none\" style=\"min-height: 50px; padding:30px 0; height:auto;\"><span>出错啦，请联系管理员</span></div>";
+            lis.push(str);
+          }
+          //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+          $('.reply-body-'+page).each(function(){
+            var othis = $(this), html = othis.html();
+            othis.html(fly.content(html));
+          });
+        },
+        error: function(xmlHttpRequest, textStatus,errorThrown){
+          var str="<div class=\"fly-none\" style=\"min-height: 50px; padding:30px 0; height:auto;\"><span>错误"+xmlHttpRequest.status+"，请联系管理员</span></div>";
+          lis.push(str);
+          next(lis.join(''), 1 < 1);
+        },
+        dataType: "json"
+      });
+
+
+    }
+  });
+
+
+  $('body').on('click', '.home-dacontent img', function(){
+    //window.open(this.src);
+    layer.photos({
+      photos: {
+        "data": [{
+          "src": this.src
+        }]},
+      anim:1
+    });
+  });
+
+});
 </script>
+
+<script>
+  //var user_id=[[${user.id}]];
+  function getReplyBody() {
+
+
+  }
+</script>
+
 
 </body>
 </html>

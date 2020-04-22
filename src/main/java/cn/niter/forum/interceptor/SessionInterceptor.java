@@ -53,14 +53,14 @@ public class SessionInterceptor implements HandlerInterceptor {
         String host = request.getHeader("host");//客户端指定自己想访问的WEB服务器的域名/IP 地址和端口号。 在任何类型请求中，request都会包含此header信息。
        //处理静态资源
        if (handler instanceof ResourceHttpRequestHandler){
-           if(referer!=null&&(!host.equals(referer.split("//")[1].split("/")[0]))){//静态资源防盗链,请务必确保配置文件中的site.main.domain填写正确
+           if(referer!=null&&(!host.equals(referer.split("//")[1].split("/")[0]))){//静态资源防盗链
                response.setStatus(403);
                return false;
            }
            return true;
        }
 
-       //拦截非本站post请求，如果你需要改造为前后端分离项目，请留意这里
+       //拦截非本站post请求，如果你需要改造为前后端分离项目，此处代码可能会有所影响
        String origin = request.getHeader("origin");//用来说明请求从哪里发起的，包括，且仅仅包括协议和域名。post请求才有，这个参数一般只存在于CORS跨域请求中，可以看到response有对应的header：Access-Control-Allow-Origin。
        if(origin!=null&&(!host.equals(origin.split("//")[1])||referer==null)){
            response.setStatus(406);

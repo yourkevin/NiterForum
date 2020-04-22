@@ -23,4 +23,27 @@
     COMMENT_COUNT = COMMENT_COUNT + #{commentCount,jdbcType=INTEGER}
     where id = #{id}
     </update>
+    <select id="countBySearch" parameterType="cn.niter.forum.dto.CommentQueryDTO"
+            resultType="java.lang.Integer">
+        select count(*) from comment
+        <where>
+                1=1
+            <if test="id != null and id != 0">
+                and id = #{id}
+            </if>
+            <if test="parentId != null and parentId != 0">
+                and parent_id = #{parentId}
+            </if>
+            <if test="commentator != null and commentator != 0">
+                and commentator = #{commentator}
+            </if>
+
+            <if test="type != null and type != 0">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
+
+
 </mapper>

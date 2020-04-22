@@ -1,8 +1,6 @@
 package cn.niter.forum.controller;
 
-import cn.niter.forum.dto.CommentCreateDTO;
-import cn.niter.forum.dto.CommentDTO;
-import cn.niter.forum.dto.ResultDTO;
+import cn.niter.forum.dto.*;
 import cn.niter.forum.enums.CommentTypeEnum;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
@@ -68,6 +66,21 @@ public class CommentController {
     public ResultDTO<List<CommentDTO>> comments(@PathVariable(name = "id") Long id) {
         List<CommentDTO> commentDTOS = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
         return ResultDTO.okOf(commentDTOS);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/api/comment/list", method = RequestMethod.POST)
+    public ResultDTO<List<CommentDTO>> commentList(
+            /*@RequestParam(name = "commentator",required = false) Long commentator
+            ,@RequestParam(name = "type",required = false) Integer type
+            ,@RequestParam(name = "id",required = false) Long id
+            ,@RequestParam(name = "parentId",required = false) Long parentId*/
+            @RequestBody CommentQueryDTO commentQueryDTO
+            ) {
+        PaginationDTO paginationDTO = commentService.listByCommentQueryDTO(commentQueryDTO);
+
+
+        return ResultDTO.okOf(paginationDTO);
     }
 
     @PostMapping("/comment/del/id")

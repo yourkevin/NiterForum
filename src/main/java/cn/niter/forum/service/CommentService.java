@@ -1,6 +1,6 @@
 package cn.niter.forum.service;
 
-import cn.niter.forum.dto.CommentDTO;
+import cn.niter.forum.dto.*;
 import cn.niter.forum.enums.CommentTypeEnum;
 import cn.niter.forum.enums.NotificationStatusEnum;
 import cn.niter.forum.enums.NotificationTypeEnum;
@@ -8,6 +8,8 @@ import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.mapper.*;
 import cn.niter.forum.model.*;
+import cn.niter.forum.util.TimeUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +47,9 @@ public class CommentService {
 
     @Autowired
     private NotificationMapper notificationMapper;
+
+    @Autowired
+    private TimeUtils timeUtils;
 
     @Value("${score1.comment.inc}")
     private Integer score1CommentInc;
@@ -276,11 +281,14 @@ public class CommentService {
         List<CommentDTO> commentDTOS = comments.stream().map(comment -> {
             CommentDTO commentDTO = new CommentDTO();
             BeanUtils.copyProperties(comment, commentDTO);
-            commentDTO.setUser(userMap.get(comment.getCommentator()));
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(userMap.get(comment.getCommentator()),userDTO);
+            commentDTO.setUser(userDTO);
             UserAccountExample userAccountExample = new UserAccountExample();
             userAccountExample.createCriteria().andUserIdEqualTo(userMap.get(comment.getCommentator()).getId());
             List<UserAccount> userAccounts = userAccountMapper.selectByExample(userAccountExample);
             commentDTO.setUserAccount(userAccounts.get(0));
+            commentDTO.setGmtModifiedStr(timeUtils.getTime(commentDTO.getGmtModified(),null));
             return commentDTO;
         }).collect(Collectors.toList());
 
@@ -313,4 +321,87 @@ public class CommentService {
         userAccount=null;
         return c;
     }
+
+
+    public PaginationDTO listByCommentQueryDTO(CommentQueryDTO commentQueryDTO){
+        Integer totalPage;
+
+        Integer totalCount = commentExtMapper.countBySearch(commentQueryDTO);
+
+
+
+
+        CommentExample commentExample = new CommentExample();
+        CommentExample.Criteria criteria = commentExample.createCriteria();
+        if(commentQueryDTO.getCommentator()!=null)
+            criteria.andCommentatorEqualTo(commentQueryDTO.getCommentator());
+        if(commentQueryDTO.getId()!=null)
+            criteria.andIdEqualTo(commentQueryDTO.getId());
+        if(commentQueryDTO.getParentId()!=null)
+            criteria.andParentIdEqualTo(commentQueryDTO.getParentId());
+        if(commentQueryDTO.getType()!=null)
+            criteria.andTypeEqualTo(commentQueryDTO.getType());
+
+        if(commentQueryDTO.getPage()==null||commentQueryDTO.getPage()<=0) commentQueryDTO.setPage(1);
+        if(commentQueryDTO.getSize()==null||commentQueryDTO.getSize()<=0) commentQueryDTO.setSize(5);
+        if (totalCount % commentQueryDTO.getSize() == 0) {
+            totalPage = totalCount / commentQueryDTO.getSize();
+        } else {
+            totalPage = totalCount / commentQueryDTO.getSize() + 1;
+        }
+
+        if (commentQueryDTO.getPage() > totalPage) {
+            commentQueryDTO.setPage(totalPage);
+        }
+
+        Integer offset = commentQueryDTO.getPage() < 1 ? 0 : commentQueryDTO.getSize() * (commentQueryDTO.getPage() - 1);
+        commentQueryDTO.setOffset(offset);
+
+
+
+        commentExample.setOrderByClause("gmt_modified desc");
+        List<Comment> comments = commentMapper.selectByExampleWithRowbounds(commentExample,new RowBounds(commentQueryDTO.getSize()*(commentQueryDTO.getPage()-1), commentQueryDTO.getSize()));
+        PaginationDTO paginationDTO = new PaginationDTO();
+        paginationDTO.setTotalCount(totalCount);
+        if (comments.size() == 0) {
+            return paginationDTO;
+        }
+        // 获取去重的评论人
+        Set<Long> commentators = comments.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
+        List<Long> userIds = new ArrayList();
+        userIds.addAll(commentators);
+
+
+        // 获取评论人并转换为 Map
+        UserExample userExample = new UserExample();
+        userExample.createCriteria()
+                .andIdIn(userIds);
+        List<User> users = userMapper.selectByExample(userExample);
+
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getId(), user -> user));
+
+
+
+        // 转换 comment 为 commentDTO
+        List<CommentDTO> commentDTOS = comments.stream().map(comment -> {
+            CommentDTO commentDTO = new CommentDTO();
+            BeanUtils.copyProperties(comment, commentDTO);
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(userMap.get(comment.getCommentator()),userDTO);
+            commentDTO.setUser(userDTO);
+            UserAccountExample userAccountExample = new UserAccountExample();
+            userAccountExample.createCriteria().andUserIdEqualTo(userMap.get(comment.getCommentator()).getId());
+            List<UserAccount> userAccounts = userAccountMapper.selectByExample(userAccountExample);
+            commentDTO.setUserAccount(userAccounts.get(0));
+            commentDTO.setGmtModifiedStr(timeUtils.getTime(commentDTO.getGmtModified(),null));
+            return commentDTO;
+        }).collect(Collectors.toList());
+
+
+        paginationDTO.setData(commentDTOS);
+        paginationDTO.setPagination(totalPage,commentQueryDTO.getPage());
+        return paginationDTO;
+
+    }
+
 }
