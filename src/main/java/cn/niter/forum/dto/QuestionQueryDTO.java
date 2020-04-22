@@ -8,6 +8,7 @@ public class QuestionQueryDTO {
     private String tag;
     private String sort;
     private Long time;
+    private Integer page;
     private Integer offset;
     private Integer size;
     private Integer column2;
