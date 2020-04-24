@@ -13,28 +13,28 @@
   <link rel="stylesheet" href="/layui/css/layui.css">
   <link rel="stylesheet" href="/css/global.css">
   <link rel="stylesheet" href="/css/mylay.css?v=1.1">
-  <link rel="stylesheet" href="/css/wap2app.css">
+  <link rel="stylesheet" href="/css/wap2app.css?v=1.7">
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
   <script src="/js/jquery-3.4.1.min.js"></script>
-  <script src="/js/community.js" type="application/javascript"></script>
+  <script src="/js/community.js?v=1.4.6" type="application/javascript"></script>
   <script src="/js/sweetalert.min.js"></script>
-  <script src="/js/plusShare.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/js/wap2app.js?v=1.5.8" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/plusShare.js?v=1.6" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/wap2app.js?v=1.5.19" type="text/javascript" charset="utf-8"></script>
 </th:block>
 
 <div th:fragment="nav" class="fly-header layui-bg-cyan html5plus-hide">
   <div class="layui-container">
-    <a class="fly-logo layui-hide-xs" href="/" >
+    <a class="fly-logo layui-hide-xs" href="/forum" >
       <img src="/images/logo.png" alt="layui" style="height: 40px">
     </a>
 
       <!--导航针对移动端优化-->
-    <a class="fly-logo layui-hide-lg layui-hide-md" href="/" >
+    <a class="fly-logo layui-hide-lg layui-hide-md" href="/forum" >
       <img src="/images/N80.png" alt="layui" style="height: 40px">
     </a>
     <ul class="layui-nav layui-hide-lg layui-hide-md" style="margin-left: 60px">
       <li th:class="${'communitynav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
-        <a href="/"><i class="layui-icon">&#xe68e;</i>主页</a>
+        <a href="/forum"><i class="layui-icon">&#xe68e;</i>主页</a>
       </li>
       <li class="layui-nav-item">
         <a></a>
@@ -52,7 +52,7 @@
 
     <ul class="layui-nav fly-nav layui-hide-xs">
       <li th:class="${'communitynav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
-        <a href="/"><i class="layui-icon">&#xe68e;</i>主页</a>
+        <a href="/forum"><i class="layui-icon">&#xe68e;</i>主页</a>
       </li>
       <!--li th:class="${'devnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
         <a href="/dev"><i class="iconfont icon-iconmingxinganli"></i>实验室</a>
@@ -125,17 +125,66 @@
   </div>
 </div>
 
+<th:block th:fragment="home_nav">
+  <div class="header">
+    <div class="header-wrap">
+      <h1 class="logo pull-left">
+        <a href="/home">
+          <img src="/images/home-logo.png" alt="尼特IT-Now ITer" class="logo-img">
+          <!--img src="/images/logo-text.png" alt="Now ITer" class="logo-text"-->
+        </a>
+      </h1>
+
+      <div class="blog-nav pull-right">
+        <ul class="layui-nav pull-left">
+          <li th:class="${navtype == 'homenav'}? 'layui-nav-item layui-this' : 'layui-nav-item'"><a href="/home">首页</a></li>
+          <li th:if="${navtype == 'communitynav'}" class="layui-nav-item layui-this"><a href="#">文章</a></li>
+          <li th:class="${navtype == 'msgnav'}? 'layui-nav-item layui-this' : 'layui-nav-item'"><a href="/home/message">留言</a></li>
+          <li class="layui-nav-item"><a target="_blank" href="/forum">社区</a></li>
+          <li class="layui-nav-item">
+            <a target="_blank" href="https://github.com/yourkevin/NiterForum/">源码</a>
+            <dl class="layui-nav-child">
+              <dd><a target="_blank" href="https://gitee.com/yourkevin/NiterForum/"><i><img src="/images/gitee120c.png" style="height: 28px"></i>Gitee</a></dd>
+              <dd><a target="_blank" href="https://github.com/yourkevin/NiterForum/"><i><img src="/images/github120c.png" style="height: 28px"></i>Github</a></dd>
+              <dd><a target="_blank" href="https://api-1251590924.cos.ap-nanjing.myqcloud.com/qrcode/index.html"><i class="layui-icon" style="font-size: 30px; color: #ffdd11;">&#xe65e;</i>打赏</a></dd>
+            </dl>
+          </li>
+          <li class="layui-nav-item"><a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5uPXrY2">联系</a></li>
+        </ul>
+        <a href="#" class="personal pull-left">
+          <i class="layui-icon">&#xe66f;<th:block th:if="${session.user!=null}" th:text="${session.user.name}"></th:block></i>
+
+        </a>
+      </div>
+      <div class="mobile-nav pull-right" id="mobile-nav">
+        <a href="javascript:;">
+          <i class="layui-icon">&#xe671;</i>
+        </a>
+      </div>
+    </div>
+    <ul class="pop-nav" id="pop-nav">
+      <li th:class="${navtype == 'homenav'}? 'layui-nav-item layui-this' : 'layui-nav-item'"><a href="/home">首页</a></li>
+      <li th:class="${navtype == 'msgnav'}? 'layui-nav-item layui-this' : 'layui-nav-item'"><a href="/home/message">留言</a></li>
+      <li class="layui-nav-item"><a target="_blank" href="/forum">社区</a></li>
+      <li class="layui-nav-item">
+        <a target="_blank" href="https://github.com/yourkevin/NiterForum/">源码</a>
+      </li>
+      <li class="layui-nav-item"><a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5uPXrY2">联系</a></li>
+    </ul>
+  </div>
+</th:block>
+
 <div th:fragment="sub_nav" class="fly-panel fly-column">
   <div class="layui-container">
     <ul class="layui-clear">
-      <li th:class="${column == null}? 'layui-this' : ''"><a href="/">首页</a></li>
-      <li th:class="${column == 1}? 'layui-this' : ''"><a href="/?column=1">提问</a></li>
-      <li th:class="${column == 2}? 'layui-this' : ''"><a href="/?column=2">分享<span class="layui-badge-dot"></span></a></li>
-      <li th:class="${column == 3}? 'layui-this' : ''"><a href="/?column=3">建议</a></li>
-      <li th:class="${column == 4}? 'layui-this' : ''"><a href="/?column=4">讨论</a></li>
-      <li th:class="${column == 5}? 'layui-this' : ''"><a href="/?column=5">公告</a></li>
-      <li th:class="${column == 6}? 'layui-this' : ''"><a href="/?column=6">动态</a></li>
-      <li th:class="${column == 9}? 'layui-this' : ''"><a href="/?column=9">其它</a></li>
+      <li th:class="${column == null}? 'layui-this' : ''"><a href="/forum">首页</a></li>
+      <li th:class="${column == 1}? 'layui-this' : ''"><a href="/forum?column=1">提问</a></li>
+      <li th:class="${column == 2}? 'layui-this' : ''"><a href="/forum?column=2">分享<span class="layui-badge-dot"></span></a></li>
+      <li th:class="${column == 3}? 'layui-this' : ''"><a href="/forum?column=3">建议</a></li>
+      <li th:class="${column == 4}? 'layui-this' : ''"><a href="/forum?column=4">讨论</a></li>
+      <li th:class="${column == 5}? 'layui-this' : ''"><a href="/forum?column=5">公告</a></li>
+      <li th:class="${column == 6}? 'layui-this' : ''"><a href="/forum?column=6">动态</a></li>
+      <li th:class="${column == 9}? 'layui-this' : ''"><a href="/forum?column=9">其它</a></li>
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
 
       <!-- 用户登入后显示 -->

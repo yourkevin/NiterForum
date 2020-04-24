@@ -5,8 +5,9 @@
 
   <title th:text="${'发布帖子 '+@environment.getProperty('site.main.titleInfo')}">${@environment.getProperty('clientId')}</title>
   <link rel="stylesheet" href="/css/community.css">
+  <link rel="stylesheet" href="/css/myeditor.css">
   <th:block th:insert="~{common/header :: head}"></th:block>
-  <script src="/js/community.js" type="application/javascript"></script>
+  <!--script src="/js/community.js" type="application/javascript"></script-->
   <script src="/js/moment.js" type="application/javascript"></script>
 </head>
 <body>
