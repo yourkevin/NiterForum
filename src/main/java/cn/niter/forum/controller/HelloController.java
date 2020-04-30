@@ -35,7 +35,7 @@ public class HelloController {
         System.out.println(keywordsEnable);*/
        // qqProvider.allOpenIdtoUnionId("101844155");
         //tinifyProvider.init();
-       return "user/verification";
+       return "other/video2";
     }
 
 

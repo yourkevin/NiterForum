@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
 @Slf4j
 @Controller
 public class AuthorizeController {
@@ -77,6 +78,8 @@ public class AuthorizeController {
     private String qqRedirectUri;
     @Value("${qq.api.unionId}")
     private int getQqUnionId;
+    @Value("${site.main.domain}")
+    private String domain;
 
     @Autowired
     private UserService userService;
@@ -95,7 +98,7 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         GithubUser githubUser = githubProvider.getUser(accessToken);
         //System.out.println(githubUser.getName()+githubUser.getId());
-       if (githubUser != null && githubUser.getId() != null) {
+        if (githubUser != null && githubUser.getId() != null) {
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
@@ -106,30 +109,30 @@ public class AuthorizeController {
             user.setAccountId(String.valueOf(githubUser.getId()));
 //            user.setGmtCreate(System.currentTimeMillis());
 //            user.setGmtModified(user.getGmtCreate());
-            user.setAvatarUrl("/images/avatar/"+(int)(Math.random()*11)+".jpg");
+            user.setAvatarUrl("/images/avatar/" + (int) (Math.random() * 11) + ".jpg");
             userService.createOrUpdate(user);
          /*  Cookie cookie = new Cookie("token", token);
            cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
            cookie.setHttpOnly(true);//通过js脚本是无法获取到cookie的信息的。防止XSS攻击。
            cookie.setMaxAge(60 * 60 * 24 * 30 * 6);*/
-           Cookie cookie=getCookie(token);
-           response.addCookie(cookie);
-          // userMapper.insert(user);
-           //request.getSession().setAttribute("user",githubUser);
+            Cookie cookie = getCookie(token);
+            response.addCookie(cookie);
+            // userMapper.insert(user);
+            //request.getSession().setAttribute("user",githubUser);
             return "redirect:/";
         } else {
             // 登录失败，重新登录
-           log.error("callback get github error,{}", githubUser);
-           return "redirect:/";
+            log.error("callback get github error,{}", githubUser);
+            return "redirect:/";
         }
-       //return "index";
+        //return "index";
     }
 
     @GetMapping("/callbackbaidu")
     public String callbackBaidu(@RequestParam(name = "code") String code,
-                           @RequestParam(name = "state") String state,
-                           HttpServletResponse response,
-                           HttpServletRequest request,
+                                @RequestParam(name = "state") String state,
+                                HttpServletResponse response,
+                                HttpServletRequest request,
                                 Model model) {
 
         BaiduAccessTokenDTO baiduAccessTokenDTO = new BaiduAccessTokenDTO();
@@ -138,10 +141,10 @@ public class AuthorizeController {
         baiduAccessTokenDTO.setClient_id(baiduClientId);
         baiduAccessTokenDTO.setClient_secret(baiduClientSecret);
         baiduAccessTokenDTO.setRedirect_uri(baiduRedirectUri);
-       // System.out.println("code是"+code+"state是"+state);
+        // System.out.println("code是"+code+"state是"+state);
         String accessToken = baiduProvider.getAccessToken(baiduAccessTokenDTO);
         BaiduUserDTO baiduUser = baiduProvider.getUser(accessToken);
-       // System.out.println(baiduUser.getUsername()+baiduUser.getUserid());
+        // System.out.println(baiduUser.getUsername()+baiduUser.getUserid());
         if (baiduUser != null && baiduUser.getUserid() != null) {
             User user = new User();
             UserInfo userInfo = new UserInfo();
@@ -151,12 +154,12 @@ public class AuthorizeController {
             user.setBaiduAccountId("" + baiduUser.getUserid());
             user.setAvatarUrl("https://gss0.bdstatic.com/6LZ1dD3d1sgCo2Kml5_Y_D3/sys/portrait/item/" + baiduUser.getPortrait());
 
-            BeanUtils.copyProperties(baiduUser,userInfo);
-           // System.out.println("生日:"+userInfo.getBirthday()+"realname:"+userInfo.getRealname());
-           // userInfo.setUserId();
+            BeanUtils.copyProperties(baiduUser, userInfo);
+            // System.out.println("生日:"+userInfo.getBirthday()+"realname:"+userInfo.getRealname());
+            // userInfo.setUserId();
             User loginuser = (User) request.getSession().getAttribute("user");
-            int flag = userService.createOrUpdateBaidu(user,loginuser,userInfo);
-            if(flag == 1) {//创建百度账号
+            int flag = userService.createOrUpdateBaidu(user, loginuser, userInfo);
+            if (flag == 1) {//创建百度账号
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用百度账号成功注册本站！");
                 /*model.addAttribute("aouth", "Baidu");
@@ -165,19 +168,19 @@ public class AuthorizeController {
                 request.getSession().setAttribute("userTemp",user);
                 return "oauth";*/
             }
-            if (flag==2) {
+            if (flag == 2) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您的账号已成功绑定/更新百度账号！");
             }
-            if (flag==3) {
+            if (flag == 3) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用百度账号成功登陆本站！");
             }
-            Cookie cookie=getCookie(token);
+            Cookie cookie = getCookie(token);
             response.addCookie(cookie);
             return "result";
 
-        }else {
+        } else {
             // 登录失败，重新登录
             log.error("callback get github error,{}", baiduUser);
             return "redirect:/";
@@ -186,10 +189,10 @@ public class AuthorizeController {
 
     @GetMapping("/callbackqq")
     public String callbackQq(@RequestParam(name = "code") String code,
-                                @RequestParam(name = "state") String state,
-                                HttpServletResponse response,
-                                HttpServletRequest request,
-                                Model model) {
+                             @RequestParam(name = "state") String state,
+                             HttpServletResponse response,
+                             HttpServletRequest request,
+                             Model model) {
 
         QqAccessTokenDTO qqAccessTokenDTO = new QqAccessTokenDTO();
         qqAccessTokenDTO.setGrant_type("authorization_code");
@@ -201,13 +204,13 @@ public class AuthorizeController {
         String string = qqProvider.getAccessToken(qqAccessTokenDTO);
         String access_token = string.split("&")[0].split("=")[1];
         String openid = qqProvider.getOpenID(access_token);
-        QqUserDTO qqUser = qqProvider.getUser(access_token,qqClientId,openid);
+        QqUserDTO qqUser = qqProvider.getUser(access_token, qqClientId, openid);
         if (qqUser != null && qqUser.getOpenId() != null) {
             User user = new User();
             UserInfo userInfo = new UserInfo();
-            if(getQqUnionId==1){
+            if (getQqUnionId == 1) {
                 user.setQqAccountId(qqProvider.getUnionId(access_token));
-            }else{
+            } else {
                 user.setQqAccountId(openid);
             }
             String token = UUID.randomUUID().toString();
@@ -216,30 +219,30 @@ public class AuthorizeController {
             //user.setQqAccountId(qqUser.getOpenId());
             user.setAvatarUrl(qqUser.getFigureurl_qq());
             userInfo.setSex(qqUser.getGender());
-            if(StringUtils.isBlank(qqUser.getProvince())) qqUser.setProvince("全部");
-            if(StringUtils.isBlank(qqUser.getCity())) qqUser.setCity("全部");
-            userInfo.setLocation(qqUser.getProvince()+"-"+qqUser.getCity()+"-全部");
-            if(!StringUtils.isBlank(qqUser.getConstellation())) userInfo.setConstellation(qqUser.getConstellation());
-            userInfo.setBirthday(qqUser.getYear()+"-10-10");
+            if (StringUtils.isBlank(qqUser.getProvince())) qqUser.setProvince("全部");
+            if (StringUtils.isBlank(qqUser.getCity())) qqUser.setCity("全部");
+            userInfo.setLocation(qqUser.getProvince() + "-" + qqUser.getCity() + "-全部");
+            if (!StringUtils.isBlank(qqUser.getConstellation())) userInfo.setConstellation(qqUser.getConstellation());
+            userInfo.setBirthday(qqUser.getYear() + "-10-10");
             User loginuser = (User) request.getSession().getAttribute("user");
-            int flag = userService.createOrUpdateQq(user,loginuser,userInfo);
-            if(flag == 1) {//创建qq账号
+            int flag = userService.createOrUpdateQq(user, loginuser, userInfo);
+            if (flag == 1) {//创建qq账号
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用QQ账号成功注册本站！");
             }
-            if (flag==2) {
+            if (flag == 2) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您的账号已成功绑定/更新QQ账号！");
             }
-            if (flag==3) {
+            if (flag == 3) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用QQ账号成功登陆本站！");
             }
-            Cookie cookie=getCookie(token);
+            Cookie cookie = getCookie(token);
             response.addCookie(cookie);
             return "result";
 
-        }else {
+        } else {
             log.error("callback get qq error,{}", qqUser);
             return "redirect:/";
         }
@@ -260,10 +263,10 @@ public class AuthorizeController {
         weiboAccessTokenDTO.setRedirect_uri(weiboRedirectUri);
         // System.out.println("code是"+code+"state是"+state);
         String jsonString = weiboProvider.getAccessToken(weiboAccessTokenDTO);
-         JSONObject obj = JSONObject.parseObject(jsonString);
+        JSONObject obj = JSONObject.parseObject(jsonString);
         String access_token = obj.getString("access_token");
         String uid = obj.getString("uid");
-        WeiboUserDTO weiboUser = weiboProvider.getUser(access_token,uid);
+        WeiboUserDTO weiboUser = weiboProvider.getUser(access_token, uid);
         if (weiboUser != null && weiboUser.getIdstr() != null) {
             User user = new User();
             UserInfo userInfo = new UserInfo();
@@ -273,29 +276,29 @@ public class AuthorizeController {
             user.setWeiboAccountId(weiboUser.getIdstr());
             user.setAvatarUrl(weiboUser.getAvatar_hd());
             userInfo.setUserdetail(weiboUser.getDescription());
-            if("f".equals(weiboUser.getGender())) userInfo.setSex("女");
+            if ("f".equals(weiboUser.getGender())) userInfo.setSex("女");
             else userInfo.setSex("男");
             userInfo.setLocation(weiboUser.getLocation());
             //BeanUtils.copyProperties(weiboUser,userInfo);
             User loginuser = (User) request.getSession().getAttribute("user");
-            int flag = userService.createOrUpdateWeibo(user,loginuser,userInfo);
-            if(flag == 1) {//创建百度账号
+            int flag = userService.createOrUpdateWeibo(user, loginuser, userInfo);
+            if (flag == 1) {//创建百度账号
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用微博账号成功注册本站！");
             }
-            if (flag==2) {
+            if (flag == 2) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您的账号已成功绑定/更新微博账号！");
             }
-            if (flag==3) {
+            if (flag == 3) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用微博账号成功登陆本站！");
             }
-            Cookie cookie=getCookie(token);
+            Cookie cookie = getCookie(token);
             response.addCookie(cookie);
             return "result";
 
-        }else {
+        } else {
             log.error("callback get github error,{}", weiboUser);
             return "redirect:/";
         }
@@ -304,13 +307,13 @@ public class AuthorizeController {
 
     @RequestMapping(value = "/creatAccount/baidu", method = RequestMethod.POST)
     public String creatAccountFromBaidu(HttpServletRequest request,
-                         HttpServletResponse response,
-                         @RequestParam(name = "name", required = false)String name,
-                                       Model model) {
+                                        HttpServletResponse response,
+                                        @RequestParam(name = "name", required = false) String name,
+                                        Model model) {
         UserInfo userInfoTemp = (UserInfo) request.getSession().getAttribute("userInfoTemp");
         User userTemp = (User) request.getSession().getAttribute("userTemp");
-        if(name!=null&& StringUtils.isNotBlank(name)) userTemp.setName(name);
-        userService.createNewBaidu(userTemp,userInfoTemp);
+        if (name != null && StringUtils.isNotBlank(name)) userTemp.setName(name);
+        userService.createNewBaidu(userTemp, userInfoTemp);
         /*Cookie cookie = new Cookie("token", userTemp.getToken());
         cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
         response.addCookie(cookie);
@@ -328,6 +331,8 @@ public class AuthorizeController {
         request.getSession().removeAttribute("userInfo");
         request.getSession().removeAttribute("unreadCount");
         Cookie cookie = new Cookie("token", null);
+        cookie.setDomain(domain);
+        cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
         return "redirect:/forum";
@@ -335,25 +340,27 @@ public class AuthorizeController {
 
     @PostMapping("/callbackOpenid")
     @ResponseBody
-    public Map<String,Object> callbackOpenid(HttpServletRequest request,
-                         HttpServletResponse response) {
-        Map<String,Object> map  = new HashMap<>();
-        map.put("info","进来了");
+    public Map<String, Object> callbackOpenid(HttpServletRequest request,
+                                              HttpServletResponse response) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("info", "进来了");
         return map;
     }
 
     public String getUserName(String authorizeSize) {
         String str = RandomStringUtils.random(5,
                 "abcdefghijklmnopqrstuvwxyz1234567890");
-        String name = authorizeSize+"用户_"+str;
+        String name = authorizeSize + "用户_" + str;
         return name;
     }
 
-    public Cookie getCookie(String token){
+    public Cookie getCookie(String token) {
         Cookie cookie = new Cookie("token", token);
         cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
         cookie.setHttpOnly(true);//通过js脚本是无法获取到cookie的信息的。防止XSS攻击。
         cookie.setMaxAge(60 * 60 * 24 * 3 * 1);//缩短为三天
+        cookie.setDomain(domain);
+        cookie.setPath("/");
         return cookie;
     }
 

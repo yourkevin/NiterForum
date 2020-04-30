@@ -31,6 +31,8 @@ public class MailController {
 
     @Value("${site.main.title}")
     private String siteTitle;
+    @Value("${site.main.domain}")
+    private String domain;
 
     @GetMapping("/profile/regmail")
     public String hello(HttpServletRequest request) {
@@ -45,12 +47,12 @@ public class MailController {
 
     @ResponseBody//@ResponseBody返回json格式的数据
     @RequestMapping(value = "/mail/getMailCode", method = RequestMethod.POST)
-    public Object getMailCode(@RequestParam(name="username",required = false) String username,
+    public Object getMailCode(@RequestParam(name = "username", required = false) String username,
                               @RequestParam("mail") String mail,
                               @RequestParam("ip") String ip,
-                              @RequestParam("token") String token){
-        if((!token.equals(ipLimitCache.getInterval(ip)))||(ipLimitCache.showIpScores(ip)>=100)){
-            ipLimitCache.addIpScores(ip,10);
+                              @RequestParam("token") String token) {
+        if ((!token.equals(ipLimitCache.getInterval(ip))) || (ipLimitCache.showIpScores(ip) >= 100)) {
+            ipLimitCache.addIpScores(ip, 10);
             return ResultDTO.errorOf(CustomizeErrorCode.SEND_MAIL_FAILED);
         }
         /*System.out.println("token"+ipLimitCache.get(ip));
@@ -58,12 +60,12 @@ public class MailController {
         System.out.println("Expiration:"+ipLimitCache.getInterval().getExpiration(ip));
         System.out.println("ip:"+ip+"-token:"+token);*/
         // TODO 自动生成的方法存根
-       try {
-            if(username==null) username=siteTitle;
+        try {
+            if (username == null) username = siteTitle;
             JavaMailUtils.setUserName(username);
             JavaMailUtils.setReceiveMailAccount(mail);
             JavaMailUtils.send();
-            temporaryCache.putMailCode(mail,JavaMailUtils.code);
+            temporaryCache.putMailCode(mail, JavaMailUtils.code);
             return ResultDTO.okOf(JavaMailUtils.code);
         } catch (Exception e) {
             // TODO 自动生成的 catch 块
@@ -78,34 +80,34 @@ public class MailController {
     @ResponseBody//@ResponseBody返回json格式的数据
     @RequestMapping(value = "/mail/submitMail", method = RequestMethod.POST)
     public Object submitMail(@RequestParam("id") String id,
-                              @RequestParam("mail") String mail,
-                             @RequestParam("code") String code){
-        if(!code.equals(temporaryCache.getMailCode(mail)))
+                             @RequestParam("mail") String mail,
+                             @RequestParam("code") String code) {
+        if (!code.equals(temporaryCache.getMailCode(mail)))
             return ResultDTO.errorOf("验证码不匹配，可能已经超过5分钟，请重试");        // TODO 自动生成的方法存根
-           return userService.updateUserMailById(id,mail);
+        return userService.updateUserMailById(id, mail);
     }
 
     @ResponseBody//@ResponseBody返回json格式的数据
     @RequestMapping(value = "/mail/registerOrLoginWithMail", method = RequestMethod.POST)
     public Object registerOrLoginWithMail(
-                             @RequestParam("mail") String mail,
-                             @RequestParam("code") String code){
+            @RequestParam("mail") String mail,
+            @RequestParam("code") String code) {
         //  System.out.println("mail:"+mail);
-        if(!code.equals(temporaryCache.getMailCode(mail)))
+        if (!code.equals(temporaryCache.getMailCode(mail)))
             return ResultDTO.errorOf("验证码不匹配，可能已经超过5分钟，请重试");
 
         String token = UUID.randomUUID().toString();
-      //  Cookie cookie = new Cookie("token", token);
-       // cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
-      //  response.addCookie(cookie);
+        //  Cookie cookie = new Cookie("token", token);
+        // cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
+        //  response.addCookie(cookie);
         // TODO 自动生成的方法存根
-        return userService.registerOrLoginWithMail(mail,token);
+        return userService.registerOrLoginWithMail(mail, token);
     }
 
     @RequestMapping(value = "/registerorLoginWithMailisOk", method = RequestMethod.GET)
     public String returnToken(Model model,
-                              @RequestParam(name = "token")String token,
-                              HttpServletResponse response){
+                              @RequestParam(name = "token") String token,
+                              HttpServletResponse response) {
         //  System.out.println("mail:"+mail);
         // TODO 自动生成的方法存根
         model.addAttribute("rsTitle", "成功啦！！！");
@@ -114,10 +116,11 @@ public class MailController {
         cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
         cookie.setHttpOnly(true);//通过js脚本是无法获取到cookie的信息的。防止XSS攻击。
         cookie.setMaxAge(60 * 60 * 24 * 3 * 1);//三天
+        cookie.setDomain(domain);
+        cookie.setPath("/");
         response.addCookie(cookie);
         return "result";
     }
-
 
 
 }

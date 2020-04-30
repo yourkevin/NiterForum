@@ -73,31 +73,13 @@ public class TController {
         Map<String,Object> map  = new HashMap<>();
         UserAccount userAccount = (UserAccount)request.getSession().getAttribute("userAccount");
         PaginationDTO pagination = questionService.listwithColumn(search, tag, sort, page,size,column2,userAccount);
-        /*List<QuestionDTO> questionDTOList = new ArrayList<>();
-        questionDTOList=pagination.getData();*/
-        //List<String> tags = hotTagCache.getHots();
-        //List<User> loginUsers = loginUserCache.getLoginUsers();
-        //System.out.println("users"+loginUsers);
-        //model.addAttribute("loginUsers", loginUsers);
         map.put("questions",pagination.getData());
-        //map.put("pagination",pagination);
         map.put("totalPage",pagination.getTotalPage());
-       // System.out.println(pagination.getTotalPage());
         map.put("search",search);
         map.put("tag",tag);
         map.put("sort",sort);
         map.put("column",column2);
-        //map.put("page",page);
 
-        /*model.addAttribute("pagination",pagination);
-        model.addAttribute("search", search);
-        model.addAttribute("tag", tag);
-        model.addAttribute("sort", sort);
-        model.addAttribute("column", column2);*/
-        //model.addAttribute("tags", tags);
-        //model.addAttribute("topQuestions", topQuestions);
-        //model.addAttribute("navtype", "communitynav");
-        //return "index";
         return map;
     }
 
