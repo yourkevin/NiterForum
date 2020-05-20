@@ -5,8 +5,6 @@ import cn.niter.forum.enums.CommentTypeEnum;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.model.Question;
-import cn.niter.forum.model.User;
-import cn.niter.forum.model.UserAccount;
 import cn.niter.forum.service.CommentService;
 import cn.niter.forum.service.QuestionService;
 import com.alibaba.fastjson.JSON;
@@ -22,6 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 17:27
+ * @site niter.cn
+ */
 
 @Controller
 public class QuestionController {
@@ -44,20 +49,22 @@ public class QuestionController {
 
     @GetMapping(value = {"/p/{id}","/article/{id}"})
     public String po(@PathVariable(name = "id") Long id, HttpServletRequest request,Model model,@RequestParam(name = "to",required = false)String to){
-        User viewUser = (User)request.getSession().getAttribute("user");
+        UserDTO viewUser = (UserDTO)request.getAttribute("loginUser");
         Long viewUser_id;
-        if(viewUser==null) viewUser_id=0L;
+        if(viewUser==null){
+            viewUser_id=0L;
+        }
         else viewUser_id=viewUser.getId();
         QuestionDTO questionDTO = questionService.getById(id,viewUser_id);
-        UserAccount userAccount = (UserAccount)request.getSession().getAttribute("userAccount");
-        if(userAccount==null){
+        //UserAccount userAccount = (UserAccount)request.getSession().getAttribute("userAccount");
+        if(viewUser==null){
             if(questionDTO.getPermission()!=0){
                 model.addAttribute("rsTitle", "您无权访问！");
                 model.addAttribute("rsMessage", "该贴设置了权限，游客不可见，快去登录吧");
                 return "result";
             }
         }
-        else if(questionDTO.getPermission()>userAccount.getGroupId()&&questionDTO.getCreator()!=userAccount.getUserId()){
+        else if(questionDTO.getPermission()>viewUser.getGroupId()&&questionDTO.getCreator()!=viewUser.getId()){
             model.addAttribute("rsTitle", "您无权访问！");
             model.addAttribute("rsMessage", "该贴仅作者和"+env.getProperty("user.group.r"+questionDTO.getPermission())+"及以上的用户可以访问，快去多多发帖提升等级或者开通VIP畅享全站！");
             return "result";
@@ -88,9 +95,9 @@ public class QuestionController {
     public Map<String,Object> delQuestionById(HttpServletRequest request,
                                                      @RequestParam(name = "id",defaultValue = "0") Long id) {
 
-        User user = (User) request.getSession().getAttribute("user");
-        UserAccount userAccount = (UserAccount) request.getSession().getAttribute("userAccount");
-        if (user == null||userAccount==null) {
+        UserDTO user = (UserDTO)request.getAttribute("loginUser");
+        //UserAccount userAccount = (UserAccount) request.getSession().getAttribute("userAccount");
+        if (user == null) {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
         Map<String,Object> map  = new HashMap<>();
@@ -100,7 +107,7 @@ public class QuestionController {
         }
         else{
 
-            int c = questionService.delQuestionById(user.getId(),userAccount.getGroupId(),id);
+            int c = questionService.delQuestionById(user.getId(),user.getGroupId(),id);
             if(c==0) {
                 map.put("code",500);
                 map.put("msg","哎呀，该贴已删除或您无权删除！");
@@ -140,9 +147,9 @@ public class QuestionController {
                                              ,@RequestParam(name = "field",required = false) String field
                                              ,@RequestParam(name = "json",required = false) String json) {
 
-        User user = (User) request.getSession().getAttribute("user");
-        UserAccount userAccount = (UserAccount) request.getSession().getAttribute("userAccount");
-        if (user == null||userAccount==null) {
+        UserDTO user = (UserDTO)request.getAttribute("loginUser");
+        //UserAccount userAccount = (UserAccount) request.getSession().getAttribute("userAccount");
+        if (user == null) {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
         Map<String,Object> map  = new HashMap<>();
@@ -152,7 +159,7 @@ public class QuestionController {
             return map;
         }
         Question question = questionService.getQuestionById(id);
-        if(!(question.getCreator().longValue()==user.getId()||userAccount.getGroupId()>=18)){
+        if(!(question.getCreator().longValue()==user.getId()||user.getGroupId()>=18)){
             map.put("code",500);
             map.put("msg","您无权进行此操作！");
             return map;

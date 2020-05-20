@@ -4,20 +4,27 @@ import cn.niter.forum.cache.IpLimitCache;
 import cn.niter.forum.cache.TemporaryCache;
 import cn.niter.forum.dto.ResultDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
-import cn.niter.forum.exception.CustomizeException;
-import cn.niter.forum.model.User;
 import cn.niter.forum.service.UserService;
+import cn.niter.forum.util.CookieUtils;
 import cn.niter.forum.util.JavaMailUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.UUID;
+
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 16:17
+ * @site niter.cn
+ */
 
 @Controller
 public class MailController {
@@ -33,16 +40,18 @@ public class MailController {
     private String siteTitle;
     @Value("${site.main.domain}")
     private String domain;
+    @Autowired
+    private CookieUtils cookieUtils;
 
-    @GetMapping("/profile/regmail")
+   /* @GetMapping("/profile/regmail")
     public String hello(HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
         if (user == null) {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
 
         return "user/regmail";
-    }
+    }*/
 
 
     @ResponseBody//@ResponseBody返回json格式的数据
@@ -66,7 +75,7 @@ public class MailController {
             JavaMailUtils.setReceiveMailAccount(mail);
             JavaMailUtils.send();
             temporaryCache.putMailCode(mail, JavaMailUtils.code);
-            return ResultDTO.okOf(JavaMailUtils.code);
+            return ResultDTO.okOf("邮箱验证码已发送成功！");
         } catch (Exception e) {
             // TODO 自动生成的 catch 块
             e.printStackTrace();
@@ -91,17 +100,19 @@ public class MailController {
     @RequestMapping(value = "/mail/registerOrLoginWithMail", method = RequestMethod.POST)
     public Object registerOrLoginWithMail(
             @RequestParam("mail") String mail,
-            @RequestParam("code") String code) {
-        //  System.out.println("mail:"+mail);
+            @RequestParam("code") String code,
+            @RequestParam(name = "password", required = false) String password,
+            HttpServletResponse response) {
+
         if (!code.equals(temporaryCache.getMailCode(mail)))
             return ResultDTO.errorOf("验证码不匹配，可能已经超过5分钟，请重试");
-
-        String token = UUID.randomUUID().toString();
-        //  Cookie cookie = new Cookie("token", token);
-        // cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
-        //  response.addCookie(cookie);
+        ResultDTO resultDTO = (ResultDTO)userService.registerOrLoginWithMail(mail,password);
+        if(200==resultDTO.getCode()){
+            Cookie cookie = cookieUtils.getCookie("token",resultDTO.getMessage(),86400*3);
+            response.addCookie(cookie);
+        }
         // TODO 自动生成的方法存根
-        return userService.registerOrLoginWithMail(mail, token);
+        return resultDTO;
     }
 
     @RequestMapping(value = "/registerorLoginWithMailisOk", method = RequestMethod.GET)
@@ -112,15 +123,9 @@ public class MailController {
         // TODO 自动生成的方法存根
         model.addAttribute("rsTitle", "成功啦！！！");
         model.addAttribute("rsMessage", "您已成功注册/登陆本站！");
-        Cookie cookie = new Cookie("token", token);
-        cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
-        cookie.setHttpOnly(true);//通过js脚本是无法获取到cookie的信息的。防止XSS攻击。
-        cookie.setMaxAge(60 * 60 * 24 * 3 * 1);//三天
-        cookie.setDomain(domain);
-        cookie.setPath("/");
+        Cookie cookie = cookieUtils.getCookie("token",token,86400*3);
         response.addCookie(cookie);
         return "result";
     }
-
 
 }

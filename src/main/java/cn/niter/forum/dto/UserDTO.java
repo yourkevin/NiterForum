@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class UserDTO {
-    Long id;
+    private Long id;
     private String name;
-    String avatarUrl;
-
+    private String avatarUrl;
+    private Integer vipRank;
+    private Integer groupId;
 }

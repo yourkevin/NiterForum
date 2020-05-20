@@ -1,5 +1,6 @@
 package cn.niter.forum.service;
 
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.enums.LikeTypeEnum;
 import cn.niter.forum.enums.NotificationStatusEnum;
 import cn.niter.forum.enums.NotificationTypeEnum;
@@ -28,7 +29,7 @@ public class LikeService {
     private QuestionMapper questionMapper;
 
     @Transactional
-    public int insert(Thumb thumb, User user) {
+    public int insert(Thumb thumb, UserDTO user) {
         if (thumb.getTargetId() == null || thumb.getTargetId() == 0) {
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }

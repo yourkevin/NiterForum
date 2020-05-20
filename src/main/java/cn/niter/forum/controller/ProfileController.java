@@ -1,9 +1,13 @@
 package cn.niter.forum.controller;
 
 import cn.niter.forum.dto.PaginationDTO;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
-import cn.niter.forum.model.User;
+import cn.niter.forum.mapper.UserAccountMapper;
+import cn.niter.forum.mapper.UserInfoMapper;
+import cn.niter.forum.mapper.UserMapper;
+import cn.niter.forum.model.*;
 import cn.niter.forum.service.NotificationService;
 import cn.niter.forum.service.QuestionService;
 import org.apache.commons.lang3.StringUtils;
@@ -16,10 +20,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 public class ProfileController {
 
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private UserAccountMapper userAccountMapper;
+    @Autowired
+    private UserInfoMapper userInfoMapper;
 
     @Autowired
     private QuestionService questionService;
@@ -35,7 +46,7 @@ public class ProfileController {
                           Model model,
                           @RequestParam(name = "page",defaultValue = "1")Integer page,
                           @RequestParam(name = "size",defaultValue = "5")Integer size){
-        User user = (User)request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO)request.getAttribute("loginUser");
 
         if(user==null){
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
@@ -55,7 +66,7 @@ public class ProfileController {
                     Model model,
                     @RequestParam(name = "page",defaultValue = "1")Integer page,
                     @RequestParam(name = "size",defaultValue = "10")Integer size){
-        User user = (User)request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO)request.getAttribute("loginUser");
 
         if(user==null){
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
@@ -85,7 +96,7 @@ public class ProfileController {
                           Model model,
                           @RequestParam(name = "page",defaultValue = "1")Integer page,
                           @RequestParam(name = "size",defaultValue = "5")Integer size){
-      User user = (User)request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO)request.getAttribute("loginUser");
 
         if(user==null){
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
@@ -121,10 +132,22 @@ public class ProfileController {
     public String getSetPage(HttpServletRequest request,
                                  @PathVariable(name = "action") String action,
                                  Model model) {
-        User user = (User) request.getSession().getAttribute("user");
-        if(user == null) {
+        UserDTO loginUser = (UserDTO)request.getAttribute("loginUser");
+        if(loginUser == null) {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
+        User user = userMapper.selectByPrimaryKey(loginUser.getId());
+        UserAccountExample userAccountExample = new UserAccountExample();
+        userAccountExample.createCriteria().andUserIdEqualTo(loginUser.getId());
+        List<UserAccount> userAccounts = userAccountMapper.selectByExample(userAccountExample);
+        UserAccount userAccount = userAccounts.get(0);
+        UserInfoExample userInfoExample = new UserInfoExample();
+        userInfoExample.createCriteria().andUserIdEqualTo(loginUser.getId());
+        List<UserInfo> userInfos = userInfoMapper.selectByExample(userInfoExample);
+        UserInfo userInfo = userInfos.get(0);
+        model.addAttribute("user", user);
+        model.addAttribute("userAccount", userAccount);
+        model.addAttribute("userInfo", userInfo);
         if("info".equals(action)|| StringUtils.isBlank(action)){
             model.addAttribute("section", "info");
             model.addAttribute("sectionName", "我的资料");

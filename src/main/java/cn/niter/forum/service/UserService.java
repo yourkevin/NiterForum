@@ -1,14 +1,19 @@
 package cn.niter.forum.service;
 
 import cn.niter.forum.dto.ResultDTO;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.mapper.UserAccountMapper;
 import cn.niter.forum.mapper.UserInfoMapper;
 import cn.niter.forum.mapper.UserMapper;
 import cn.niter.forum.model.*;
+import cn.niter.forum.util.TokenUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +27,32 @@ public class UserService {
     @Autowired
     private UserAccountMapper userAccountMapper;
 
-    public void createOrUpdate(User user) {
+    @Autowired
+    private UserAccountService userAccountService;
+    @Autowired
+    private TokenUtils tokenUtils;
+    @Value("${site.password.salt}")
+    private String salt;
+
+    public User selectUserByExample(UserExample userExample){
+        List<User> users = userMapper.selectByExample(userExample);
+        if(users.size()!=0) return users.get(0);
+        return null;
+    }
+
+    public ResultDTO repass(Long user_id,String nowpass,String pass){
+        User user = userMapper.selectByPrimaryKey(user_id);
+        if((StringUtils.isBlank(nowpass)&&StringUtils.isBlank(user.getPassword()))||DigestUtils.sha256Hex(nowpass+salt).equals(user.getPassword())){
+            user.setPassword(DigestUtils.sha256Hex(pass+salt));
+            int i = userMapper.updateByPrimaryKeySelective(user);
+            if(i>0) return ResultDTO.okOf("修改成功");
+        }
+
+        return ResultDTO.errorOf("当前密码错误");
+    }
+
+    public User createOrUpdate(User user) {
+
         UserExample userExample = new UserExample();
         userExample.createCriteria()
                 .andAccountIdEqualTo(user.getAccountId());
@@ -32,8 +62,7 @@ public class UserService {
        if (users.size() == 0) {
             // 插入
            if(user.getName()==null|| StringUtils.isBlank(user.getName()))
-               user.setName(getUserName("Github"));
-              // user.setName(getUserName("Github"));
+            user.setName(getUserName("Github"));
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             userMapper.insert(user);
@@ -43,12 +72,14 @@ public class UserService {
            List<User> users2 = userMapper.selectByExample(userExample2);
            if(users2.size() != 0){//表示user表已创建
                User dbUser = users2.get(0);
+               BeanUtils.copyProperties(dbUser,user);
                initUserTable(dbUser,new UserInfo());
            }
         } else {
             //更新
             User dbUser = users.get(0);
             User updateUser = new User();
+           BeanUtils.copyProperties(dbUser,user);
            if(dbUser.getName()==null&&(user.getName()==null|| StringUtils.isBlank(user.getName())))//数据库为空，当前为空
                updateUser.setName(getUserName("Github"));
           /* if(user.getName()!=null)//当前不空
@@ -62,9 +93,11 @@ public class UserService {
                     .andIdEqualTo(dbUser.getId());
             userMapper.updateByExampleSelective(updateUser, example);
         }
+
+       return user;
     }
 
-    public int createOrUpdateWeibo(User user, User loginuser, UserInfo userInfo) {
+    public int createOrUpdateWeibo(User user, UserDTO loginuser, UserInfo userInfo) {
         UserExample userExample = new UserExample();
         userExample.createCriteria()
                 .andWeiboAccountIdEqualTo(user.getWeiboAccountId());
@@ -117,7 +150,7 @@ public class UserService {
     }
 
 
-    public int createOrUpdateBaidu(User user, User loginuser, UserInfo userInfo) {
+    public int createOrUpdateBaidu(User user, UserDTO loginuser, UserInfo userInfo) {
         UserExample userExample = new UserExample();
         userExample.createCriteria()
                 .andBaiduAccountIdEqualTo(user.getBaiduAccountId());
@@ -241,7 +274,16 @@ public class UserService {
         return userMapper.updateByPrimaryKey(user);
     }
 
-    public Object registerOrLoginWithMail(String mail,String token) {
+    public UserDTO getUserDTO(User user) {
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user,userDTO);
+        UserAccount userAccount = userAccountService.selectUserAccountByUserId(user.getId());
+        userDTO.setGroupId(userAccount.getGroupId());
+        userDTO.setVipRank(userAccount.getVipRank());
+        return userDTO;
+    }
+
+    public Object registerOrLoginWithMail(String mail,String password) {
 
         UserExample userExample = new UserExample();
         userExample.createCriteria()
@@ -250,34 +292,41 @@ public class UserService {
         User updateUser = new User();
         if(users.size() != 0){//登录
             User dbUser = users.get(0);
+            UserDTO userDTO = getUserDTO(dbUser);
             if(dbUser.getName()==null|| StringUtils.isBlank(dbUser.getName()))//数据库为空，当前为空
                 updateUser.setName(getUserName("邮箱"));
 
             updateUser.setGmtModified(System.currentTimeMillis());
-            updateUser.setToken(token);
+            //updateUser.setToken(token);
             UserExample example = new UserExample();
             example.createCriteria()
                     .andIdEqualTo(dbUser.getId());
             userMapper.updateByExampleSelective(updateUser, example);
-            return ResultDTO.okOf(token);
+            return ResultDTO.okOf(tokenUtils.getToken(userDTO));
         }else {
             //注册
-            updateUser.setEmail(mail);
-            updateUser.setName(getUserName("邮箱"));
-            updateUser.setToken(token);
-            updateUser.setAvatarUrl("/images/avatar/"+(int)(Math.random()*11)+".jpg");
-            updateUser.setGmtCreate(System.currentTimeMillis());
-            updateUser.setGmtModified(updateUser.getGmtCreate());
-            userMapper.insert(updateUser);
-            UserExample example = new UserExample();
-            example.createCriteria()
-                    .andEmailEqualTo(mail);
-            List<User> insertUsers = userMapper.selectByExample(example);
-            User insertUser = insertUsers.get(0);
-            initUserTable(insertUser,new UserInfo());
-            return ResultDTO.okOf(token);
+                updateUser.setEmail(mail);
+                updateUser.setName(getUserName("邮箱"));
+                updateUser.setPassword(DigestUtils.sha256Hex(password+salt));
+                updateUser.setAvatarUrl("/images/avatar/"+(int)(Math.random()*11)+".jpg");
+                updateUser.setGmtCreate(System.currentTimeMillis());
+                updateUser.setGmtModified(updateUser.getGmtCreate());
+                userMapper.insert(updateUser);
+                UserExample example = new UserExample();
+                example.createCriteria()
+                        .andEmailEqualTo(mail);
+                List<User> insertUsers = userMapper.selectByExample(example);
+                //System.out.println("size:"+insertUsers.size());
+                if(insertUsers.size() != 0){
+                    User insertUser = insertUsers.get(0);
+                    initUserTable(insertUser,new UserInfo());
+                    UserDTO userDTO = getUserDTO(insertUser);
+                    return ResultDTO.okOf(tokenUtils.getToken(userDTO));
+                }
+
         }
 
+        return ResultDTO.errorOf("未知错误");
 
 
     }
@@ -303,7 +352,7 @@ public class UserService {
         }
     }
 
-    public Object registerOrLoginWithPhone(String phone, String token) {
+    public Object registerOrLoginWithPhone(String phone,String password) {
         UserExample userExample = new UserExample();
         userExample.createCriteria()
                 .andPhoneEqualTo(phone);
@@ -311,25 +360,27 @@ public class UserService {
         User updateUser = new User();
         if(users.size() != 0){//登录
             User dbUser = users.get(0);
+            UserDTO userDTO = getUserDTO(dbUser);
             if(dbUser.getName()==null|| StringUtils.isBlank(dbUser.getName()))//数据库为空，当前为空
                 updateUser.setName(getUserName("手机"));
 
             updateUser.setGmtModified(System.currentTimeMillis());
-            updateUser.setToken(token);
+            //updateUser.setToken(token);
             UserExample example = new UserExample();
             example.createCriteria()
                     .andIdEqualTo(dbUser.getId());
             userMapper.updateByExampleSelective(updateUser, example);
-            return ResultDTO.okOf(token);
+            return ResultDTO.okOf(tokenUtils.getToken(userDTO));
         }else {
             //注册
             updateUser.setPhone(phone);
             updateUser.setName(getUserName("手机"));
-            updateUser.setToken(token);
+            //updateUser.setToken(token);
             double random = Math.random();
             updateUser.setAvatarUrl("/images/avatar/"+(int)(Math.random()*11)+".jpg");
             updateUser.setGmtCreate(System.currentTimeMillis());
             updateUser.setGmtModified(updateUser.getGmtCreate());
+            updateUser.setPassword(DigestUtils.sha256Hex(password+salt));
             userMapper.insert(updateUser);
             UserExample example = new UserExample();
             example.createCriteria()
@@ -337,6 +388,7 @@ public class UserService {
             List<User> insertUsers = userMapper.selectByExample(example);
             User insertUser = insertUsers.get(0);
             initUserTable(insertUser,new UserInfo());
+            UserDTO userDTO = getUserDTO(insertUser);
            /* UserInfo userInfo = new UserInfo();
             userInfo.setUserId(insertUser.getId());
             userInfoMapper.insert(userInfo);
@@ -345,12 +397,12 @@ public class UserService {
             userAccount.setUserId(insertUser.getId());
             userAccountMapper.insert(userAccount);*/
 
-            return ResultDTO.okOf(token);
+            return ResultDTO.okOf(tokenUtils.getToken(userDTO));
         }
 
     }
 
-    public int createOrUpdateQq(User user, User loginuser, UserInfo userInfo) {
+    public int createOrUpdateQq(User user, UserDTO loginuser, UserInfo userInfo) {
         UserExample userExample = new UserExample();
         userExample.createCriteria()
                 .andQqAccountIdEqualTo(user.getQqAccountId());
@@ -457,7 +509,7 @@ public class UserService {
         userAccount=null;
     }
 
-    public void updateUserInfo(User user,User updateUser,User loginuser,UserInfo userInfo){
+    public void updateUserInfo(User user,User updateUser,UserDTO loginuser,UserInfo userInfo){
         updateUser.setGmtModified(System.currentTimeMillis());
         updateUser.setToken(user.getToken());
         //updateUser.setAvatarUrl(user.getAvatarUrl());
@@ -483,4 +535,21 @@ public class UserService {
 
     }
 
+    public Object login(Integer type, String name, String password) {
+        UserExample userExample = new UserExample();
+        if(type==1){//手机号登录
+            userExample.createCriteria().andPhoneEqualTo(name).andPasswordEqualTo(DigestUtils.sha256Hex(password+salt));
+        }else if(type==2){//邮箱登录
+            userExample.createCriteria().andEmailEqualTo(name).andPasswordEqualTo(DigestUtils.sha256Hex(password+salt));
+        }else {
+            return ResultDTO.errorOf("不支持此登录类型");
+        }
+        List<User> users = userMapper.selectByExample(userExample);
+        if(users.size()!=0){
+            ResultDTO resultDTO = ResultDTO.okOf("登录成功");
+            resultDTO.setData(tokenUtils.getToken(getUserDTO(users.get(0))));
+            return resultDTO;
+        }
+        else return ResultDTO.errorOf("密码错误用户不存在");
+    }
 }

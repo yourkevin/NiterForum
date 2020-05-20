@@ -1,10 +1,11 @@
 package cn.niter.forum.controller;
 
 import cn.niter.forum.dto.NotificationDTO;
+import cn.niter.forum.dto.ResultDTO;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.enums.NotificationTypeEnum;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
-import cn.niter.forum.model.User;
 import cn.niter.forum.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,17 +15,36 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 17:12
+ * @site niter.cn
+ */
+
 @Controller
 public class NotificationController {
 
     @Autowired
     private NotificationService notificationService;
 
+    @ResponseBody
+    @RequestMapping(value = "/api/notification/mine", method = RequestMethod.GET)
+    public ResultDTO questionList(
+            HttpServletRequest request
+    ) {
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
+        if(user==null) return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
+        Long unreadCount = notificationService.unreadCount(user.getId());
+        return ResultDTO.okOf(unreadCount);
+    }
+
+
     @GetMapping("/notification/{id}")
     public String readNotification(HttpServletRequest request,
                           @PathVariable(name = "id") Long id) {
 
-        User user = (User) request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
         if (user == null) {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
@@ -47,7 +67,7 @@ public class NotificationController {
     public Map<String,Object> removeAllNotifications(HttpServletRequest request,
                                                      @RequestParam(name = "all",defaultValue = "0") Integer all) {
 
-        User user = (User) request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
         if (user == null) {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
@@ -75,7 +95,7 @@ public class NotificationController {
     public Map<String,Object> removeNotificationById(HttpServletRequest request,
                                                      @RequestParam(name = "id",defaultValue = "0") Long id) {
 
-        User user = (User) request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
         if (user == null) {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
@@ -104,7 +124,7 @@ public class NotificationController {
     public Map<String,Object> readAllNotifications(HttpServletRequest request,
                                                      @RequestParam(name = "all",defaultValue = "0") Integer all) {
 
-        User user = (User) request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
         if (user == null) {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }

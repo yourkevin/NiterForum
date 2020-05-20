@@ -2,6 +2,7 @@ package cn.niter.forum.controller;
 
 import cn.niter.forum.dto.ResultDTO;
 import cn.niter.forum.dto.ThumbCreateDTO;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.model.Thumb;
@@ -15,6 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 16:17
+ * @site niter.cn
+ */
+
 @Controller
 public class LikeController {
 
@@ -25,7 +33,7 @@ public class LikeController {
     @RequestMapping(value = "/like", method = RequestMethod.POST)
     public Object like(@RequestBody ThumbCreateDTO thumbCreateDTO,//@RequestBody接受json格式的数据
                        HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
         if (user == null) {
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }

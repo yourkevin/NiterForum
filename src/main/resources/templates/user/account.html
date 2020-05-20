@@ -29,22 +29,23 @@
                 <li class="layui-this"  lay-id="phone">我的手机</li>
                 <li lay-id="email">我的邮箱</li>
                 <li lay-id="bind">第三方账号</li>
+                <li lay-id="pass">设置密码</li>
             </ul>
             <div class="layui-tab-content" style="padding: 20px 0;">
-                <input type="hidden" name="id" id="id" th:value="${session.user.id}">
+                <input type="hidden" name="id" id="id" th:value="${user.id}">
 
                 <div class="layui-form layui-form-pane layui-tab-item layui-show">
 
                         <div class="layui-form-item">
                             <label for="L_username" class="layui-form-label">用户名</label>
                             <div class="layui-input-inline">
-                                <input type="text" id="L_username" name="L_username" required lay-verify="required" autocomplete="off" disabled="disabled" th:value="${session.user.name}" class="layui-input">
+                                <input type="text" id="L_username" name="L_username" required lay-verify="required" autocomplete="off" disabled="disabled" th:value="${user.name}" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label for="phone" class="layui-form-label">手机号</label>
                             <div class="layui-input-inline">
-                                <input type="text" id="phone" name="phone" placeholder="请输入您需要绑定的手机号" th:value="${session.user.phone}" required lay-verify="phone" autocomplete="off" class="layui-input">
+                                <input type="text" id="phone" name="phone" placeholder="请输入您需要绑定的手机号" th:value="${user.phone}" required lay-verify="phone" autocomplete="off" class="layui-input">
                             </div>
                             <div class="layui-form-mid layui-word-aux">
                                 11位大陆地区手机号，可修改换绑
@@ -81,13 +82,13 @@
                     <div class="layui-form-item">
                         <label for="L2_username" class="layui-form-label">用户名</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="L2_username" name="L2_username" required lay-verify="required" autocomplete="off" disabled="disabled" th:value="${session.user.name}" class="layui-input">
+                            <input type="text" id="L2_username" name="L2_username" required lay-verify="required" autocomplete="off" disabled="disabled" th:value="${user.name}" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <label for="mail" class="layui-form-label">邮箱号</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="mail" name="mail" placeholder="请输入您需要绑定的邮箱号" th:value="${session.user.email}" required lay-verify="email" autocomplete="off" class="layui-input">
+                            <input type="text" id="mail" name="mail" placeholder="请输入您需要绑定的邮箱号" th:value="${user.email}" required lay-verify="email" autocomplete="off" class="layui-input">
                         </div>
                         <div class="layui-form-mid layui-word-aux">
                             请输入正确的邮箱号，可修改换绑
@@ -121,51 +122,51 @@
 
                 <div class="layui-form layui-form-pane layui-tab-item">
                     <ul class="app-bind">
-                        <li th:class="${session.user.qqAccountId!=null}?'fly-msg app-havebind':'fly-msg'">
+                        <li th:class="${user.qqAccountId!=null}?'fly-msg app-havebind':'fly-msg'">
                             <i class="iconfont icon-qq"></i>
-                            <th:block th:if="${session.user.qqAccountId!=null}">
+                            <th:block th:if="${user.qqAccountId!=null}">
                                 <span>已成功绑定，您可以使用QQ帐号直接登录尼特社区，当然，您也可以</span>
                                 <a href="javascript:authLoginQq();" class="html5plus-display" title="更换qq账号" style="display: none">更换绑定</a>
                                 <a th:href="${'https://graph.qq.com/oauth2.0/authorize?client_id='+@environment.getProperty('qq.client.id')+'&redirect_uri='+@environment.getProperty('qq.redirect.uri')+'&response_type=code&state=1'}" class="html5plus-hide">更换绑定</a>
                             </th:block>
-                            <th:block th:if="${session.user.qqAccountId==null}">
+                            <th:block th:if="${user.qqAccountId==null}">
                                 <a th:href="${'https://graph.qq.com/oauth2.0/authorize?client_id='+@environment.getProperty('qq.client.id')+'&redirect_uri='+@environment.getProperty('qq.redirect.uri')+'&response_type=code&state=1'}" onclick="layer.msg('正在绑定QQ', {icon:16, shade: 0.1, time:0})" class="acc-bind html5plus-hide" type="qq_id">立即绑定</a>
                                 <a href="javascript:authLoginQq();" class="acc-bind html5plus-display" style="display: none" type="qq_id"  onclick="layer.msg('正在绑定qq', {icon:16, shade: 0.1, time:0})">立即绑定</a>
                                 <span>，即可使用QQ帐号登录尼特社区</span>
                             </th:block>
                         </li>
-                        <li th:class="${session.user.weiboAccountId!=null}?'fly-msg app-havebind':'fly-msg'">
+                        <li th:class="${user.weiboAccountId!=null}?'fly-msg app-havebind':'fly-msg'">
                             <i class="iconfont icon-weibo"></i>
-                            <th:block th:if="${session.user.weiboAccountId!=null}">
+                            <th:block th:if="${user.weiboAccountId!=null}">
                                 <span>已成功绑定，您可以使用微博账号直接登录尼特社区，当然，您也可以</span>
                                 <a href="javascript:authLoginWeibo();" class="html5plus-display" title="更换微博账号" style="display: none">更换绑定</a>
                                 <a th:href="${'https://api.weibo.com/oauth2/authorize?client_id='+@environment.getProperty('weibo.client.id')+'&redirect_uri='+@environment.getProperty('weibo.redirect.uri')+'&response_type=code&state=1&scope=all'}" class="html5plus-hide">更换绑定</a>
                             </th:block>
-                            <th:block th:if="${session.user.weiboAccountId==null}">
+                            <th:block th:if="${user.weiboAccountId==null}">
                                 <a href="javascript:authLoginWeibo();" class="acc-weibo html5plus-display" style="display: none" type="weibo_id"  onclick="layer.msg('正在绑定微博', {icon:16, shade: 0.1, time:0})">立即绑定</a>
                                 <a th:href="${'https://api.weibo.com/oauth2/authorize?client_id='+@environment.getProperty('weibo.client.id')+'&redirect_uri='+@environment.getProperty('weibo.redirect.uri')+'&response_type=code&state=1&scope=all'}" class="acc-weibo html5plus-hide" type="weibo_id"  onclick="layer.msg('正在绑定微博', {icon:16, shade: 0.1, time:0})" >立即绑定</a>
                                 <span>，即可使用微博帐号登录尼特社区</span>
                             </th:block>
                         </li>
-                        <li th:class="${session.user.baiduAccountId!=null}?'fly-msg app-havebind':'fly-msg'">
-                            <th:block th:if="${session.user.baiduAccountId!=null}">
+                        <li th:class="${user.baiduAccountId!=null}?'fly-msg app-havebind':'fly-msg'">
+                            <th:block th:if="${user.baiduAccountId!=null}">
                                 <i><img src="/images/baidu120c.png" style="height: 28px"></i>
                                 <span>已成功绑定，您可以使用百度账号直接登录尼特社区，当然，您也可以</span>
                                 <a th:href="${'https://openapi.baidu.com/oauth/2.0/authorize?client_id='+@environment.getProperty('baidu.client.id')+'&redirect_uri='+@environment.getProperty('baidu.redirect.uri')+'&response_type=code&state=1'}" >更换绑定</a>
                             </th:block>
-                            <th:block th:if="${session.user.baiduAccountId==null}">
+                            <th:block th:if="${user.baiduAccountId==null}">
                                 <i><img src="/images/baidu120.png" style="height: 28px"></i>
                                 <a th:href="${'https://openapi.baidu.com/oauth/2.0/authorize?client_id='+@environment.getProperty('baidu.client.id')+'&redirect_uri='+@environment.getProperty('baidu.redirect.uri')+'&response_type=code&state=1'}" class="acc-weibo" type="weibo_id"  onclick="layer.msg('正在绑定百度', {icon:16, shade: 0.1, time:0})" >立即绑定</a>
                                 <span>，即可使用百度帐号登录尼特社区</span>
                             </th:block>
                         </li>
-                        <li th:class="${session.user.accountId!=null}?'fly-msg app-havebind':'fly-msg'">
-                            <th:block th:if="${session.user.accountId!=null}">
+                        <li th:class="${user.accountId!=null}?'fly-msg app-havebind':'fly-msg'">
+                            <th:block th:if="${user.accountId!=null}">
                                 <i><img src="/images/github120c.png" style="height: 28px"></i>
                                 <span>已成功绑定，您可以使用Github账号直接登录尼特社区，当然，您也可以</span>
                                 <a th:href="${'https://github.com/login/oauth/authorize?client_id='+@environment.getProperty('github.client.id')+'&redirect_uri='+@environment.getProperty('github.redirect.uri')+'&scope=user&state=1'}">更换绑定</a>
                             </th:block>
-                            <th:block th:if="${session.user.accountId==null}">
+                            <th:block th:if="${user.accountId==null}">
                                 <i><img src="/images/github120.png" style="height: 28px"></i>
                                 <a th:href="${'https://github.com/login/oauth/authorize?client_id='+@environment.getProperty('github.client.id')+'&redirect_uri='+@environment.getProperty('github.redirect.uri')+'&scope=user&state=1'}" class="acc-weibo" type="weibo_id"  onclick="layer.msg('正在绑定Github', {icon:16, shade: 0.1, time:0})" >立即绑定</a>
                                 <span>，即可使用Github帐号登录尼特社区</span>
@@ -174,7 +175,31 @@
                     </ul>
                 </div>
 
-
+                <div class="layui-form layui-form-pane layui-tab-item">
+                    <div class="layui-form-item">
+                        <label for="L_nowpass" class="layui-form-label">当前密码</label>
+                        <div class="layui-input-inline">
+                            <input type="password" id="L_nowpass" name="nowpass"  autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">如未设置过，请留空</div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_pass" class="layui-form-label">新密码</label>
+                        <div class="layui-input-inline">
+                            <input type="password" id="L_pass" name="pass" required lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_repass" class="layui-form-label">确认密码</label>
+                        <div class="layui-input-inline">
+                            <input type="password" id="L_repass" name="repass" required lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <button class="layui-btn" key="set-mine" lay-filter="modifyPw" lay-submit>确认修改</button>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -196,7 +221,7 @@
         version: "2.0.0"
         ,base: '/mods/'
     }).extend({
-        fly: 'index'
+        fly: 'index2'
     }).use('fly');
 </script>
 <script src="https://v.vaptcha.com/v3.js"></script>

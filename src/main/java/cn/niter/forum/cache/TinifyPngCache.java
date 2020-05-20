@@ -1,6 +1,7 @@
 package cn.niter.forum.cache;
 
 import cn.niter.forum.dto.TinifyPngDTO;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.model.User;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class TinifyPngCache {
     public void clear(){
         images.clear();
     }
-    public void add(String url, User user, String fileName){
+    public void add(String url, UserDTO user, String fileName){
         if(images.size()<10){//控制最大容量
             TinifyPngDTO png = new TinifyPngDTO();
             png.setUrl(url);

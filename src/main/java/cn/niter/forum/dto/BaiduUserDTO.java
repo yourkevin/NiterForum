@@ -19,4 +19,5 @@ public class BaiduUserDTO {
     private String education;//学历
     private String trade;//当前职业
     private String job;//职业
+    private String openid;
 }

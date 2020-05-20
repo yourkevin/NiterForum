@@ -92,7 +92,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void insert(Comment comment, User commentator,UserAccount userAccount) {
+    public void insert(Comment comment, UserDTO commentator,UserAccount userAccount) {
         if (comment.getParentId() == null || comment.getParentId() == 0) {
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }

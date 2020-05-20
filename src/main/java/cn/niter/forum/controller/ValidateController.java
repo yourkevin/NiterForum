@@ -31,7 +31,7 @@ public class ValidateController {
         if(ipLimitCache.putInterval(ip, token)==0) {
             ipLimitCache.addIpScores(ip,10);
             ValidateDTO validateDTO = new ValidateDTO();
-            validateDTO.setMsg("请勿反复验证，1分钟后再试");
+            validateDTO.setMsg("验证频繁，需至少间隔30S");
             validateDTO.setSocre(100);
             validateDTO.setSuccess(0);
             return validateDTO;

@@ -272,26 +272,41 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     });
   });
 
-  //提交资料
- /* form.on('submit(submitInfo)', function(data){
-
-     // layer.msg(JSON.stringify(data.field));
-    if(slider.isOk()){
-      console.log(JSON.stringify(data.field));
+  //修改密码
+  form.on('submit(modifyPw)', function(data){
+    //alert("length:"+data.field.pass.length);
+    if(data.field.pass.length<6||data.field.pass.length>16){
+      swal("修改失败!", "当前密码长度不满足要求!", "warning");
+      return false;
+    }
+    //alert("json:"+JSON.stringify(data.field));
+    if(data.field.nowpass==data.field.pass)
+    {
+      swal("修改失败!", "新旧密码一致，无需修改!", "warning");
+      return false;
+    }
+    if(data.field.pass!=data.field.repass)
+    {
+      swal("修改失败!", "两次新密码不一致!", "warning");
+      return false;
     }
 
-    $.post('/user/set/info', {
-      json: JSON.stringify(data.field)
+    $.post('/api/user/repass', {
+      nowpass: data.field.nowpass
+      ,pass:data.field.pass
     }, function(res){
-      if(res.code==200) swal("Good job!", ""+res.msg, "success");
-      else swal("Oh,no!", ""+res.msg, "error");
+      if(res.code==200) {
+        swal("Good job!", ""+res.message, "success").then((value) => {
+          location.reload();});
+      }
+      else swal("Oh,no!", ""+res.message, "error");
     });
 
 
     return true;
   });
 
-*/
+
   //提交成功后刷新
   fly.form['set-mine'] = function(data, required){
     layer.msg('修改成功', {

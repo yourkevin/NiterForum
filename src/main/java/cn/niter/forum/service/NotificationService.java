@@ -2,6 +2,7 @@ package cn.niter.forum.service;
 
 import cn.niter.forum.dto.NotificationDTO;
 import cn.niter.forum.dto.PaginationDTO;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.enums.NotificationStatusEnum;
 import cn.niter.forum.enums.NotificationTypeEnum;
 import cn.niter.forum.exception.CustomizeErrorCode;
@@ -9,7 +10,6 @@ import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.mapper.NotificationMapper;
 import cn.niter.forum.model.Notification;
 import cn.niter.forum.model.NotificationExample;
-import cn.niter.forum.model.User;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +86,7 @@ public class NotificationService {
         return notificationMapper.countByExample(notificationExample);
     }
 
-    public NotificationDTO read(Long id, User user) {
+    public NotificationDTO read(Long id, UserDTO user) {
         Notification notification = notificationMapper.selectByPrimaryKey(id);
         if (notification == null) {
             throw new CustomizeException(CustomizeErrorCode.NOTIFICATION_NOT_FOUND);

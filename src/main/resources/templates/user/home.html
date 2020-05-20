@@ -34,7 +34,7 @@
     <i class="iconfont icon-chengshi"></i><span th:text="${'来自：'+(userInfo.location==null?'保密':userInfo.location)}"></span>
   </p>
 
-  <p class="fly-home-sign" th:text="${'个人简介：'+(userInfo.userdetail==null?'该用户太懒了，还没来得及填写':userInfo.userdetail)}"></p>
+  <p class="fly-home-sign" th:text="${'个人简介：'+((userInfo.userdetail==null||userInfo.userdetail=='')?'该用户太懒了，还没来得及填写':userInfo.userdetail)}"></p>
 
   <div class="fly-sns" data-user="">
     <a href="javascript:;" class="layui-btn layui-btn-primary fly-imActive" data-type="addFriend">加为好友</a>

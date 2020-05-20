@@ -2,7 +2,7 @@
 
 <ul th:fragment="user" class="layui-nav layui-nav-tree layui-inline" lay-filter="user">
     <li class="layui-nav-item">
-        <a th:href="${'/user/'+session.user.id}" target="_blank">
+        <a th:href="${'/user/'+loginUser.id}" target="_blank">
             <i class="layui-icon">&#xe609;</i>
             我的主页
         </a>
@@ -31,6 +31,12 @@
             基本设置
         </a>
     </li>
+    <li class="layui-nav-item">
+        <a href="/logout">
+            <i class="layui-icon">&#x1006;</i>
+            退出登录
+        </a>
+    </li>
 </ul>
 
 <div th:fragment="index" class="layui-col-md4">
@@ -40,7 +46,7 @@
             热门话题
         </div>
         <div class="fly-panel-main">
-            <a th:each="tag : ${tags}" th:href="@{/(page=1,search=${search},tag=${tag},sort=${sort})}"
+            <a th:each="tag : ${tags}" th:href="@{/forum/(page=1,search=${search},tag=${tag},sort=${sort})}"
                th:text="${tag}" class="community-tag"></a>
         </div>
     </div>
@@ -138,17 +144,13 @@
 </div>
 
 
-
-
-
-
-<th:block th:fragment="common">
+<div th:fragment="common" class="html5plus-hide">
     <div class="fly-panel">
         <div class="fly-panel-title">
             广告招募哦~
         </div>
         <div class="fly-panel-main">
-            <a href="#" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">NiterForum 2.0 - 尼特网 旗舰之作</a>
+            <a href="https://niter.cn/p/111" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">NiterForum 2.0 - 尼特网 旗舰之作</a>
         </div>
     </div>
 
@@ -173,7 +175,7 @@
         </dl>
     </div>
 
-</th:block>
+</div>
 
 
 

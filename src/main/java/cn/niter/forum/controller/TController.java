@@ -5,9 +5,11 @@ import cn.niter.forum.cache.HotTagCache;
 import cn.niter.forum.cache.LoginUserCache;
 import cn.niter.forum.dto.PaginationDTO;
 import cn.niter.forum.dto.QuestionDTO;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.model.User;
 import cn.niter.forum.model.UserAccount;
 import cn.niter.forum.service.QuestionService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 17:33
+ * @site niter.cn
+ */
 
 @Controller
 public class TController {
@@ -41,7 +50,7 @@ public class TController {
                          @RequestParam(name = "tag", defaultValue = "") String tag,
                          @RequestParam(name = "sort", defaultValue = "new") String sort) {
         List<QuestionDTO> topQuestions = questionService.listTopwithColumn(search, tag, sort,column2);
-        UserAccount userAccount = (UserAccount)request.getSession().getAttribute("userAccount");
+       // UserAccount userAccount = (UserAccount)request.getSession().getAttribute("userAccount");
         //PaginationDTO pagination = questionService.listwithColumn(search, tag, sort, page,size,column2,userAccount);
         List<String> tags = hotTagCache.getHots();
         List<User> loginUsers = loginUserCache.getLoginUsers();
@@ -71,8 +80,13 @@ public class TController {
                                     @RequestParam(name = "sort", required = false) String sort) {
         //List<QuestionDTO> topQuestions = questionService.listTopwithColumn(search, tag, sort,column2);
         Map<String,Object> map  = new HashMap<>();
-        UserAccount userAccount = (UserAccount)request.getSession().getAttribute("userAccount");
-        PaginationDTO pagination = questionService.listwithColumn(search, tag, sort, page,size,column2,userAccount);
+        UserDTO loginuser = (UserDTO) request.getAttribute("loginUser");
+        UserAccount userAccount =null;
+        if(loginuser!=null){
+            userAccount = new UserAccount();
+            BeanUtils.copyProperties(loginuser,userAccount);
+            userAccount.setUserId(loginuser.getId());
+        }        PaginationDTO pagination = questionService.listwithColumn(search, tag, sort, page,size,column2,userAccount);
         map.put("questions",pagination.getData());
         map.put("totalPage",pagination.getTotalPage());
         map.put("search",search);

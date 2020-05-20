@@ -23,12 +23,12 @@
         <div class="fly-panel-title fly-filter">
           <a>欢迎您的到来~</a>
           <!--a href="#signin" class="html5plus-hide layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a-->
-          <a th:if="${session.user==null}" href="/sso/login" class="layui-hide-sm fly-right html5plus-display" id="LAY_gologin" style="color: #FF5722;display: none">注册/登录</a>
-          <a th:if="${session.user!=null}" class="fly-nav-avatar niter-avatar layui-hide-sm fly-right html5plus-display" id="LAY_goUserCenter" style="color: #FF5722;display: none">
+          <a th:if="${loginUser==null}" href="/sso/login" class="layui-hide-sm fly-right html5plus-display" id="LAY_gologin" style="color: #FF5722;display: none">注册/登录</a>
+          <a th:if="${loginUser!=null}" class="fly-nav-avatar niter-avatar layui-hide-sm fly-right html5plus-display html5plus-user-icon" id="LAY_goUserCenter" style="color: #FF5722;display: none">
               <!--img th:src="${session.user.avatarUrl}"-->
-              <i th:if="${session.userAccount.vipRank==1}" class="layui-icon fly-list-kiss layui-hide-xs" title="红砖会员等级：LV1">&#xe735</i>
-              <cite onclick="javascript:window.open('/user/set/info')" th:class="${session.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${session.user.name}"></cite>
-              <span onclick="javascript:window.open('/user/message')" th:if="${session.unreadCount!=0}" class="layui-badge" th:text="${session.unreadCount}"></span>
+              <i th:if="${loginUser.vipRank==1}" class="layui-icon fly-list-kiss layui-hide-xs" title="红砖会员等级：LV1">&#xe735</i>
+              <cite onclick="javascript:window.open('/user/set/info')" th:class="${loginUser.vipRank==1? 'fly-list-kiss':''}" th:text="${loginUser.name}"></cite>
+              <!--span onclick="javascript:window.open('/user/message')" th:if="${session.unreadCount!=0}" class="layui-badge" th:text="${session.unreadCount}"></span-->
           </a>
 
         </div>
@@ -51,7 +51,7 @@
                 <a th:if="${question.viewCount>100}" class="fly-list-like layui-hide-xs" title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
             </h2>
             <div class="fly-list-info">
-              <a th:href="${'/user/'+question.user.id}" link target="_blank">
+              <a link >
                 <i th:if="${question.userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
                 <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
                 <i class="layui-badge fly-badge-vip layui-bg-gray layui-hide-xs" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
@@ -115,7 +115,7 @@
               <a th:if="${question.viewCount>100}" class="fly-list-like layui-hide-xs" title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
             </h2>
             <div class="fly-list-info">
-                <a th:href="${'/user/'+question.user.id}" link target="_blank">
+                <a link >
                     <i th:if="${question.userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
                     <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
                     <i class="layui-badge fly-badge-vip layui-bg-gray layui-hide-xs" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
@@ -176,11 +176,14 @@
 <!--script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_30088308'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "w.cnzz.com/c.php%3Fid%3D30088308' type='text/javascript'%3E%3C/script%3E"));</script-->
 <th:block th:insert="~{common/footer :: foot}"></th:block>
 <script>
-  layui.cache.page = '';
+  layui.cache.page = 'index';
   layui.cache.user = {
-    username: '匿名用户'
-    ,uid: -1
-    ,avatar: '/images/avatar/00.jpg'
+    //username: '匿名用户'
+    //,uid: -1
+    //  ,avatar: '/images/avatar/00.jpg'
+    name: '[[${loginUser!=null?loginUser.name:"匿名用户"}]]'
+    ,uid: [[${loginUser!=null?loginUser.id:-1}]]
+    ,avatar: '[[${loginUser!=null?loginUser.avatarUrl:"/images/avatar/default.png"}]]'
     ,experience: 83
     ,sex: '男'
   };

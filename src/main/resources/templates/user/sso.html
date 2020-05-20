@@ -13,12 +13,31 @@
     <div class="fly-panel fly-panel-user" pad20>
         <div class="layui-tab layui-tab-brief" lay-filter="user">
             <ul class="layui-tab-title">
-                <li onclick="javascript:setType(1)" class="layui-this" th:text="${'手机号'+sectionName}"></li>
-                <li onclick="javascript:setType(2)" th:text="${'邮箱号'+sectionName}"></li>
-                <li class="html5plus-hide layui-hide-xs" onclick="javascript:alertQrcode()">扫码登录</li>
+                <li th:if="${section=='login'}" onclick="javascript:setType(3)" class="layui-this">密码登录</li>
+                <li onclick="javascript:setType(1)" th:class="${section=='register'?'layui-this':''}" th:text="${'手机'+sectionName}"></li>
+                <li onclick="javascript:setType(2)" th:text="${'邮箱'+sectionName}"></li>
+                <li th:if="${section=='login'}" class="html5plus-hide layui-hide-xs" onclick="javascript:alertQrcode()">扫码登录</li>
             </ul>
             <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
-                <div class="layui-tab-item layui-show">
+                <div th:if="${section=='login'}" class="layui-tab-item layui-show">
+                    <div class="layui-form layui-form-pane">
+                        <div class="layui-form-item">
+                            <label for="phoneorMail" class="layui-form-label">手机/邮箱</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="phoneorMail" name="phoneorMail" required lay-verify="required" placeholder="请输入您的手机号或邮箱号" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">使用第三方账号注册的用户需先绑定手机/邮箱号</div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="password" class="layui-form-label">密码</label>
+                            <div class="layui-input-inline">
+                                <input type="password" id="password" name="password" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入6到16位的密码">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">如果您之前未设置过密码，请使用其它方式登陆后在账户中心设置密码</div>
+                        </div>
+                    </div>
+                </div>
+                <div th:class="${section=='register'?'layui-tab-item layui-show':'layui-tab-item'}">
                     <div class="layui-form layui-form-pane">
                             <div class="layui-form-item">
                                 <label for="phone" class="layui-form-label">手机号</label>
@@ -29,7 +48,7 @@
                             <div class="layui-form-item">
                                 <label for="verifyPhoneCode" class="layui-form-label">验证码</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" id="verifyPhoneCode" name="verifyPhoneCode" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请人机验证后点击右侧按钮">
+                                    <input type="text" id="verifyPhoneCode" name="verifyPhoneCode" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请先点击下方人机验证">
                                 </div>
                                 <button type="submit" class="layui-btn" id="btnSendPhoneCode" name="btnSendPhoneCode" onclick="getPhoneCode()">获取验证码</button>
                             </div>
@@ -46,7 +65,7 @@
                             <div class="layui-form-item">
                                 <label for="verifyCode" class="layui-form-label">验证码</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" id="verifyCode" name="verifyCode" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请人机验证后点击右侧按钮">
+                                    <input type="text" id="verifyCode" name="verifyCode" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请先点击下方人机验证">
                                 </div>
                                 <button type="submit" class="layui-btn" id="btnSendCode" name="btnSendCode" onclick="getCode()">获取验证码</button>
                             </div>
@@ -61,6 +80,20 @@
                                 </a>
                                 <span class="vaptcha-text">Vaptcha启动中...</span>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${section=='register'}" class="layui-form-item layui-form layui-form-pane">
+                    <div class="layui-form-item">
+                        <label for="pass" class="layui-form-label">设置密码</label>
+                        <div class="layui-input-inline">
+                            <input type="password" id="pass" name="pass" placeholder="请输入6到16个字符" required lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="repass" class="layui-form-label">确认密码</label>
+                        <div class="layui-input-inline">
+                            <input type="password" id="repass" name="repass" placeholder="请再次输入您的密码" required lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                 </div>
@@ -252,10 +285,15 @@
                 if(data.code==0){
                     alert("错误："+data.msg);
                 }
-                else if(data.token!=null&&data.token!=''){
+                else if(data.code==200){
                     //alert(data.token);
-                    window.location.href='/registerorLoginWithMailisOk?token='+data.token;
-                }
+                    swal({
+                        title: "恭喜您!",
+                        text: ""+data.msg,
+                        icon: "success",
+                    }).then((value) => {
+                        window.location.href='/forum';
+                });                }
                 else alert("else:未知错误");
             },
             error:function(data){
@@ -321,7 +359,7 @@
 </script>
 <script type="text/javascript">
     token = '';
-    ossType=1;
+    ossType=[[${initOssType}]];
     userIp='';
     function setType(a){
         ossType=a;
@@ -339,6 +377,8 @@
                 registerOrLoginWithPhone();            }
             if(ossType==2){//登录邮箱
                 registerOrLoginWithMail();            }
+            if(ossType==3){//密码登录
+                loginWithPW();            }
             if(ossType==4){//登录QQ
                 window.location='https://graph.qq.com/oauth2.0/authorize?client_id=101797776&redirect_uri=' + document.location.origin + '/callbackqq&sresponse_type=code&state=1' ;
             }
@@ -447,9 +487,6 @@
                 layer.msg("邮箱不合法");
                 return false;
             }
-
-
-
             isValid == 0
             curCount = count;
             $("#btnSendCode").attr("disabled", "true");
@@ -475,8 +512,8 @@
                     });
                     //vaptchaObj.reset();
                 } else {
-                    sessionStorage.setItem("code", result.message);
-                    sweetAlert("请耐心等待", "验证码已发送成功!", "info");
+                    //sessionStorage.setItem("code", result.message);
+                    sweetAlert("请耐心等待", ""+result.message, "info");
                     $('#mail').attr("disabled", "disabled");
 
                 }
@@ -501,14 +538,30 @@
     function registerOrLoginWithMail(){
         var verifyCode = $("#verifyCode").val();
         var mail = $("#mail").val();
-        //console.log("code:"+sessionStorage.getItem("code"));
-        if(verifyCode==sessionStorage.getItem("code")){//客户端第一次校验
+        var pass = $("#pass").val();
+        var repass = $("#repass").val();
+        if(pass==null) pass="null";
+        else if(pass!=repass){
+                swal("注册失败!", "两次密码不一致!", "warning");
+                return false;
+        }else if(pass.length<6||pass.length>16){
+            swal("注册失败!", "当前密码长度不满足要求!", "warning");
+            return false;
+        }
+       // if(verifyCode==sessionStorage.getItem("code")){//客户端第一次校验
             $.post('/mail/registerOrLoginWithMail', {
                 mail:mail,
-                code:verifyCode
+                code:verifyCode,
+                password:pass
             }, function(result){
                 if (result.code == 200) {
-                    window.location.href='/registerorLoginWithMailisOk?token='+result.message;
+                    swal({
+                        title: "恭喜您!",
+                        text: "您已经成功登陆啦!",
+                        icon: "success",
+                    }).then((value) => {
+                        window.location.href='/forum';
+                });
                 } else {
                     swal({
                         title: "注册/登录失败!",
@@ -538,14 +591,14 @@
                 },
                 "text"//xml,json,text或不写
             ); */
-        }
+       /* }
         else
             swal({
                 title: "验证失败!",
                 text: "验证码不匹配,请重新输入！",
                 icon: "error",
                 button: "确认",
-            });
+            });*/
     }
 </script>
 <script type="text/javascript">
@@ -630,10 +683,49 @@
     function registerOrLoginWithPhone(){
         var verifyPhoneCode = $("#verifyPhoneCode").val();
         var phone = $("#phone").val();
-        console.log("code:"+verifyPhoneCode+" msg_id:"+msg_id+" phone:"+phone)
-        $.getJSON(
+        var pass = $("#pass").val();
+        var repass = $("#repass").val();
+        if(pass==null) pass="null";
+        else if(pass!=repass){
+            swal("注册失败!", "两次密码不一致!", "warning");
+            return false;
+        }else if(pass.length<6||pass.length>16){
+            swal("注册失败!", "当前密码长度不满足要求!", "warning");
+            return false;
+        }
+       // console.log("code:"+verifyPhoneCode+" msg_id:"+msg_id+" phone:"+phone)
+        $.post('/phone/ValidCode', {
+            msg_id:msg_id,
+            code:verifyPhoneCode,
+            phone:phone,
+            state:2,
+            password:pass
+        }, function(result){
+            if (result.code == 200) {
+                swal({
+                    title: "恭喜您!",
+                    text: "您已经成功登陆啦!",
+                    icon: "success",
+                }).then((value) => {
+                    window.location.href='/forum';
+            });
+            } else {
+                swal({
+                    title: "注册/登录失败!",
+                    text: ""+result.message,
+                    icon: "error",
+                    button: "确认",
+                });
+            }
+        });
+
+
+
+
+
+       /* $.getJSON(
             "/phone/ValidCode",
-            "msg_id=" + msg_id+"&&code="+verifyPhoneCode+"&&phone="+phone+"&&state=2",//2即登录注册
+            "msg_id=" + msg_id+"&&code="+verifyPhoneCode+"&&phone="+phone+"&&state=2&&password="+pass,//2即登录注册
             function(result){
                 if(result.code==200){
                     window.location.href='/registerorLoginWithMailisOk?token='+result.message;
@@ -649,10 +741,78 @@
                 }
             },
             "text"//xml,json,text或不写
-        );
+        );*/
 
     }
 
+</script>
+<script type="text/javascript">
+    function loginWithPW(){
+        var phoneorMail = $("#phoneorMail").val();
+        var password = $("#password").val();
+        var type=1;//1为手机号，2为邮箱号
+        if(password.length<6||password.length>16){
+            swal("修改失败!", "当前密码长度不满足要求!", "warning");
+            return false;
+        }
+
+
+
+        var mailReg = new RegExp("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$");
+        if((!mailReg.test(phoneorMail))){//邮箱不合法
+            if(phoneorMail.length!=11||!(/^1[3456789]\d{9}$/.test(phoneorMail))){//手机不合法
+                swal({
+                    title: "哎哟...",
+                    text: "你输入的手机号或者邮箱号有误，请重填",
+                    icon: "warning",
+                    button: "确认",
+                });
+                return;
+            }
+
+        }else {//邮箱合法
+            type=2;
+        }
+
+        $.ajax({
+            type:"POST",
+            url:"/api/sso/login",
+           // dataType:"json",
+           // contentType:"application/json",
+            data:{
+                "name": phoneorMail
+                ,"password":password
+                ,"type":type
+            },
+            success:function(res){
+                if(res.code==200) {
+                    swal({
+                        title: "恭喜您!",
+                        text: "您已经成功登陆啦!",
+                        icon: "success",
+                    }).then((value) => {
+                        window.location.href='/forum';
+                });
+                }
+                else swal("Oh,no!", ""+res.message, "error");
+            },
+            error:function(XMLHttpRequest, textStatus, errorThrown){
+                swal(textStatus, "错误："+XMLHttpRequest.status, "error");
+            }
+        });
+
+       /* $.post('/api/sso/login', {
+            name: phoneorMail
+            ,password:password
+            ,type:type
+        }, function(res){
+            if(res.code==200) {
+                swal("Good job!", ""+res.message+res.data, "success").then((value) => {
+                    location.reload();});
+            }
+            else swal("Oh,no!", ""+res.message, "error");
+        });*/
+    }
 </script>
 </body>
 </html>

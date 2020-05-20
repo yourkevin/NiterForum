@@ -1,9 +1,9 @@
 package cn.niter.forum.provider;
 
 import cn.niter.forum.cache.TinifyPngCache;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
-import cn.niter.forum.model.User;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -33,6 +33,7 @@ import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import sun.misc.BASE64Encoder;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,9 +41,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Base64;
 import java.util.List;
-
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 15:17
+ * @site niter.cn
+ */
 @Service
 @Slf4j
 public class QCloudProvider {
@@ -80,7 +85,7 @@ public class QCloudProvider {
     @Autowired
     private TinifyPngCache tinifyPngCache;
 
-    public String upload(InputStream fileStream, String contentType, User user, String fileName , Long contentLength) {
+    public String upload(InputStream fileStream, String contentType, UserDTO user, String fileName , Long contentLength) {
 
       /*  if("image/png".equals(contentType)&&tinifyEnable==1&&contentLength>tinifyMinContentLength){//进行图片质量压缩（png），若不处理请忽略
             try {
@@ -104,12 +109,18 @@ public class QCloudProvider {
                 String watermark = "@"+user.getName()+" "+domain;
                 try {
                     byte[] data = watermark.getBytes("utf-8");
-                    watermark= Base64.getEncoder().encodeToString(data);
+                    String encodeBase64 = new BASE64Encoder().encode(data);
+                    watermark = encodeBase64.replace('+', '-');
+                    watermark = watermark.replace('/', '_');
+                    //watermark = watermark.replaceAll("=", "");
+                    //watermark= Base64.getEncoder().encodeToString(data);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                initUrl = initUrl+"?imageView2/q/75|watermark/2/text/"+watermark+"/fill/IzNEM0QzRA/fontsize/18/dissolve/80/gravity/SouthEast/dx/20/dy/10/";
-                imgUrl=uploadUrltoBucket(initUrl,"img",contentType,user,fileName);
+                imgUrl = initUrl+"?imageView2/q/75|watermark/2/text/"+watermark+"/fill/IzNEM0QzRA/fontsize/18/dissolve/80/gravity/SouthEast/dx/20/dy/10/";
+
+                //initUrl = initUrl+"?imageView2/q/75|watermark/2/text/"+watermark+"/fill/IzNEM0QzRA/fontsize/18/dissolve/80/gravity/SouthEast/dx/20/dy/10/";
+                //imgUrl=uploadUrltoBucket(initUrl,"img",contentType,user,fileName);
             }
             imgUrl = imgUrl.replace(objecturl,ciObjecturl);
         }
@@ -118,7 +129,7 @@ public class QCloudProvider {
         return imgUrl;
     }
 
-    public String uploadAvatar(InputStream inputStream, String contentType, User user, String fileName, Long contentLength)  {
+    public String uploadAvatar(InputStream inputStream, String contentType, UserDTO user, String fileName, Long contentLength)  {
         String initUrl = uploadtoBucket(inputStream,"avatar",contentType,user,fileName,contentLength);
         String avatarUrl=initUrl;
         //开启腾讯云数据万象后可以上传的头像进行智能剪切，若不处理请忽略
@@ -131,7 +142,7 @@ public class QCloudProvider {
         return avatarUrl;
     }
 
-    private String uploadUrltoBucket(String initUrl, String fileType, String contentType, User user, String fileName)  {
+    private String uploadUrltoBucket(String initUrl, String fileType, String contentType, UserDTO user, String fileName)  {
         URL url = null;
         String finalUrl=null;
         InputStream fileStream=null;
@@ -160,7 +171,7 @@ public class QCloudProvider {
         return finalUrl;
     }
 
-    public String uploadtoBucket(InputStream inputStream, String fileType, String contentType, User user, String fileName, Long contentLength){
+    public String uploadtoBucket(InputStream inputStream, String fileType, String contentType, UserDTO user, String fileName, Long contentLength){
 
         // 1 初始化用户身份信息(secretId, secretKey)
         COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);

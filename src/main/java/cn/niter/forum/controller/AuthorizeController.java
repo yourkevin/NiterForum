@@ -2,12 +2,16 @@ package cn.niter.forum.controller;
 
 import cn.niter.forum.dto.*;
 import cn.niter.forum.model.User;
+import cn.niter.forum.model.UserExample;
 import cn.niter.forum.model.UserInfo;
 import cn.niter.forum.provider.BaiduProvider;
 import cn.niter.forum.provider.GithubProvider;
 import cn.niter.forum.provider.QqProvider;
 import cn.niter.forum.provider.WeiboProvider;
+import cn.niter.forum.service.UserAccountService;
 import cn.niter.forum.service.UserService;
+import cn.niter.forum.util.CookieUtils;
+import cn.niter.forum.util.TokenUtils;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -25,6 +29,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 15:17
+ * @site niter.cn
+ */
 
 @Slf4j
 @Controller
@@ -83,6 +94,13 @@ public class AuthorizeController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserAccountService userAccountService;
+    @Autowired
+    private TokenUtils tokenUtils;
+
+    @Autowired
+    private CookieUtils cookieUtils;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
@@ -110,20 +128,15 @@ public class AuthorizeController {
 //            user.setGmtCreate(System.currentTimeMillis());
 //            user.setGmtModified(user.getGmtCreate());
             user.setAvatarUrl("/images/avatar/" + (int) (Math.random() * 11) + ".jpg");
-            userService.createOrUpdate(user);
-         /*  Cookie cookie = new Cookie("token", token);
-           cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
-           cookie.setHttpOnly(true);//通过js脚本是无法获取到cookie的信息的。防止XSS攻击。
-           cookie.setMaxAge(60 * 60 * 24 * 30 * 6);*/
-            Cookie cookie = getCookie(token);
+            user = userService.createOrUpdate(user);
+            UserDTO userDTO = userService.getUserDTO(user);
+            Cookie cookie = cookieUtils.getCookie("token",tokenUtils.getToken(userDTO),86400*3);
             response.addCookie(cookie);
-            // userMapper.insert(user);
-            //request.getSession().setAttribute("user",githubUser);
-            return "redirect:/";
+            return "redirect:/forum";
         } else {
             // 登录失败，重新登录
             log.error("callback get github error,{}", githubUser);
-            return "redirect:/";
+            return "redirect:/forum";
         }
         //return "index";
     }
@@ -144,46 +157,45 @@ public class AuthorizeController {
         // System.out.println("code是"+code+"state是"+state);
         String accessToken = baiduProvider.getAccessToken(baiduAccessTokenDTO);
         BaiduUserDTO baiduUser = baiduProvider.getUser(accessToken);
-        // System.out.println(baiduUser.getUsername()+baiduUser.getUserid());
-        if (baiduUser != null && baiduUser.getUserid() != null) {
+        // System.out.println(baiduUser.getUsername()+baiduUser.getOpenid());
+        if (baiduUser != null && baiduUser.getOpenid() != null) {
             User user = new User();
             UserInfo userInfo = new UserInfo();
             String token = UUID.randomUUID().toString();
             user.setName(baiduUser.getUsername());
             user.setToken(token);
-            user.setBaiduAccountId("" + baiduUser.getUserid());
+            user.setBaiduAccountId("" + baiduUser.getOpenid());
             user.setAvatarUrl("https://gss0.bdstatic.com/6LZ1dD3d1sgCo2Kml5_Y_D3/sys/portrait/item/" + baiduUser.getPortrait());
-
             BeanUtils.copyProperties(baiduUser, userInfo);
-            // System.out.println("生日:"+userInfo.getBirthday()+"realname:"+userInfo.getRealname());
-            // userInfo.setUserId();
-            User loginuser = (User) request.getSession().getAttribute("user");
+            UserDTO loginuser = (UserDTO) request.getAttribute("loginUser");
             int flag = userService.createOrUpdateBaidu(user, loginuser, userInfo);
-            if (flag == 1) {//创建百度账号
+           /* if (flag == 1) {//创建百度账号
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用百度账号成功注册本站！");
-                /*model.addAttribute("aouth", "Baidu");
-                model.addAttribute("aouthName", "账户中心-绑定百度账号");
-                request.getSession().setAttribute("userInfoTemp",userInfo);
-                request.getSession().setAttribute("userTemp",user);
-                return "oauth";*/
-            }
+            }*/
             if (flag == 2) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您的账号已成功绑定/更新百度账号！");
+                return "redirect:/user/set/account#bind";
             }
-            if (flag == 3) {
+           /* if (flag == 3) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用百度账号成功登陆本站！");
-            }
-            Cookie cookie = getCookie(token);
+            }*/
+            UserExample userExample = new UserExample();
+            userExample.createCriteria()
+                    .andBaiduAccountIdEqualTo(baiduUser.getOpenid());
+            User dbUser = userService.selectUserByExample(userExample);
+            if(dbUser==null) return "redirect:/forum";
+            UserDTO userDTO = userService.getUserDTO(dbUser);
+            Cookie cookie = cookieUtils.getCookie("token",tokenUtils.getToken(userDTO),86400*3);
             response.addCookie(cookie);
-            return "result";
+            return "redirect:/forum";
 
         } else {
             // 登录失败，重新登录
             log.error("callback get github error,{}", baiduUser);
-            return "redirect:/";
+            return "redirect:/forum";
         }
     }
 
@@ -224,23 +236,30 @@ public class AuthorizeController {
             userInfo.setLocation(qqUser.getProvince() + "-" + qqUser.getCity() + "-全部");
             if (!StringUtils.isBlank(qqUser.getConstellation())) userInfo.setConstellation(qqUser.getConstellation());
             userInfo.setBirthday(qqUser.getYear() + "-10-10");
-            User loginuser = (User) request.getSession().getAttribute("user");
+            UserDTO loginuser = (UserDTO) request.getAttribute("loginUser");
             int flag = userService.createOrUpdateQq(user, loginuser, userInfo);
-            if (flag == 1) {//创建qq账号
+        /*    if (flag == 1) {//创建qq账号
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用QQ账号成功注册本站！");
-            }
+            }*/
             if (flag == 2) {
-                model.addAttribute("rsTitle", "成功啦！！！");
-                model.addAttribute("rsMessage", "您的账号已成功绑定/更新QQ账号！");
+               /* model.addAttribute("rsTitle", "成功啦！！！");
+                model.addAttribute("rsMessage", "您的账号已成功绑定/更新QQ账号！");*/
+                return "redirect:/user/set/account#bind";
             }
-            if (flag == 3) {
+         /*   if (flag == 3) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用QQ账号成功登陆本站！");
-            }
-            Cookie cookie = getCookie(token);
+            }*/
+            UserExample userExample = new UserExample();
+            userExample.createCriteria()
+                    .andQqAccountIdEqualTo(user.getQqAccountId());
+            User dbUser = userService.selectUserByExample(userExample);
+            if(dbUser==null) return "redirect:/forum";
+            UserDTO userDTO = userService.getUserDTO(dbUser);
+            Cookie cookie = cookieUtils.getCookie("token",tokenUtils.getToken(userDTO),86400*3);
             response.addCookie(cookie);
-            return "result";
+            return "redirect:/forum";
 
         } else {
             log.error("callback get qq error,{}", qqUser);
@@ -280,23 +299,31 @@ public class AuthorizeController {
             else userInfo.setSex("男");
             userInfo.setLocation(weiboUser.getLocation());
             //BeanUtils.copyProperties(weiboUser,userInfo);
-            User loginuser = (User) request.getSession().getAttribute("user");
+            UserDTO loginuser = (UserDTO) request.getAttribute("loginUser");
             int flag = userService.createOrUpdateWeibo(user, loginuser, userInfo);
-            if (flag == 1) {//创建百度账号
+          /*  if (flag == 1) {//创建百度账号
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用微博账号成功注册本站！");
-            }
+            }*/
             if (flag == 2) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您的账号已成功绑定/更新微博账号！");
+                return "redirect:/user/set/account#bind";
             }
-            if (flag == 3) {
+           /* if (flag == 3) {
                 model.addAttribute("rsTitle", "成功啦！！！");
                 model.addAttribute("rsMessage", "您已使用微博账号成功登陆本站！");
-            }
-            Cookie cookie = getCookie(token);
+
+            }*/
+            UserExample userExample = new UserExample();
+            userExample.createCriteria()
+                    .andWeiboAccountIdEqualTo(user.getWeiboAccountId());
+            User dbUser = userService.selectUserByExample(userExample);
+            if(dbUser==null) return "redirect:/forum";
+            UserDTO userDTO = userService.getUserDTO(dbUser);
+            Cookie cookie = cookieUtils.getCookie("token",tokenUtils.getToken(userDTO),86400*3);
             response.addCookie(cookie);
-            return "result";
+            return "redirect:/forum";
 
         } else {
             log.error("callback get github error,{}", weiboUser);
@@ -314,11 +341,6 @@ public class AuthorizeController {
         User userTemp = (User) request.getSession().getAttribute("userTemp");
         if (name != null && StringUtils.isNotBlank(name)) userTemp.setName(name);
         userService.createNewBaidu(userTemp, userInfoTemp);
-        /*Cookie cookie = new Cookie("token", userTemp.getToken());
-        cookie.setMaxAge(60 * 60 * 24 * 30 * 6);
-        response.addCookie(cookie);
-        model.addAttribute("rsTitle", "成功啦！！！");
-        model.addAttribute("rsMessage", "您已成功使用百度账号关联本站！");*/
         return "result";
     }
 
@@ -326,10 +348,10 @@ public class AuthorizeController {
     @GetMapping("/logout")
     public String logout(HttpServletRequest request,
                          HttpServletResponse response) {
-        request.getSession().removeAttribute("user");
+       /* request.getSession().removeAttribute("user");
         request.getSession().removeAttribute("userAccount");
         request.getSession().removeAttribute("userInfo");
-        request.getSession().removeAttribute("unreadCount");
+        request.getSession().removeAttribute("unreadCount");*/
         Cookie cookie = new Cookie("token", null);
         cookie.setDomain(domain);
         cookie.setPath("/");
@@ -354,7 +376,16 @@ public class AuthorizeController {
         return name;
     }
 
-    public Cookie getCookie(String token) {
+  /*  public UserDTO getUserDTO(User user) {
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user,userDTO);
+        UserAccount userAccount = userAccountService.selectUserAccountByUserId(user.getId());
+        userDTO.setGroupId(userAccount.getGroupId());
+        userDTO.setVipRank(userAccount.getVipRank());
+        return userDTO;
+    }*/
+
+   /* public Cookie getCookie(String token) {
         Cookie cookie = new Cookie("token", token);
         cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
         cookie.setHttpOnly(true);//通过js脚本是无法获取到cookie的信息的。防止XSS攻击。
@@ -362,6 +393,6 @@ public class AuthorizeController {
         cookie.setDomain(domain);
         cookie.setPath("/");
         return cookie;
-    }
+    }*/
 
 }

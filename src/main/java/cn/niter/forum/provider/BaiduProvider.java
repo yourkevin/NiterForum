@@ -48,7 +48,8 @@ public class BaiduProvider {
             String string = response.body().string();
             System.out.println(string);
             BaiduUserDTO baiduUserDTO = JSON.parseObject(string, BaiduUserDTO.class);
-
+            if(baiduUserDTO.getUserid()!=null&&baiduUserDTO.getUserid().longValue()!=0L)
+                baiduUserDTO.setOpenid(""+baiduUserDTO.getUserid());
             return baiduUserDTO;
         } catch (IOException e) {
         }

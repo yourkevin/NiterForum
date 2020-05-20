@@ -1,15 +1,19 @@
 package cn.niter.forum.interceptor;
 
-import cn.niter.forum.enums.AdPosEnum;
+import cn.niter.forum.annotation.UserLoginToken;
+import cn.niter.forum.cache.LoginUserCache;
+import cn.niter.forum.dto.ResultDTO;
+import cn.niter.forum.dto.UserDTO;
+import cn.niter.forum.exception.CustomizeErrorCode;
+import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.mapper.UserAccountMapper;
-import cn.niter.forum.mapper.UserInfoMapper;
 import cn.niter.forum.mapper.UserMapper;
-import cn.niter.forum.model.*;
 import cn.niter.forum.service.AdService;
-import cn.niter.forum.service.NotificationService;
+import cn.niter.forum.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
@@ -17,8 +21,14 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.lang.reflect.Method;
 
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 15:17
+ * @site niter.cn
+ */
 @Service
 public class SessionInterceptor implements HandlerInterceptor {
     @Autowired
@@ -26,12 +36,11 @@ public class SessionInterceptor implements HandlerInterceptor {
     @Autowired
     private UserAccountMapper userAccountMapper;
     @Autowired
-    private UserInfoMapper userInfoMapper;
-    @Autowired
-    private NotificationService notificationService;
+    private LoginUserCache loginUserCache;
     @Autowired
     private AdService adService;
-
+    @Autowired
+    TokenUtils tokenUtils;
    /* @Value("${github.redirect.uri}")
     private String redirectUri;
     @Value("${baidu.redirect.uri}")
@@ -61,55 +70,92 @@ public class SessionInterceptor implements HandlerInterceptor {
        }
 
        //拦截非本站post请求，如果你需要改造为前后端分离项目，此处代码可能会有所影响
-       String origin = request.getHeader("origin");//用来说明请求从哪里发起的，包括，且仅仅包括协议和域名。post请求才有，这个参数一般只存在于CORS跨域请求中，可以看到response有对应的header：Access-Control-Allow-Origin。
+      /* String origin = request.getHeader("origin");//用来说明请求从哪里发起的，包括，且仅仅包括协议和域名。post请求才有，这个参数一般只存在于CORS跨域请求中，可以看到response有对应的header：Access-Control-Allow-Origin。
        if(origin!=null&&(!host.equals(origin.split("//")[1])||referer==null)){
            response.setStatus(406);
            return false;
-       }
+       }*/
 
         //设置广告
-        for (AdPosEnum adPos : AdPosEnum.values()) {
+    /*    for (AdPosEnum adPos : AdPosEnum.values()) {
             request.getServletContext().setAttribute(adPos.name(), adService.list(adPos.name()));
-        }
-
+        }*/
+        HandlerMethod handlerMethod=(HandlerMethod)handler;
+        Method method=handlerMethod.getMethod();
+        String token=null;
+        ResultDTO resultDTO=null;
         Cookie[] cookies = request.getCookies();
+        boolean hashToken = false;
         if(cookies!=null&&cookies.length!=0){
             for (Cookie cookie : cookies) {
                 if(cookie.getName().equals("token")){
-                    String token=cookie.getValue();
-                    UserExample userExample = new UserExample();
-                    userExample.createCriteria()
-                            .andTokenEqualTo(token);
-                    List<User> users = userMapper.selectByExample(userExample);
-
-                    if(users.size()!=0){
-                        User user = users.get(0);
-                        //System.out.println("id"+user.getId());
-                        UserAccountExample userAccountExample = new UserAccountExample();
-                        userAccountExample.createCriteria().andUserIdEqualTo(user.getId());
-                        List<UserAccount> userAccounts = userAccountMapper.selectByExample(userAccountExample);
-                        UserAccount userAccount = userAccounts.get(0);
-                        UserInfoExample userInfoExample = new UserInfoExample();
-                        userInfoExample.createCriteria().andUserIdEqualTo(user.getId());
-                        List<UserInfo> userInfos = userInfoMapper.selectByExample(userInfoExample);
-                        UserInfo userInfo = userInfos.get(0);
-                        //System.out.println("infoid"+userInfo.getId());
-                        request.getSession().setAttribute("user",user);
-                        request.getSession().setAttribute("userAccount",userAccount);
-                        request.getSession().setAttribute("userInfo",userInfo);
-                        Long unreadCount = notificationService.unreadCount(users.get(0).getId());
-                        request.getSession().setAttribute("unreadCount", unreadCount);
-                    //    System.out.println("用户ID："+userAccount.getGroupId());
-                        UserExample example = new UserExample();
-                        users.get(0).setGmtModified(System.currentTimeMillis());
-                        example.createCriteria()
-                                .andIdEqualTo(users.get(0).getId());
-                        userMapper.updateByExampleSelective(users.get(0), example);
+                    token=cookie.getValue();
+                    if(token!=null) {
+                        hashToken=true;
+                        resultDTO = tokenUtils.verifyToken(token);
+                        if(resultDTO.getCode()==200){
+                            UserDTO userDTO = (UserDTO) resultDTO.getData();
+                            request.setAttribute("loginUser",userDTO);
+                            loginUserCache.putLoginUser(userDTO.getId(),System.currentTimeMillis());
+                             //return true;
+                        }
                     }
+                    //检查有没有需要用户权限的注解
+                   /* if (method.isAnnotationPresent(UserLoginToken.class)) {
+                        UserLoginToken userLoginToken = method.getAnnotation(UserLoginToken.class);
+                        if (userLoginToken.required()) {
+                            // 执行认证
+                            if (token == null||resultDTO.getCode()!=200) {
+                                response.setStatus(401);
+                                throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+                                //return false;
+                            }*/
+                            // 获取 token 中的 user id
+               /* String userId;
+                try {
+                    userId = JWT.decode(token).getAudience().get(0);
+                } catch (JWTDecodeException j) {
+                    throw new RuntimeException("401-1");
+                }
+                User user = userService.findUserById(userId);
+                if (user == null) {
+                    throw new RuntimeException("用户不存在，请重新登录");
+                }*/
+                            // 验证 token
+              /*  JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword())).withIssuer("NiterUser").build();
+                try {
+                    DecodedJWT verify = jwtVerifier.verify(token);
+                    Map<String, Claim> map=verify.getClaims();
+                    Map<String, String> resultMap = new HashMap<>(map.size());
+                    map.forEach((k, v) -> resultMap.put(k, v.asString()));
+                    System.out.println("resultMap"+JSON.toJSONString(resultMap));
+
+                } catch (JWTVerificationException e) {
+                    throw new RuntimeException("401-2");
+                }*/
+                          /*  return true;
+                        }
+                    }*/
                     break;
                 }
             }
         }
+
+
+        if (method.isAnnotationPresent(UserLoginToken.class)) {
+            UserLoginToken userLoginToken = method.getAnnotation(UserLoginToken.class);
+            if (userLoginToken.required()) {
+                // 执行认证
+                if ((!hashToken)||resultDTO.getCode()!=200) {
+                    response.setStatus(401);
+                    throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+                    //return false;
+                }
+            }
+        }
+
+
+
         return true;
     }
 

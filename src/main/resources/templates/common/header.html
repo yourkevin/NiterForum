@@ -77,7 +77,7 @@
     </ul>
 
     <ul class="layui-nav fly-nav-user">
-      <th:block th:if="${session.user==null}">
+      <th:block th:if="${loginUser==null}">
       <!-- 未登入的状态 -->
       <li class="layui-nav-item">
         <a class="iconfont icon-touxiang layui-hide-xs" href="/sso/login"></a>
@@ -96,21 +96,20 @@
       </li>
       </th:block>
       <!-- 登入后的状态 -->
-    <th:block th:if="${session.user!=null}">
-      <li class="layui-nav-item" style="margin-right: 20px">
+    <th:block th:if="${loginUser!=null}">
+      <!--li class="layui-nav-item" style="margin-right: 20px">
         <a th:if="${session.unreadCount!=0}" href="/user/message"><span class="layui-hide-xs">有新消息</span><span class="layui-badge" th:text="${session.unreadCount}"></span></a>
-        <!--span th:if="${session.unreadCount!=0}" class="layui-badge" th:text="${session.unreadCount}"></span-->
-      </li>
+      </li-->
       <li class="layui-nav-item" >
         <a class="fly-nav-avatar niter-avatar" href="javascript:;">
-          <i th:if="${session.userAccount.vipRank==1}" class="layui-icon fly-list-kiss layui-hide-xs" title="红砖会员等级：LV1">&#xe735</i>
-          <cite th:class="${session.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${session.user.name}"></cite>
+          <i th:if="${loginUser.vipRank==1}" class="layui-icon fly-list-kiss layui-hide-xs" title="红砖会员等级：LV1">&#xe735</i>
+          <cite th:class="${loginUser.vipRank==1? 'fly-list-kiss':''}" th:text="${loginUser.name}"></cite>
           <!--i class="layui-badge fly-badge-vip layui-bg-gray layui-hide-xs" th:text="${@environment.getProperty('user.group.r'+session.userAccount.groupId)}"></i-->
-          <img th:src="${session.user.avatarUrl}">
+          <img th:src="${loginUser.avatarUrl}">
         </a>
         <dl class="layui-nav-child">
-          <dd><a href="/user/message"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息<span th:if="${session.unreadCount!=0}" class="layui-badge-dot"></span></a></dd>
-          <dd><a th:href="${'/user/'+session.user.id}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
+          <dd><a href="/user/message" class="user-message-menu"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
+          <dd><a th:href="${'/user/'+loginUser.id}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
           <hr style="margin: 5px 0;">
           <dd><a href="/user/p/myPosts"><i class="layui-icon">&#xe62a;</i>帖子管理</a></dd>
           <dd><a href="/user/set/account"><i class="layui-icon">&#xe612;</i>账户中心</a></dd>
@@ -152,7 +151,7 @@
           <li class="layui-nav-item"><a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5uPXrY2">联系</a></li>
         </ul>
         <a href="#" class="personal pull-left">
-          <i class="layui-icon">&#xe66f;<th:block th:if="${session.user!=null}" th:text="${session.user.name}"></th:block></i>
+          <i class="layui-icon">&#xe66f;<th:block th:if="${loginUser!=null}" th:text="${loginUser.name}"></th:block></i>
 
         </a>
       </div>
@@ -188,7 +187,7 @@
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li>
 
       <!-- 用户登入后显示 -->
-      <th:block th:if="${session.user!=null}">
+      <th:block th:if="${loginUser!=null}">
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a target="_blank" href="/user/p/myPosts">我发表的贴</a></li>
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a target="_blank" href="/user/p/likes">我收藏的贴</a></li>
       </th:block>

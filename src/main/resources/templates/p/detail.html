@@ -37,7 +37,7 @@
           <span th:if="${question.sticky}" class="layui-badge layui-bg-orange">置顶</span>
           <span th:if="${question.essence}" class="layui-badge layui-bg-red">精帖</span>
 
-          <div class="fly-admin-box" th:data-id="${question.id}" th:if="${session.user!=null}">
+          <div class="fly-admin-box" th:data-id="${question.id}" th:if="${loginUser!=null}">
             <span th:if="${question.canDelete}" class="layui-btn layui-btn-xs jie-admin" type="del">删除</span>
 
             <span th:if="${question.canSticky&&(!question.sticky)}" class="layui-btn layui-btn-xs jie-admin" type="set" field="stick" rank="1">置顶</span>
@@ -68,7 +68,7 @@
           </div>
           <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
             <span style="padding-right: 10px; color: #FF7200" >点击群号免费加入尼特社区交流群：<a target="_blank" th:href="${@environment.getProperty('site.info.contactQunUrl')}" th:text="${@environment.getProperty('site.info.contactQun')}"></a>。</span>
-            <span th:if="${session.user!=null&&question.canEdit}" class="layui-btn layui-btn-xs jie-admin" type="edit"><a th:href="@{'/p/publish/'+${question.id}}" style="margin-left: -5px;"><i class="layui-icon">&#xe642;</i>编辑</a></span>
+            <span th:if="${loginUser!=null&&question.canEdit}" class="layui-btn layui-btn-xs jie-admin" type="edit"><a th:href="@{'/p/publish/'+${question.id}}" style="margin-left: -5px;"><i class="layui-icon">&#xe642;</i>编辑</a></span>
             <!--span th:data-id="${question.id}" onclick="like_question(this)" class="layui-btn layui-btn-xs layui-btn-warm"><i class="layui-icon">&#xe600;</i><th:block th:text="${question.favorite?'已':''}"></th:block>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span-->
           </div>
         </div>
@@ -136,10 +136,10 @@
                 <i class="iconfont icon-svgmoban53"></i>
                <em th:text="${comment.commentCount}" th:class="${comment.commentCount != 0}? 'zanok' : ''"></em>
               </span>
-              <div class="jieda-admin" th:if="${session.user!=null&&session.userAccount!=null}">
-                <span type="edit" th:if="${comment.commentator==session.user.id}">编辑</span>
-                <span type="del" th:if="${session.userAccount.groupId>18||comment.commentator==session.user.id}">删除</span>
-                <span class="jieda-accept" type="accept" th:if="${session.userAccount.groupId>18}">采纳</span>
+              <div class="jieda-admin" th:if="${loginUser!=null}">
+                <span type="edit" th:if="${comment.commentator==loginUser.id}">编辑</span>
+                <span type="del" th:if="${loginUser.groupId>18||comment.commentator==loginUser.id}">删除</span>
+                <span class="jieda-accept" type="accept" th:if="${loginUser.groupId>18}">采纳</span>
               </div>
             </div>
             <!--二级评论-->
@@ -405,9 +405,9 @@
 <script>
   layui.cache.page = 'jie';
   layui.cache.user = {
-    username: '匿名用户'
-    ,uid: -1
-    ,avatar: '/images/avatar/00.jpg'
+    name: '[[${loginUser!=null?loginUser.name:"匿名用户"}]]'
+    ,uid: [[${loginUser!=null?loginUser.id:-1}]]
+    ,avatar: '[[${loginUser!=null?loginUser.avatarUrl:"/images/avatar/default.png"}]]'
     ,experience: 83
     ,sex: '男'
   };

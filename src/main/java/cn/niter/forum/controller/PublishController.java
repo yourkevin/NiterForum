@@ -1,13 +1,13 @@
 package cn.niter.forum.controller;
 
+import cn.niter.forum.annotation.UserLoginToken;
 import cn.niter.forum.cache.TagCache;
 import cn.niter.forum.dto.QuestionDTO;
 import cn.niter.forum.dto.ResultDTO;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.model.Question;
-import cn.niter.forum.model.User;
-import cn.niter.forum.model.UserAccount;
 import cn.niter.forum.provider.BaiduCloudProvider;
 import cn.niter.forum.service.QuestionService;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +21,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 15:17
+ * @site niter.cn
+ */
+
 @Controller
 public class PublishController {
     @Autowired
@@ -28,11 +35,14 @@ public class PublishController {
     @Autowired
     private BaiduCloudProvider baiduCloudProvider;
 
+    @UserLoginToken
     @GetMapping("p/publish")
     public String publish2(Model model) {
         model.addAttribute("tags", TagCache.get());
         return "p/add";
     }
+
+    @UserLoginToken
     @PostMapping("p/publish")
     public String doPublish2(
             @RequestParam("title") String title,
@@ -56,14 +66,14 @@ public class PublishController {
         model.addAttribute("id", id);
         model.addAttribute("navtype", "publishnav");
         model.addAttribute("permission", permission);
-        User user = (User)request.getSession().getAttribute("user");
-        UserAccount userAccount = (UserAccount)request.getSession().getAttribute("userAccount");
+        UserDTO user = (UserDTO)request.getAttribute("loginUser");
+        //UserAccount userAccount = (UserAccount)request.getSession().getAttribute("userAccount");
 
-        if(user==null) {
+      /*  if(user==null) {
             model.addAttribute("error","用户未登陆");
             model.addAttribute("description", description);
             return "p/add";
-        }
+        }*/
 
         if (StringUtils.isBlank(title)) {
             model.addAttribute("error", "标题不能为空");
@@ -102,7 +112,7 @@ public class PublishController {
         //question.setGmtCreate(System.currentTimeMillis());
         //question.setGmtModified(question.getGmtCreate());
         // questionMapper.creat(question);
-        questionService.createOrUpdate(question,userAccount);
+        questionService.createOrUpdate(question,user);
         return "redirect:/forum";
     }
 
@@ -111,7 +121,7 @@ public class PublishController {
                        Model model,
                        HttpServletRequest request){
         QuestionDTO question = questionService.getById(id,0L);
-        User user = (User)request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO)request.getAttribute("loginUser");
         if (question.getCreator().longValue() != user.getId().longValue() ){
             throw new CustomizeException(CustomizeErrorCode.CAN_NOT_EDIT_QUESTION);
         }

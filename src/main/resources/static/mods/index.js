@@ -20,7 +20,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
 
   //阻止IE7以下访问
   if(device.ie && device.ie < 8){
-    layer.alert('如果您非得使用 IE 浏览器访问Fly社区，那么请使用 IE8+');
+    layer.alert('如果您非得使用 IE 浏览器访问尼特社区，那么请使用 IE8+');
   }
 
   layui.focusInsert = function(obj, str){
@@ -282,13 +282,58 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     //新消息通知
     ,newmsg: function(){
       var elemUser = $('.fly-nav-user');
-      if(layui.cache.user.uid !== -1 && elemUser[0]){
-        fly.json('/message/nums/', {
-          _: new Date().getTime()
+      var elemMenu = $('.user-message-menu');
+      var elemHtml5plus = $('.html5plus-user-icon');
+
+
+      if(layui.cache.user.uid !== -1 && layui.cache.page=="index" && elemUser[0]){
+        $.ajax({
+          type: "GET",
+          url: "/api/notification/mine",
+          success: function (res) {
+            if(res.code === 200 && res.data > 0){
+//      <li class="layui-nav-item" style="margin-right: 20px">
+//         <a  href="/user/message"><span class="layui-hide-xs">有新消息</span><span class="layui-badge"></span></a>
+//       </li>
+              var msg = $('<li class="layui-nav-item" style="margin-right: 20px"><a  href="/user/message"><span class="layui-hide-xs">有新消息</span><span class="layui-badge">'+ res.data +'</span></a>');
+              var msg2 = $('<span class="layui-badge-dot"></span>');
+              var msg3 = $('<span onclick="javascript:window.open(\'/user/message\')" class="layui-badge">'+ res.data +'</span>');
+              elemUser.prepend(msg);
+              elemMenu.append(msg2);
+              elemHtml5plus.append(msg3);
+              /* msg.on('click', function(){
+                 fly.json('/message/read', {}, function(res){
+                   if(res.status === 0){
+                     location.href = '/user/message/';
+                   }
+                 });
+               });*/
+              if(!(layui.device().android||layui.device().ios)){
+                layer.tips('你有 '+ res.data +' 条未读消息', msg, {
+                  tips: 3
+                  ,tipsMore: true
+                  ,fixed: true
+                });
+              }
+
+              msg.on('mouseenter', function(){
+                layer.closeAll('tips');
+              })
+            }
+          }
+        });
+
+
+
+       /*fly.json('/api/notification/mine', {
+         // _: new Date().getTime()
         }, function(res){
-          if(res.status === 0 && res.count > 0){
-            var msg = $('<a class="fly-nav-msg" href="javascript:;">'+ res.count +'</a>');
-            elemUser.append(msg);
+          alert(""+res.code+"-"+res.data);
+          if(res.code === 200 && res.data > 0){
+
+            var msg = $('<li class="layui-nav-item" style="margin-right: 20px"><a  href="/user/message"><span class="layui-hide-xs">有新消息</span><span class="layui-badge">'+ res.data +'</span></a>');
+            //var msg = $('<a class="fly-nav-msg" href="javascript:;">'+ res.count +'</a>');
+            elemUser.prepend(msg);
             msg.on('click', function(){
               fly.json('/message/read', {}, function(res){
                 if(res.status === 0){
@@ -296,7 +341,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                 }
               });
             });
-            layer.tips('你有 '+ res.count +' 条未读消息', msg, {
+            layer.tips('你有 '+ res.data +' 条未读消息', msg, {
               tips: 3
               ,tipsMore: true
               ,fixed: true
@@ -305,7 +350,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
               layer.closeAll('tips');
             })
           }
-        });
+        });*/
       }
       return arguments.callee;
     }
@@ -484,7 +529,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     layer.photos({
       photos: '.photos'
       ,zIndex: 9999999999
-      ,anim: -1
+      ,anim: 1
     });
   } else {
     $('body').on('click', '.photos img', function(){

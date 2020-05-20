@@ -114,7 +114,7 @@
                     <option value="2" th:selected="${column2==2}" >分享</option>
                     <option value="3" th:selected="${column2==3}">建议</option>
                     <option value="4" th:selected="${column2==4}">讨论</option>
-                    <option th:if="${session.userAccount!=null&&session.userAccount.groupId==21}" th:selected="${column2==5}" value="5">公告</option>
+                    <option th:if="${loginUser!=null&&loginUser.groupId==21}" th:selected="${column2==5}" value="5">公告</option>
                     <option value="6" th:selected="${column2==6}">动态</option>
                     <option value="9" th:selected="${column2==9}">其它</option>
                   </select>

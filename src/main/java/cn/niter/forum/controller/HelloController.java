@@ -1,6 +1,7 @@
 package cn.niter.forum.controller;
 
 import cn.niter.forum.provider.*;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -30,11 +31,8 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String hello(HttpServletRequest request, Model model) {
-       //baiduCloudProvider.getTextCensorReult("习近平");
-      /*  if(keywordsEnable==0)
-        System.out.println(keywordsEnable);*/
-       // qqProvider.allOpenIdtoUnionId("101844155");
-        //tinifyProvider.init();
+        String encodekey = DigestUtils.sha256Hex("测试SHA256"+"adsdsad");
+        System.out.println(encodekey);
        return "other/video2";
     }
 

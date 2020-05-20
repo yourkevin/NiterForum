@@ -26,6 +26,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 15:17
+ * @site niter.cn
+ */
+
 @Service
 public class QuestionService {
     @Autowired
@@ -428,9 +435,11 @@ public class QuestionService {
         List<Question> questionList = new ArrayList<>();
         PaginationDTO paginationDTO = new PaginationDTO();
         List<QuestionDTO> questionDTOList = new ArrayList<>();
-       // Question question = new Question();
+        Question questionTemp ;
         for (Thumb thumb : thumbs) {
-            questionList.add(questionMapper.selectByPrimaryKey(thumb.getTargetId()));
+            questionTemp=questionMapper.selectByPrimaryKey(thumb.getTargetId());
+            if(questionTemp!=null)
+            questionList.add(questionTemp);
         }
         for (Question question : questionList) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -516,7 +525,7 @@ public class QuestionService {
         return questionDTO;
     }
 
-    public void createOrUpdate(Question question,UserAccount userAccount) {
+    public void createOrUpdate(Question question,UserDTO user) {
         if (question.getId() == null) {
             // 创建
             question.setGmtCreate(System.currentTimeMillis());
@@ -527,12 +536,12 @@ public class QuestionService {
             question.setCommentCount(0);
             question.setStatus(0);
             questionMapper.insert(question);
-            if(userAccount.getVipRank()!=0){//VIP积分策略，可自行修改，这里简单处理
+            if(user.getVipRank()!=0){//VIP积分策略，可自行修改，这里简单处理
                 score1PublishInc=score1PublishInc*2;
                 score2PublishInc=score2PublishInc*2;
                 score3PublishInc=score2PublishInc*3;
             }
-            userAccount = new UserAccount();
+            UserAccount userAccount = new UserAccount();
             userAccount.setUserId(question.getCreator());
             userAccount.setScore1(score1PublishInc);
             userAccount.setScore2(score2PublishInc);

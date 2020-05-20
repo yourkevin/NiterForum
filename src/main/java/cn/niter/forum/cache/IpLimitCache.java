@@ -10,8 +10,8 @@ import java.util.concurrent.TimeUnit;
 public class IpLimitCache {
     ExpiringMap<String,String> interval = ExpiringMap.builder()
             .maxSize(20)//设置最大容量，增大攻击难度，值越大存储的可疑ip越多，过大会占用额外资源
-            .expiration(1, TimeUnit.MINUTES)//过期时间1分钟
-            .expirationPolicy(ExpirationPolicy.ACCESSED)//每次访问重置过期时间
+            .expiration(30, TimeUnit.SECONDS)//过期时间30秒
+            .expirationPolicy(ExpirationPolicy.CREATED)//每次访问重置过期时间
             .variableExpiration()
             .build();
 

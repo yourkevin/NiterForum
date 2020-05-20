@@ -31,8 +31,6 @@
         <li lay-id="score">积分</li>
         <li lay-id="userGroup">用户组</li>
         <li lay-id="avatar">头像</li>
-        <li lay-id="pass">密码</li>
-
       </ul>
       <div class="layui-tab-content" style="padding: 20px 0;">
 
@@ -48,25 +46,25 @@
             <div class="layui-form-item">
               <label for="username" class="layui-form-label">昵称</label>
               <div class="layui-input-inline">
-                <input type="text" id="username" name="username" required lay-verify="required" autocomplete="off" th:value="${session.user.name}" class="layui-input">
+                <input type="text" id="username" name="username" required lay-verify="required" autocomplete="off" th:value="${user.name}" class="layui-input">
               </div>
               <div class="layui-inline">
                 <div class="layui-input-inline">
-                  <input type="radio" name="sex" value="男" checked title="男">
-                  <input type="radio" name="sex" value="女" title="女">
+                  <input type="radio" name="sex" value="男" th:checked="${userInfo.sex=='男'}" title="男">
+                  <input type="radio" name="sex" value="女" th:checked="${userInfo.sex=='女'}" title="女">
                 </div>
               </div>
             </div>
             <div class="layui-form-item ">
               <label for="birthday" class="layui-form-label">生日</label>
               <div class="layui-input-inline">
-                <input type="text" id="birthday" name="birthday" autocomplete="off" th:value="${session.userInfo.birthday}" class="layui-input">
+                <input type="text" id="birthday" name="birthday" autocomplete="off" th:value="${userInfo.birthday}" class="layui-input">
               </div>
             </div>
             <div class="layui-form-item">
               <label for="constellation" class="layui-form-label">星座</label>
               <div class="layui-input-inline">
-               <input disabled type="text" id="constellation" name="constellation" th:value="${session.userInfo.constellation}" class="layui-input">
+               <input disabled type="text" id="constellation" name="constellation" th:value="${userInfo.constellation}" class="layui-input">
               </div>
               <div class="layui-form-mid layui-word-aux">无需手动填写，星座将在填写生日后自动生成~提交后刷新可见</div>
             </div>
@@ -74,8 +72,8 @@
               <label for="marriage" class="layui-form-label">婚姻</label>
               <div class="layui-input-inline">
                 <select id="marriage" name="marriage" lay-verify="">
-                  <option th:selected="${session.userInfo.marriage=='未婚'}" value="未婚">未婚</option>
-                  <option th:selected="${session.userInfo.marriage=='已婚'}" value="已婚">已婚</option>
+                  <option th:selected="${userInfo.marriage=='未婚'}" value="未婚">未婚</option>
+                  <option th:selected="${userInfo.marriage=='已婚'}" value="已婚">已婚</option>
                 </select>
               </div>
             </div>
@@ -83,11 +81,11 @@
               <label for="blood" class="layui-form-label">血型</label>
               <div class="layui-input-inline">
                 <select id="blood" name="blood" lay-verify="">
-                  <option th:selected="${session.userInfo.blood=='A型'}" value="A型">A型</option>
-                  <option th:selected="${session.userInfo.blood=='B型'}" value="B型">B型</option>
-                  <option th:selected="${session.userInfo.blood=='AB型'}" value="AB型">AB型</option>
-                  <option th:selected="${session.userInfo.blood=='O型'}" value="O型">O型</option>
-                  <option th:selected="${session.userInfo.blood=='其它'}" value="其它">其它</option>
+                  <option th:selected="${userInfo.blood=='A型'}" value="A型">A型</option>
+                  <option th:selected="${userInfo.blood=='B型'}" value="B型">B型</option>
+                  <option th:selected="${userInfo.blood=='AB型'}" value="AB型">AB型</option>
+                  <option th:selected="${userInfo.blood=='O型'}" value="O型">O型</option>
+                  <option th:selected="${userInfo.blood=='其它'}" value="其它">其它</option>
                 </select>
               </div>
             </div>
@@ -95,19 +93,19 @@
               <label for="education" class="layui-form-label">学历</label>
               <div class="layui-input-inline">
                 <select id="education" name="education" lay-verify="">
-                  <option th:selected="${session.userInfo.education=='小学'}" value="小学">小学</option>
-                  <option th:selected="${session.userInfo.education=='初中'}" value="初中">初中</option>
-                  <option th:selected="${session.userInfo.education=='高中'}" value="高中">高中</option>
-                  <option th:selected="${session.userInfo.education=='专科'}" value="专科">专科</option>
-                  <option th:selected="${session.userInfo.education=='本科'}" value="本科">本科</option>
-                  <option th:selected="${session.userInfo.education=='硕士'}" value="硕士">硕士</option>
-                  <option th:selected="${session.userInfo.education=='博士'}" value="博士">博士</option>
-                  <option th:selected="${session.userInfo.education=='其它'}" value="其它">其它</option>
+                  <option th:selected="${userInfo.education=='小学'}" value="小学">小学</option>
+                  <option th:selected="${userInfo.education=='初中'}" value="初中">初中</option>
+                  <option th:selected="${userInfo.education=='高中'}" value="高中">高中</option>
+                  <option th:selected="${userInfo.education=='专科'}" value="专科">专科</option>
+                  <option th:selected="${userInfo.education=='本科'}" value="本科">本科</option>
+                  <option th:selected="${userInfo.education=='硕士'}" value="硕士">硕士</option>
+                  <option th:selected="${userInfo.education=='博士'}" value="博士">博士</option>
+                  <option th:selected="${userInfo.education=='其它'}" value="其它">其它</option>
                 </select>
               </div>
             </div>
             <div class="layui-form-item">
-              <input type="hidden" name="locationValue" id="locationValue" th:value="${session.userInfo.location}">
+              <input type="hidden" name="locationValue" id="locationValue" th:value="${userInfo.location}">
               <label for="location" class="layui-form-label">位置</label>
               <div class="layui-inline">
                 <div class="layui-form-item" id="location" name="location">
@@ -132,7 +130,7 @@
             <div class="layui-form-item layui-form-text">
               <label for="userdetail" class="layui-form-label">签名</label>
               <div class="layui-input-block">
-                <textarea placeholder="写点什么吧，让大家更好的认识你" id="userdetail"  name="userdetail" autocomplete="off" class="layui-textarea" style="height: 80px;" th:text="${session.userInfo.userdetail}"></textarea>
+                <textarea placeholder="写点什么吧，让大家更好的认识你" id="userdetail"  name="userdetail" autocomplete="off" class="layui-textarea" style="height: 80px;" th:text="${userInfo.userdetail}"></textarea>
               </div>
             </div>
             <div class="layui-form-item">
@@ -149,10 +147,10 @@
 
         <div class="layui-form layui-form-pane layui-tab-item">
           <blockquote class="layui-elem-quote"
-                      th:text="${'我的积分：总'+@environment.getProperty('user.score.name')+'：'+session.userAccount.score
-                      +'|'+@environment.getProperty('user.score1.name')+'：'+session.userAccount.score1
-                      +'|'+@environment.getProperty('user.score2.name')+'：'+session.userAccount.score2
-                      +'|'+@environment.getProperty('user.score3.name')+'：'+session.userAccount.score3
+                      th:text="${'我的积分：总'+@environment.getProperty('user.score.name')+'：'+userAccount.score
+                      +'|'+@environment.getProperty('user.score1.name')+'：'+userAccount.score1
+                      +'|'+@environment.getProperty('user.score2.name')+'：'+userAccount.score2
+                      +'|'+@environment.getProperty('user.score3.name')+'：'+userAccount.score3
                       }"></blockquote>
           <blockquote class="layui-elem-quote"
                       th:text="${'积分公式：总'+@environment.getProperty('user.score.name')+'='
@@ -207,7 +205,7 @@
 
         <div class="layui-form layui-form-pane layui-tab-item">
           <blockquote class="layui-elem-quote"
-                      th:text="${'我的用户组：'+@environment.getProperty('user.group.r'+session.userAccount.groupId)}"></blockquote>
+                      th:text="${'我的用户组：'+@environment.getProperty('user.group.r'+userAccount.groupId)}"></blockquote>
           <blockquote class="layui-elem-quote">用户组详情：以下列出了用户组晋升规则及权限。如需快速提升用户组等级请了解<a class="fly-link" href="/user/set/info#score" target="_blank">积分规则</a></blockquote>
           <table lay-even class="layui-table">
             <colgroup>
@@ -255,37 +253,10 @@
                 <button type="button" class="layui-btn upload-img">
                   <i class="layui-icon">&#xe67c;</i>上传头像
                 </button>
-                <img th:src="${session.user.avatarUrl}" >
+                <img th:src="${user.avatarUrl}" >
                 <span class="loading"></span>
               </div>
             </div>
-          </div>
-          
-        <div class="layui-form layui-form-pane layui-tab-item">
-            <form action="/user/repass" method="post">
-              <div class="layui-form-item">
-                <label for="L_nowpass" class="layui-form-label">当前密码</label>
-                <div class="layui-input-inline">
-                  <input type="password" id="L_nowpass" name="nowpass" required lay-verify="required" autocomplete="off" class="layui-input">
-                </div>
-              </div>
-              <div class="layui-form-item">
-                <label for="L_pass" class="layui-form-label">新密码</label>
-                <div class="layui-input-inline">
-                  <input type="password" id="L_pass" name="pass" required lay-verify="required" autocomplete="off" class="layui-input">
-                </div>
-                <div class="layui-form-mid layui-word-aux">6到16个字符</div>
-              </div>
-              <div class="layui-form-item">
-                <label for="L_repass" class="layui-form-label">确认密码</label>
-                <div class="layui-input-inline">
-                  <input type="password" id="L_repass" name="repass" required lay-verify="required" autocomplete="off" class="layui-input">
-                </div>
-              </div>
-              <div class="layui-form-item">
-                <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit>确认修改</button>
-              </div>
-            </form>
           </div>
           
 
@@ -310,7 +281,7 @@ layui.config({
   version: "2.0.0"
   ,base: '/mods/'
 }).extend({
-  fly: 'index'
+  fly: 'index2'
 }).use(['fly','sliderVerify', 'jquery', 'form'], function() {
   var sliderVerify = layui.sliderVerify,
           $ = layui.jquery,

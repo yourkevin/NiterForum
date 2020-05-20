@@ -2,10 +2,11 @@ package cn.niter.forum.controller;
 
 import cn.niter.forum.cache.IpLimitCache;
 import cn.niter.forum.dto.ResultDTO;
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
-import cn.niter.forum.model.User;
 import cn.niter.forum.provider.JiGuangProvider;
 import cn.niter.forum.service.UserService;
+import cn.niter.forum.util.CookieUtils;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,8 +15,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 15:17
+ * @site niter.cn
+ */
 
 @Controller
 public class PhoneController {
@@ -24,6 +33,10 @@ public class PhoneController {
     private UserService userService;
     @Autowired
     private IpLimitCache ipLimitCache;
+    @Autowired
+    private CookieUtils cookieUtils;
+
+
     @ResponseBody//@ResponseBody返回json格式的数据
     @RequestMapping(value = "/phone/getPhoneCode", method = RequestMethod.POST)
     public Object getPhoneCode(@RequestParam("phone") String phone,
@@ -60,12 +73,14 @@ public class PhoneController {
     }
 
     @ResponseBody//@ResponseBody返回json格式的数据
-    @RequestMapping(value = "/phone/ValidCode", method = RequestMethod.GET)
+    @RequestMapping(value = "/phone/ValidCode", method = RequestMethod.POST)
     public Object validCode(@RequestParam("msg_id") String msg_id,
                             @RequestParam("code") String code,
                             @RequestParam("phone") String phone,
                             @RequestParam("state") String state,
-                            HttpServletRequest request){
+                            @RequestParam(name = "password", required = false) String password,
+                            HttpServletRequest request,
+                            HttpServletResponse response){
         //  System.out.println("mail:"+mail);
         // TODO 自动生成的方法存根
         try {
@@ -77,13 +92,17 @@ public class PhoneController {
             Boolean is_valid = obj.getBoolean("is_valid");
             if(is_valid){
                 if("1".equals(state)){//绑定
-                User user = (User)request.getSession().getAttribute("user");
+                UserDTO user = (UserDTO) request.getAttribute("loginUser");
                 Long id = user.getId();
                 return userService.updateUserPhoneById(id,phone);
                 }
                 if("2".equals(state)){//注册、登录
-                    String token = UUID.randomUUID().toString();
-                return userService.registerOrLoginWithPhone(phone,token);
+                    ResultDTO resultDTO = (ResultDTO)userService.registerOrLoginWithPhone(phone,password);
+                    if(200==resultDTO.getCode()){
+                        Cookie cookie = cookieUtils.getCookie("token",resultDTO.getMessage(),86400*3);
+                        response.addCookie(cookie);
+                    }
+                    return resultDTO;
                 }
 
             }

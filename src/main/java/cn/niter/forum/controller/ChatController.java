@@ -1,8 +1,8 @@
 package cn.niter.forum.controller;
 
+import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
-import cn.niter.forum.model.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,7 +26,7 @@ public class ChatController {
 
     @GetMapping("/chat")
     public String chat(HttpServletRequest request, Model model) {
-        User user = (User) request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
         if(user==null){
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
@@ -56,7 +56,7 @@ public class ChatController {
 
     @GetMapping("/mchat")
     public String mChat(HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
         if(user==null){
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }

@@ -5,7 +5,6 @@ import cn.niter.forum.enums.CommentTypeEnum;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
 import cn.niter.forum.model.Comment;
-import cn.niter.forum.model.User;
 import cn.niter.forum.model.UserAccount;
 import cn.niter.forum.provider.BaiduCloudProvider;
 import cn.niter.forum.service.CommentService;
@@ -18,6 +17,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+/**
+ * @author wadao
+ * @version 2.0
+ * @date 2020/5/1 15:17
+ * @site niter.cn
+ */
 
 @Controller
 public class CommentController {
@@ -32,8 +38,8 @@ public class CommentController {
     public Object post(@RequestBody CommentCreateDTO commentCreateDTO,//@RequestBody接受json格式的数据
                        HttpServletRequest request) {
 
-        User user = (User) request.getSession().getAttribute("user");
-        UserAccount userAccount = (UserAccount) request.getSession().getAttribute("userAccount");
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
+
         if (user == null) {
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }
@@ -54,6 +60,10 @@ public class CommentController {
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setCommentator(user.getId());
         comment.setLikeCount(0L);
+        UserAccount userAccount = new UserAccount();
+        userAccount.setVipRank(user.getVipRank());
+        userAccount.setGroupId(user.getGroupId());
+        userAccount.setUserId(user.getId());
         commentService.insert(comment,user,userAccount);
 
        return ResultDTO.okOf("回复成功！");
@@ -89,8 +99,11 @@ public class CommentController {
                                                      @RequestParam(name = "id",defaultValue = "0") Long id
                                                      ,@RequestParam(name = "type",defaultValue = "0") Integer type ) {
 
-        User user = (User) request.getSession().getAttribute("user");
-        UserAccount userAccount = (UserAccount) request.getSession().getAttribute("userAccount");
+        UserDTO user = (UserDTO) request.getAttribute("loginUser");
+        UserAccount userAccount = new UserAccount();
+        userAccount.setVipRank(user.getVipRank());
+        userAccount.setGroupId(user.getGroupId());
+        userAccount.setUserId(user.getId());
         if (user == null||userAccount==null) {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
