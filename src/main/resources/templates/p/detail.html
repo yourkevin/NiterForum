@@ -231,7 +231,7 @@
     <th:block th:insert="~{common/sider :: p_detail}"></th:block>
   </div>
 </div>
-
+<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
 <script type="text/javascript">
   var obj = document.getElementById("descriptionP");
   //alert(obj.innerText);//这样就自动解析了
@@ -275,7 +275,8 @@
 <script src="https://v.vaptcha.com/v3.js"></script>
 <script type="text/javascript">
   token = '';
-  userIp='';
+  userIp=returnCitySN["cip"];
+  //var obj2=null;
   function commentQ() {
     if(token == '') {
       swal({
@@ -285,7 +286,7 @@
         button: "确认",
       });
     }else{
-      post();
+      post(userIp,token);
     }
   }
 
@@ -297,20 +298,18 @@
     scene:2,               //场景值02，即评论
     offline_server: '/validateOffline' //离线模式服务端地址
   }).then(function (vaptchaObj) {
-    //  obj2=vaptchaObj;
+
+    //console.log("vaptchaObj:"+vaptchaObj)
     //vaptchaObj.render()// 调用验证实例 vpObj 的 render 方法加载验证按钮
     vaptchaObj.listen('pass', function() {
+      //obj2=vaptchaObj;
+      //obj2.vaptcha.token=vaptchaObj.getToken();
       // 验证成功， 进行登录操作
-      // console.log(vaptchaObj.getToken());
+      // console.log("1:"+vaptchaObj.getToken());
+      //console.log("2:"+obj2.getToken());
       //getCode();
-      $.ajax({
-        type: "get",
-        url: "/getIp",
-        ContentType: "application/json",
-        CacheControl: "no-cache",
-        //  dataType: "json",
-        success: function(data) {
-          // userIp=data;
+      token = vaptchaObj.getToken();
+      console.log("token:"+token);
           $.ajax({
             type: "post",
             url: "/validate",
@@ -318,15 +317,15 @@
             CacheControl: "no-cache",
             data:{
               scene:2,
-              token:vaptchaObj.getToken(),
-              ip:data
+              token:token,
+              ip:userIp
             },
             //  dataType: "json",
             success: function(data) {
               if(data.success==1){
                 //成功
-                token = vaptchaObj.getToken();
-                //console.log(token);
+            //    token = vaptchaObj.getToken();
+            //    console.log("token:"+token);
               }
               else if(data.success==0){
                 swal({
@@ -342,10 +341,7 @@
               console.log(msg)
             }
           })
-        },
-        error: function(msg) {
-          console.log(msg)
-        }})
+
 
 
 

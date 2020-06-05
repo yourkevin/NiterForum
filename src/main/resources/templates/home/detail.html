@@ -30,7 +30,7 @@
 						<a name="comment"> </a>
 						<div class="comt">
 							<a href="#comment" class="pull-left">评论 <em th:text="${question.commentCount}"></em></a>
-							<a th:href="${'/p/'+question.id+'#comment'}" class="pull-right">写评论</a>
+							<!--a th:href="${'/p/'+question.id+'#comment'}" class="pull-right">写评论</a-->
 						</div>
 						<div id="LAY-msg-box" th:each="comment : ${comments}">
 							<div class="info-item">

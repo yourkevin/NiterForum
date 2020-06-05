@@ -2,7 +2,6 @@ package cn.niter.forum.controller;
 
 
 import cn.niter.forum.cache.AppUserCache;
-import cn.niter.forum.dto.ResultDTO;
 import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.exception.CustomizeException;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -36,7 +34,8 @@ import java.util.Map;
 public class SSOController {
     @Value("${vaptcha.vid}")
     private String vaptcha_vid;
-
+    @Value("${jiguang.sms.enable}")
+    private Integer smsEnable;
     @Autowired
     private AppUserCache appUserCache;
 
@@ -49,7 +48,7 @@ public class SSOController {
     @Autowired
     private CookieUtils cookieUtils;
 
-    @ResponseBody//@ResponseBody返回json格式的数据
+  /*  @ResponseBody//@ResponseBody返回json格式的数据
     @RequestMapping(value = "/api/sso/login", method = RequestMethod.POST)
     public Object login(HttpServletRequest request,
                            @RequestParam("name") String name,
@@ -62,7 +61,7 @@ public class SSOController {
             response.addCookie(cookie);
         }
         return resultDTO;
-    }
+    }*/
 
 
 
@@ -90,7 +89,7 @@ public class SSOController {
            // return "/user/login";
         }
         else if("register".equals(action)){
-            model.addAttribute("initOssType", 1);
+            model.addAttribute("initOssType", 2);
             model.addAttribute("section", "register");
             model.addAttribute("sectionName", "注册");
           //  return "/user/reg";
@@ -98,6 +97,7 @@ public class SSOController {
         else {
             return "redirect:/forum";
         }
+        model.addAttribute("smsEnable", smsEnable);
        return "user/sso";
     }
 

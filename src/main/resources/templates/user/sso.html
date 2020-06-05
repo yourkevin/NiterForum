@@ -14,8 +14,9 @@
         <div class="layui-tab layui-tab-brief" lay-filter="user">
             <ul class="layui-tab-title">
                 <li th:if="${section=='login'}" onclick="javascript:setType(3)" class="layui-this">密码登录</li>
-                <li onclick="javascript:setType(1)" th:class="${section=='register'?'layui-this':''}" th:text="${'手机'+sectionName}"></li>
-                <li onclick="javascript:setType(2)" th:text="${'邮箱'+sectionName}"></li>
+                <li onclick="javascript:setType(2)" th:class="${section=='register'?'layui-this':''}" th:text="${'邮箱'+sectionName}"></li>
+                <li th:if="${1==smsEnable}" onclick="javascript:setType(1)" th:text="${'手机'+sectionName}"></li>
+
                 <li th:if="${section=='login'}" class="html5plus-hide layui-hide-xs" onclick="javascript:alertQrcode()">扫码登录</li>
             </ul>
             <div class="layui-form layui-tab-content" id="LAY_ucm" style="padding: 20px 0;">
@@ -40,23 +41,6 @@
                 <div th:class="${section=='register'?'layui-tab-item layui-show':'layui-tab-item'}">
                     <div class="layui-form layui-form-pane">
                             <div class="layui-form-item">
-                                <label for="phone" class="layui-form-label">手机号</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" id="phone" name="phone" required lay-verify="phone" placeholder="请输入您的手机号" autocomplete="off" class="layui-input">
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label for="verifyPhoneCode" class="layui-form-label">验证码</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" id="verifyPhoneCode" name="verifyPhoneCode" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请先点击下方人机验证">
-                                </div>
-                                <button type="submit" class="layui-btn" id="btnSendPhoneCode" name="btnSendPhoneCode" onclick="getPhoneCode()">获取验证码</button>
-                            </div>
-                    </div>
-                </div>
-                <div class="layui-tab-item ">
-                    <div class="layui-form layui-form-pane">
-                            <div class="layui-form-item">
                                 <label for="mail" class="layui-form-label">邮箱号</label>
                                 <div class="layui-input-inline">
                                     <input type="text" id="mail" name="mail" required lay-verify="email" autocomplete="off" class="layui-input" placeholder="请输入您的邮箱号">
@@ -69,6 +53,23 @@
                                 </div>
                                 <button type="submit" class="layui-btn" id="btnSendCode" name="btnSendCode" onclick="getCode()">获取验证码</button>
                             </div>
+                    </div>
+                </div>
+                <div class="layui-tab-item " th:if="${1==smsEnable}">
+                    <div class="layui-form layui-form-pane">
+                        <div class="layui-form-item">
+                            <label for="phone" class="layui-form-label">手机号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="phone" name="phone" required lay-verify="phone" placeholder="请输入您的手机号" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label for="verifyPhoneCode" class="layui-form-label">验证码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" id="verifyPhoneCode" name="verifyPhoneCode" required lay-verify="required" autocomplete="off" class="layui-input" placeholder="请先点击下方人机验证">
+                            </div>
+                            <button type="submit" class="layui-btn" id="btnSendPhoneCode" name="btnSendPhoneCode" onclick="getPhoneCode()">获取验证码</button>
+                        </div>
                     </div>
                 </div>
                 <div class="layui-form-item">

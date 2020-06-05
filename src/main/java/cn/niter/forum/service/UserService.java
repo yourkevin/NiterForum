@@ -290,14 +290,15 @@ public class UserService {
                 .andEmailEqualTo(mail);
         List<User> users = userMapper.selectByExample(userExample);
         User updateUser = new User();
+        if(password!=null)
+            updateUser.setPassword(DigestUtils.sha256Hex(password+salt));
         if(users.size() != 0){//登录
             User dbUser = users.get(0);
             UserDTO userDTO = getUserDTO(dbUser);
             if(dbUser.getName()==null|| StringUtils.isBlank(dbUser.getName()))//数据库为空，当前为空
                 updateUser.setName(getUserName("邮箱"));
-
             updateUser.setGmtModified(System.currentTimeMillis());
-            //updateUser.setToken(token);
+
             UserExample example = new UserExample();
             example.createCriteria()
                     .andIdEqualTo(dbUser.getId());
@@ -307,7 +308,6 @@ public class UserService {
             //注册
                 updateUser.setEmail(mail);
                 updateUser.setName(getUserName("邮箱"));
-                updateUser.setPassword(DigestUtils.sha256Hex(password+salt));
                 updateUser.setAvatarUrl("/images/avatar/"+(int)(Math.random()*11)+".jpg");
                 updateUser.setGmtCreate(System.currentTimeMillis());
                 updateUser.setGmtModified(updateUser.getGmtCreate());
@@ -358,6 +358,8 @@ public class UserService {
                 .andPhoneEqualTo(phone);
         List<User> users = userMapper.selectByExample(userExample);
         User updateUser = new User();
+        if(password!=null)
+            updateUser.setPassword(DigestUtils.sha256Hex(password+salt));
         if(users.size() != 0){//登录
             User dbUser = users.get(0);
             UserDTO userDTO = getUserDTO(dbUser);
@@ -365,7 +367,7 @@ public class UserService {
                 updateUser.setName(getUserName("手机"));
 
             updateUser.setGmtModified(System.currentTimeMillis());
-            //updateUser.setToken(token);
+
             UserExample example = new UserExample();
             example.createCriteria()
                     .andIdEqualTo(dbUser.getId());
@@ -375,12 +377,9 @@ public class UserService {
             //注册
             updateUser.setPhone(phone);
             updateUser.setName(getUserName("手机"));
-            //updateUser.setToken(token);
-            double random = Math.random();
             updateUser.setAvatarUrl("/images/avatar/"+(int)(Math.random()*11)+".jpg");
             updateUser.setGmtCreate(System.currentTimeMillis());
             updateUser.setGmtModified(updateUser.getGmtCreate());
-            updateUser.setPassword(DigestUtils.sha256Hex(password+salt));
             userMapper.insert(updateUser);
             UserExample example = new UserExample();
             example.createCriteria()
@@ -389,14 +388,6 @@ public class UserService {
             User insertUser = insertUsers.get(0);
             initUserTable(insertUser,new UserInfo());
             UserDTO userDTO = getUserDTO(insertUser);
-           /* UserInfo userInfo = new UserInfo();
-            userInfo.setUserId(insertUser.getId());
-            userInfoMapper.insert(userInfo);
-            UserAccount userAccount = new UserAccount();
-            userAccount = initUserAccount(userAccount);
-            userAccount.setUserId(insertUser.getId());
-            userAccountMapper.insert(userAccount);*/
-
             return ResultDTO.okOf(tokenUtils.getToken(userDTO));
         }
 
@@ -550,6 +541,17 @@ public class UserService {
             resultDTO.setData(tokenUtils.getToken(getUserDTO(users.get(0))));
             return resultDTO;
         }
-        else return ResultDTO.errorOf("密码错误用户不存在");
+        else return ResultDTO.errorOf("密码错误或用户不存在");
+    }
+
+    public Object register(Integer type, String name, String password) {
+        if(1==type){
+            return registerOrLoginWithPhone(name,password);
+        }else if(2==type){
+            //updateUser.setEmail(name);
+           // updateUser.setName(getUserName("邮箱"));
+            return registerOrLoginWithMail(name,password);
+        }
+       return ResultDTO.errorOf("未知错误，请联系管理员");
     }
 }

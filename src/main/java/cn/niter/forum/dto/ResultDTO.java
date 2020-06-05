@@ -21,6 +21,14 @@ public class ResultDTO<T> {
         return errorOf(errorCode.getCode(), errorCode.getMessage());
     }
 
+    public static  <T>ResultDTO errorOf(CustomizeErrorCode errorCode, T t) {
+        ResultDTO resultDTO = new ResultDTO();
+        resultDTO.setCode(errorCode.getCode());
+        resultDTO.setMessage(errorCode.getMessage());
+        resultDTO.setData(t);
+        return resultDTO;
+    }
+
     public static ResultDTO errorOf(CustomizeException e) {
         return errorOf(e.getCode(), e.getMessage());
     }
@@ -60,5 +68,6 @@ public class ResultDTO<T> {
         resultDTO.setData(t);
         return resultDTO;
     }
+
 }
 

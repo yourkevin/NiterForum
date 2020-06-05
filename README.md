@@ -81,12 +81,14 @@ JDK，Maven
  
 7. 部署到服务器并运行项目  
    ```sh
-    nohup java -jar NiterForum-2.0.1-SNAPSHOT.jar >temp.txt &   
+    nohup java -jar NiterForum-2.5.jar >temp.txt &   
     ```
 8. 访问项目
    ```
    https://yourdomain
    ```
+
+[(NiterForum安装配置常见问题汇总)](https://niter.cn/p/255/ "点击这里查看更多提示")
 
 ## 项目演示
 

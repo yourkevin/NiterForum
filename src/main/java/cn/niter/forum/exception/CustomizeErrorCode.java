@@ -23,7 +23,8 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     SUBMIT_PHONE_FAILED(2034, "手机号绑定/更新失败,可能该号码已在其他账号上绑定，请重试！"),
     USER_IS_EMPTY(2040, "该用户不存在或已被屏蔽！"),
     NEWS_NOT_FOUND(2050, "该条资讯已经找不到了，已被删除或压根就不存在？"),
-
+    VALIDATE_ERROR(2060,"参数校验失败"),
+    TOKEN_ERROR(2061,"令牌校验失败"),
     ;
 
     private Integer code;

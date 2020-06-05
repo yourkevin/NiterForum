@@ -15,6 +15,7 @@ public class AuthResultDTO {
     private String pfkey;
     private String msg;
     private int login_cost;
+    private int proxy_expires_in;
     //private String query_authority_cost;
     private int authority_cost;
 }

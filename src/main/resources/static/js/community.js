@@ -1,4 +1,5 @@
-function post() {
+function post(ip,token) {
+    //console.log(ip+"--2--"+token);
     var questionId = $("#question_id").val();
     var content = $("#comment_content").val();
     if(content.length>1024)
@@ -8,10 +9,11 @@ function post() {
             icon: "warning",
             button: "确认",
         });
-    else comment2target(questionId, 1, content);
+    else comment2target(questionId, 1, content,ip,token);
 }
 
-function comment2target(targetId, type, content) {
+function comment2target(targetId, type, content,ip,token) {
+    //console.log(ip+"--3--"+token);
     if (!content) {
         //alert("不能回复空内容~~~");
         sweetAlert("出错啦...", "不能回复空内容~~~", "error");
@@ -20,12 +22,14 @@ function comment2target(targetId, type, content) {
 
     $.ajax({
         type: "POST",
-        url: "/comment",
+        url: "/api/comment/add",
         contentType: 'application/json',
         data: JSON.stringify({
             "parentId": targetId,
             "content": content,
-            "type": type
+            "type": type,
+            "ip":ip,
+            "token":token
         }),
         success: function (response) {
             if (response.code == 200) {
@@ -97,6 +101,9 @@ function comment2target(targetId, type, content) {
                 }
             }
         },
+        error:function(XMLHttpRequest, textStatus, errorThrown){
+            swal(textStatus, "错误："+XMLHttpRequest.status, "error");
+        },
         dataType: "json"
     });
 }
@@ -111,7 +118,7 @@ function comment(e) {
     var inputBtn = $("#input-" + inputId);
     var content = inputBtn.attr('placeholder')+inputBtn.val();
     content=filterXSS(content);
-    console.log('inputId:'+inputId+'commentId:'+commentId+'placeholder:'+inputBtn.attr('placeholder')+'c:'+content);
+    //console.log('inputId:'+inputId+'commentId:'+commentId+'placeholder:'+inputBtn.attr('placeholder')+'c:'+content);
     if(content.length>1024)
         swal({
             title: "回复超过1024个字长!",
@@ -119,7 +126,7 @@ function comment(e) {
             icon: "warning",
             button: "确认",
         });
-    else comment2target(commentId, commentType, content);
+    else comment2target(commentId, commentType, content,returnCitySN["cip"],"commentType2");
 
 
 }

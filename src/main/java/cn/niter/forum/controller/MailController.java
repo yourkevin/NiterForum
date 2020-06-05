@@ -64,16 +64,15 @@ public class MailController {
             ipLimitCache.addIpScores(ip, 10);
             return ResultDTO.errorOf(CustomizeErrorCode.SEND_MAIL_FAILED);
         }
-        /*System.out.println("token"+ipLimitCache.get(ip));
-        System.out.println("ExpectedExpiration:"+ipLimitCache.getInterval().getExpectedExpiration(ip));
-        System.out.println("Expiration:"+ipLimitCache.getInterval().getExpiration(ip));
-        System.out.println("ip:"+ip+"-token:"+token);*/
+
         // TODO 自动生成的方法存根
         try {
             if (username == null) username = siteTitle;
             JavaMailUtils.setUserName(username);
             JavaMailUtils.setReceiveMailAccount(mail);
             JavaMailUtils.send();
+            System.out.println("mail:"+mail);
+            System.out.println("JavaMailUtils.code:"+JavaMailUtils.code);
             temporaryCache.putMailCode(mail, JavaMailUtils.code);
             return ResultDTO.okOf("邮箱验证码已发送成功！");
         } catch (Exception e) {

@@ -39,7 +39,6 @@ public class CommentController {
                        HttpServletRequest request) {
 
         UserDTO user = (UserDTO) request.getAttribute("loginUser");
-
         if (user == null) {
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }

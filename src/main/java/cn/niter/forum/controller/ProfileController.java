@@ -40,7 +40,8 @@ public class ProfileController {
 
     @Value("${vaptcha.vid}")
     private String vaptcha_vid;
-
+    @Value("${jiguang.sms.enable}")
+    private Integer smsEnable;
     @GetMapping("/user/message")
     public String messeage(HttpServletRequest request,
                           Model model,
@@ -160,6 +161,7 @@ public class ProfileController {
             model.addAttribute("sectionName", "绑定/更新邮箱账号");
             model.addAttribute("sectionInfo", "绑定邮箱账号后，您可以使用邮箱账号登录本站，也可用邮箱账号找回密码\n");
             model.addAttribute("navtype", "communitynav");
+            model.addAttribute("smsEnable", smsEnable);
             model.addAttribute("vaptcha_vid", vaptcha_vid);
             return "user/account";
         }

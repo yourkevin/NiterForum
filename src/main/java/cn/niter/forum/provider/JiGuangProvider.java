@@ -20,12 +20,21 @@ import cn.jsms.api.schedule.model.ScheduleSMSPayload;
 import cn.jsms.api.template.SendTempSMSResult;
 import cn.jsms.api.template.TempSMSResult;
 import cn.jsms.api.template.TemplatePayload;
+import cn.niter.forum.dto.ResultDTO;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.Cipher;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Component
@@ -56,18 +65,81 @@ public class JiGuangProvider {
         this.devSecret= devSecret;
     }
 
-
     private static Integer tempId ;
     @Value("${jiguang.sms.tempId}")
     public  void setTempId(Integer tempId) {
         this.tempId= tempId;
     }
 
-    public static void test() {
-  	testSendSMSCode("***");
+    private static String authorization = "OGY5Mzg2OWI4ZTM0ZWE1MGE4ZWZhMzliOmRiNzY0OTFjMjYwZjQzOGZlMTkzMDgxMw==";
+    private static String prikey ="MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBANETgTv06rOHimjCSb/wB8zG1OBXTSJoGYwlW/iky0DBd4ZXsWUX94ouY8dfSRW6syMT6w237QHI5nHxNH8o/ulx9MHfRBfSoZp9GLj3PFIMI9UG3uN+fqF2JaV8xxI2M5aELM4xR2IXDEZH1pLmadOvaDMWyF8DzF+PGiDhdDVzAgMBAAECgYEA0B5/VYSOINm6QF+udB5mVURTYWHlyWsgiy4hKBg6ryImbZdbYYuDAIz/C9Zg9P1dFnzcTVKZ3V3zbtaw8CeJ3mCknoHrMN4KCFkaqoUPyPgqe2yjIt7ZKaa0X8iJo82zW5ATAdWRD5uCJhIRBwE30wJE80MZ3HVrhbS8aQYevEkCQQDuMmHFny+DakuXn+QwDrvJWKO2E08iF2XpkwGtqsyvUSlUf3knuiN7mGDszFebQGFxgb6Ub/34X2Ts9b0WKTUfAkEA4LPvFRroWAayu/FP3zhc0L+KHWP62iAJ5ba6eKriwS5amoqTiPksfblq+eOqLWziyEAVqYQBcHsG6jp30idBLQJAEnLsh7XwpCkTecb0kZRSjyHCbFPKiUVuq0yrkJvuBpYusVC+PYl5PhVrTGv3TRsLcRMvg6e48AfTdVcDMjg22QJACH/l6Ed3SHUgZ6mOGuR35lGIeOoiQAP8O9s4nH3iS+pj9PqO8Bx0yWCtIjyxYDyBK4/5AcuDfmy46z1A8QsZFQJBAJi/aBWJnoYxF15RJp305JpD6qSjiSZH541gOLWOleNb3prvbpWBeCKi1zQXrASw6lC/JR6dw6an8zwREXbL+/Q=";
+
+    public static void test() throws Exception {
+        String encrypted ="FIV6k62Nkm1Ayc06DT+Y3+88zKP8UrmMQj/XylZC76uX2GNm/5RjStXmBjtu9+XoCknIcVTYJO29JI5m3fJZgMxic13cjcHu5W3Y1TwYVKjikFlzHkLhpTBqVip6Tz1lN6oVAeMpZCH11hba9yK4OWWy/0Z06hJy3IUiitDp6jM=";
+        String prikey ="MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBANETgTv06rOHimjCSb/wB8zG1OBXTSJoGYwlW/iky0DBd4ZXsWUX94ouY8dfSRW6syMT6w237QHI5nHxNH8o/ulx9MHfRBfSoZp9GLj3PFIMI9UG3uN+fqF2JaV8xxI2M5aELM4xR2IXDEZH1pLmadOvaDMWyF8DzF+PGiDhdDVzAgMBAAECgYEA0B5/VYSOINm6QF+udB5mVURTYWHlyWsgiy4hKBg6ryImbZdbYYuDAIz/C9Zg9P1dFnzcTVKZ3V3zbtaw8CeJ3mCknoHrMN4KCFkaqoUPyPgqe2yjIt7ZKaa0X8iJo82zW5ATAdWRD5uCJhIRBwE30wJE80MZ3HVrhbS8aQYevEkCQQDuMmHFny+DakuXn+QwDrvJWKO2E08iF2XpkwGtqsyvUSlUf3knuiN7mGDszFebQGFxgb6Ub/34X2Ts9b0WKTUfAkEA4LPvFRroWAayu/FP3zhc0L+KHWP62iAJ5ba6eKriwS5amoqTiPksfblq+eOqLWziyEAVqYQBcHsG6jp30idBLQJAEnLsh7XwpCkTecb0kZRSjyHCbFPKiUVuq0yrkJvuBpYusVC+PYl5PhVrTGv3TRsLcRMvg6e48AfTdVcDMjg22QJACH/l6Ed3SHUgZ6mOGuR35lGIeOoiQAP8O9s4nH3iS+pj9PqO8Bx0yWCtIjyxYDyBK4/5AcuDfmy46z1A8QsZFQJBAJi/aBWJnoYxF15RJp305JpD6qSjiSZH541gOLWOleNb3prvbpWBeCKi1zQXrASw6lC/JR6dw6an8zwREXbL+/Q=";
+        //String prikey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBANETgTv06rOHimjCSb/wB8zG1OBXTSJoGYwlW/iky0DBd4ZXsWUX94ouY8dfSRW6syMT6w237QHI5nHxNH8o/ulx9MHfRBfSoZp9GLj3PFIMI9UG3uN+fqF2JaV8xxI2M5aELM4xR2IXDEZH1pLmadOvaDMWyF8DzF+PGiDhdDVzAgMBAAECgYEA0B5/VYSOINm6QF+udB5mVURTYWHlyWsgiy4hKBg6ryImbZdbYYuDAIz/C9Zg9P1dFnzcTVKZ3V3zbtaw8CeJ3mCknoHrMN4KCFkaqoUPyPgqe2yjIt7ZKaa0X8iJo82zW5ATAdWRD5uCJhIRBwE30wJE80MZ3HVrhbS8aQYevEkCQQDuMmHFny+DakuXn+QwDrvJWKO2E08iF2XpkwGtqsyvUSlUf3knuiN7mGDszFebQGFxgb6Ub/34X2Ts9b0WKTUfAkEA4LPvFRroWAayu/FP3zhc0L+KHWP62iAJ5ba6eKriwS5amoqTiPksfblq+eOqLWziyEAVqYQBcHsG6jp30idBLQJAEnLsh7XwpCkTecb0kZRSjyHCbFPKiUVuq0yrkJvuBpYusVC+PYl5PhVrTGv3TRsLcRMvg6e48AfTdVcDMjg22QJACH/l6Ed3SHUgZ6mOGuR35lGIeOoiQAP8O9s4nH3iS+pj9PqO8Bx0yWCtIjyxYDyBK4/5AcuDfmy46z1A8QsZFQJBAJi/aBWJnoYxF15RJp305JpD6qSjiSZH541gOLWOleNb3prvbpWBeCKi1zQXrASw6lC/JR6dw6an8zwREXbL+/Q=";
+        String result = decrypt(encrypted, prikey);
+
+        System.out.println(result);
+
+  	//testSendSMSCode("***");
     //   testSendValidSMSCode();
 //        testSendVoiceSMSCode();
      //   testSendTemplateSMS();
+    }
+
+  /*  public static String decrypt(String cryptograph, String prikey) throws Exception {
+        java.security.Security.addProvider(
+                new org.bouncycastle.jce.provider.BouncyCastleProvider()
+        );
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(prikey));
+        PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(keySpec);
+
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+        byte[] b = Base64.getDecoder().decode(cryptograph);
+        return new String(cipher.doFinal(b));
+    }*/
+
+
+
+    public static Object loginTokenVerify(Object ltvd) {
+        MediaType mediaType = MediaType.get("application/json; charset=utf-8");
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(mediaType, JSON.toJSONString(ltvd));
+        Request request = new Request.Builder()
+                .url("https://api.verification.jpush.cn/v1/web/loginTokenVerify")
+                .header("Authorization","Basic "+authorization)
+                //.header("Content-Type","application/json")
+                .post(body)
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            String string = response.body().string();
+            JSONObject jsonObject = JSONObject.parseObject(string);
+            if(jsonObject.getInteger("code")==8000){
+                return ResultDTO.okOf(decrypt(jsonObject.getString("phone"), prikey));
+            }else {
+                return ResultDTO.errorOf(jsonObject.getString("content"));
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static String decrypt (String cryptograph, String prikey) throws Exception {
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(prikey));
+        PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(keySpec);
+
+        Cipher cipher=Cipher.getInstance("RSA");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+        byte [] b = Base64.getDecoder().decode(cryptograph);
+        return new String(cipher.doFinal(b));
     }
 
 
@@ -428,6 +500,5 @@ public class JiGuangProvider {
             LOG.info("Error Message: " + e.getMessage());
         }
     }
-
 
 }

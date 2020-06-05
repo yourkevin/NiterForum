@@ -33,7 +33,7 @@ public class AdminController {
     @Autowired
     private UserAccountMapper userAccountMapper;
 
-    @GetMapping("/admin678")
+    @GetMapping("/admin2508")
     public String index(HttpServletRequest request,
                        Model model){
         UserDTO user = (UserDTO)request.getAttribute("loginUser");
@@ -45,7 +45,7 @@ public class AdminController {
         return "admin/index";
     }
 
-    @GetMapping("/admin678/p/{action}")
+    @GetMapping("/admin2538/p/{action}")
     public String p(HttpServletRequest request,
                     @PathVariable(name = "action") String action,
                     Model model,
@@ -82,7 +82,7 @@ public class AdminController {
         return "admin/p";
     }
 
-    @GetMapping("/admin678/user/{action}")
+    @GetMapping("/admin2568/user/{action}")
     public String user(HttpServletRequest request,
                     @PathVariable(name = "action") String action,
                     Model model,
@@ -110,7 +110,7 @@ public class AdminController {
         return "admin/user";
     }
 
-    @PostMapping("/user678/setAdmin/id")
+    @PostMapping("/user2588/setAdmin/id")
     @ResponseBody
     public Map<String,Object> setQuestionById(HttpServletRequest request,
                                               @RequestParam(name = "id",defaultValue = "0") Long id) {
@@ -132,6 +132,4 @@ public class AdminController {
         return map;
 
     }
-
-
 }

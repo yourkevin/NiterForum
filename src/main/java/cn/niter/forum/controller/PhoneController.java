@@ -8,6 +8,8 @@ import cn.niter.forum.provider.JiGuangProvider;
 import cn.niter.forum.service.UserService;
 import cn.niter.forum.util.CookieUtils;
 import com.alibaba.fastjson.JSONObject;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -120,5 +122,29 @@ public class PhoneController {
         }
         return ResultDTO.errorOf(CustomizeErrorCode.PHONE_CODE_ERROR);
     }
+
+    @ResponseBody//@ResponseBody返回json格式的数据
+    @RequestMapping(value = "/api/phone/loginTokenVerify", method = RequestMethod.POST)
+    public Object loginTokenVerify(@RequestParam("loginToken") String loginToken,
+                            HttpServletRequest request,
+                            HttpServletResponse response){
+        //  System.out.println("mail:"+mail);
+        // TODO 自动生成的方法存根
+        LoginTokenVerifyDto ltvd = new LoginTokenVerifyDto(loginToken,"0");
+        ResultDTO resultDTO = (ResultDTO)JiGuangProvider.loginTokenVerify(ltvd);
+        if(200==resultDTO.getCode()){
+            resultDTO = (ResultDTO)userService.registerOrLoginWithPhone(resultDTO.getMessage(),null);
+        }
+        return resultDTO;
+        //return ResultDTO.errorOf(CustomizeErrorCode.PHONE_CODE_ERROR);
+    }
+
+    @Data
+    @AllArgsConstructor//有参构造
+    class LoginTokenVerifyDto{
+        String loginToken;
+        String exID;
+    }
+
 
 }

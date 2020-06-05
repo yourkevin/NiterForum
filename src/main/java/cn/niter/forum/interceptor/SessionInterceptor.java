@@ -148,8 +148,8 @@ public class SessionInterceptor implements HandlerInterceptor {
                 // 执行认证
                 if ((!hashToken)||resultDTO.getCode()!=200) {
                     response.setStatus(401);
-                    throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
-                    //return false;
+                    new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+                    return false;
                 }
             }
         }

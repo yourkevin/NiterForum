@@ -51,6 +51,7 @@ public class ValidateController {
         return validateDTO;
     }
 
+    @Deprecated
     @ResponseBody//@ResponseBody返回json格式的数据
     @RequestMapping(value = "/getIp", method = RequestMethod.GET)
     public String getIp() {
