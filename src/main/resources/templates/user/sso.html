@@ -541,7 +541,7 @@
         var mail = $("#mail").val();
         var pass = $("#pass").val();
         var repass = $("#repass").val();
-        if(pass==null) pass="null";
+        if(pass==null||repass==null) pass="null";
         else if(pass!=repass){
                 swal("注册失败!", "两次密码不一致!", "warning");
                 return false;
@@ -550,7 +550,7 @@
             return false;
         }
        // if(verifyCode==sessionStorage.getItem("code")){//客户端第一次校验
-            $.post('/mail/registerOrLoginWithMail', {
+            $.post('/api/sso/mail/registerOrLoginWithMail', {
                 mail:mail,
                 code:verifyCode,
                 password:pass
