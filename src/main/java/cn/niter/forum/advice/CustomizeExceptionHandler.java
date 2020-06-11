@@ -45,12 +45,12 @@ public class CustomizeExceptionHandler {
         return ResultDTO.errorOf(CustomizeErrorCode.VALIDATE_ERROR, objectError.getDefaultMessage());
     }
 
-    @ResponseBody
+  /*  @ResponseBody
     @ExceptionHandler(CustomizeException.class)
     public ResultDTO APIExceptionHandler(CustomizeException e) {
         log.error(e.getMessage(), e);
         return ResultDTO.errorOf(e.getCode(), e.getMessage());
-    }
+    }*/
 
 
     @ExceptionHandler(Exception.class)

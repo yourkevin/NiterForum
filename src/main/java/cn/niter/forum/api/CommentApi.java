@@ -10,6 +10,7 @@ import cn.niter.forum.model.Comment;
 import cn.niter.forum.model.UserAccount;
 import cn.niter.forum.provider.BaiduCloudProvider;
 import cn.niter.forum.service.CommentService;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +29,8 @@ import javax.validation.Valid;
  */
 
 @Controller
-@RequestMapping("/api")
+@RequestMapping("/api/comment")
+@Api(tags={"评论接口"})
 public class CommentApi {
 
 
@@ -40,11 +42,15 @@ public class CommentApi {
     private IpLimitCache ipLimitCache;
 
     @UserLoginToken
+    @ApiOperation(value = "新增评论",notes = "只有当用户登录后才能访问此接口，否则会返回401错误")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "commentCreateDTO", value = "评论基本信息", dataType = "CommentCreateDTO")
+    })
     @ResponseBody//@ResponseBody返回json格式的数据
-    @RequestMapping(value = "/comment/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     public Object post(@RequestBody @Valid CommentCreateDTO commentCreateDTO,//@RequestBody接受json格式的数据
                        HttpServletRequest request
-                 //     , BindingResult results
+                       //     , BindingResult results
     ) {
 
         UserDTO user = (UserDTO) request.getAttribute("loginUser");

@@ -164,9 +164,12 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                   if(res.code == 0){
                     image.val(res.data);
                   } else {
-                    // layer.msg(res.msg, {icon: 5});
-                    layer.msg(res.msg, {icon: 5});
+                     layer.msg(res.msg, {icon: 5});
+                    //layer.msg(res.message, {icon: 5});
                   }
+                },error: function(index){
+                  //当上传失败时，你可以生成一个“重新上传”的按钮，点击该按钮时，执行 upload() 方法即可实现重新上传
+                  layer.msg("文件"+index+"上传失败", {icon: 5});
                 }
               });
 

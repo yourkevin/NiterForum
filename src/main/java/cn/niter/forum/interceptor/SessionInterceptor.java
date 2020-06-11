@@ -52,11 +52,6 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-       /* request.getServletContext().setAttribute("redirectUri", redirectUri);
-        request.getServletContext().setAttribute("baiduRedirectUri", baiduRedirectUri);
-        request.getServletContext().setAttribute("weiboRedirectUri", weiboRedirectUri);
-        request.getServletContext().setAttribute("qqRedirectUri", qqRedirectUri);
-*/
         String referer = request.getHeader("referer");//告知服务器请求的原始资源的URI，其用于所有类型的请求，并且包括：协议+域名+查询参数（注意，不包含锚点信息）。因为原始的URI中的查询参数可能包含ID或密码等敏感信息，如果写入referer，则可能导致信息泄露。
 
         String host = request.getHeader("host");//客户端指定自己想访问的WEB服务器的域名/IP 地址和端口号。 在任何类型请求中，request都会包含此header信息。
@@ -147,9 +142,10 @@ public class SessionInterceptor implements HandlerInterceptor {
             if (userLoginToken.required()) {
                 // 执行认证
                 if ((!hashToken)||resultDTO.getCode()!=200) {
-                    response.setStatus(401);
-                    new CustomizeException(CustomizeErrorCode.NO_LOGIN);
-                    return false;
+                    //response.setStatus(401);
+                   // new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+                   // return false;
+                    throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
                 }
             }
         }
