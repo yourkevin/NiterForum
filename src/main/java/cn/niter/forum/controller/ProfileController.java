@@ -1,5 +1,6 @@
 package cn.niter.forum.controller;
 
+import cn.niter.forum.annotation.UserLoginToken;
 import cn.niter.forum.dto.PaginationDTO;
 import cn.niter.forum.dto.UserDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
@@ -42,6 +43,8 @@ public class ProfileController {
     private String vaptcha_vid;
     @Value("${jiguang.sms.enable}")
     private Integer smsEnable;
+
+    @UserLoginToken
     @GetMapping("/user/message")
     public String messeage(HttpServletRequest request,
                           Model model,
@@ -61,6 +64,7 @@ public class ProfileController {
         return "user/message";
     }
 
+    @UserLoginToken
     @GetMapping("/user/p/{action}")
     public String p(HttpServletRequest request,
                     @PathVariable(name = "action") String action,
@@ -69,9 +73,9 @@ public class ProfileController {
                     @RequestParam(name = "size",defaultValue = "10")Integer size){
         UserDTO user = (UserDTO)request.getAttribute("loginUser");
 
-        if(user==null){
+       /* if(user==null){
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
-        }
+        }*/
         if("myPosts".equals(action)){
             model.addAttribute("section", "myPosts");
             model.addAttribute("sectionName", "我的帖子");
@@ -90,7 +94,7 @@ public class ProfileController {
         return "user/p";
     }
 
-
+/*
     @GetMapping("/profile/{action}")
     public String profile(HttpServletRequest request,
                           @PathVariable(name = "action") String action,
@@ -127,8 +131,8 @@ public class ProfileController {
 
         return "profile";
     }
-
-
+*/
+    @UserLoginToken
     @GetMapping("/user/set/{action}")
     public String getSetPage(HttpServletRequest request,
                                  @PathVariable(name = "action") String action,

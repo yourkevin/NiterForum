@@ -346,16 +346,13 @@ public class AuthorizeController {
 
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request,
-                         HttpServletResponse response) {
-       /* request.getSession().removeAttribute("user");
-        request.getSession().removeAttribute("userAccount");
-        request.getSession().removeAttribute("userInfo");
-        request.getSession().removeAttribute("unreadCount");*/
-        Cookie cookie = new Cookie("token", null);
+    public String logout(HttpServletResponse response) {
+
+      /*  Cookie cookie = new Cookie("token", null);
         cookie.setDomain(domain);
         cookie.setPath("/");
-        cookie.setMaxAge(0);
+        cookie.setMaxAge(0);*/
+        Cookie cookie = cookieUtils.getCookie("token",null,0);
         response.addCookie(cookie);
         return "redirect:/forum";
     }
@@ -369,6 +366,7 @@ public class AuthorizeController {
         return map;
     }
 
+    @Deprecated
     public String getUserName(String authorizeSize) {
         String str = RandomStringUtils.random(5,
                 "abcdefghijklmnopqrstuvwxyz1234567890");
@@ -376,23 +374,5 @@ public class AuthorizeController {
         return name;
     }
 
-  /*  public UserDTO getUserDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(user,userDTO);
-        UserAccount userAccount = userAccountService.selectUserAccountByUserId(user.getId());
-        userDTO.setGroupId(userAccount.getGroupId());
-        userDTO.setVipRank(userAccount.getVipRank());
-        return userDTO;
-    }*/
-
-   /* public Cookie getCookie(String token) {
-        Cookie cookie = new Cookie("token", token);
-        cookie.setSecure(true);   //服务只能通过https来进行cookie的传递，使用http服务无法提供服务。
-        cookie.setHttpOnly(true);//通过js脚本是无法获取到cookie的信息的。防止XSS攻击。
-        cookie.setMaxAge(60 * 60 * 24 * 3 * 1);//缩短为三天
-        cookie.setDomain(domain);
-        cookie.setPath("/");
-        return cookie;
-    }*/
 
 }

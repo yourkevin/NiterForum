@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-@Builder
 @ApiModel(description="评论创建传输对象")
 public class CommentCreateDTO {
 
