@@ -91,6 +91,7 @@ public class CommentService {
         return rMaxs;
     }
 
+    @Deprecated
     @Transactional
     public void insert(Comment comment, UserDTO commentator,UserAccount userAccount) {
         if (comment.getParentId() == null || comment.getParentId() == 0) {
@@ -295,6 +296,7 @@ public class CommentService {
         return commentDTOS;
     }
 
+    @Deprecated
     public int delCommentByIdAndType(Long userId, Integer groupId, Long id, Integer type) {
         int c=0;
         Comment comment = commentMapper.selectByPrimaryKey(id);
@@ -323,14 +325,36 @@ public class CommentService {
     }
 
 
-    public PaginationDTO listByCommentQueryDTO(CommentQueryDTO commentQueryDTO){
+    public int deleteByIdAndType(UserDTO userDTO, Long id, Integer type) {
+        int c=0;
+        Comment comment = commentMapper.selectByPrimaryKey(id);
+        if(userDTO.getGroupId()>=18){//管理员可以删除
+            c=commentMapper.deleteByPrimaryKey(id);
+        }
+        else if(userDTO.getId().longValue()==comment.getCommentator()){//评论者自己可以删除
+            CommentExample commentExample = new CommentExample();
+            commentExample.createCriteria().andIdEqualTo(id).andCommentatorEqualTo(userDTO.getId());
+            c = commentMapper.deleteByExample(commentExample);
+        }
+        if(c>0&&type==1){
+            CommentExample commentExample = new CommentExample();
+            commentExample.createCriteria().andTypeEqualTo(2).andParentIdEqualTo(id);
+            c+=commentMapper.deleteByExample(commentExample);
+        }
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUserId(comment.getCommentator());
+        userAccount.setScore1(score1CommentInc);
+        userAccount.setScore2(score2CommentInc);
+        userAccount.setScore3(score3CommentInc);
+        userAccount.setScore(score1CommentInc*score1Priorities+score2CommentInc*score2Priorities+score3CommentInc*score3Priorities);
+        userAccountExtMapper.decScore(userAccount);
+        userAccount=null;
+        return c;
+    }
+
+    public PaginationDTO list(CommentQueryDTO commentQueryDTO){
         Integer totalPage;
-
         Integer totalCount = commentExtMapper.countBySearch(commentQueryDTO);
-
-
-
-
         CommentExample commentExample = new CommentExample();
         CommentExample.Criteria criteria = commentExample.createCriteria();
         if(commentQueryDTO.getCommentator()!=null)
@@ -342,8 +366,6 @@ public class CommentService {
         if(commentQueryDTO.getType()!=null)
             criteria.andTypeEqualTo(commentQueryDTO.getType());
 
-        if(commentQueryDTO.getPage()==null||commentQueryDTO.getPage()<=0) commentQueryDTO.setPage(1);
-        if(commentQueryDTO.getSize()==null||commentQueryDTO.getSize()<=0) commentQueryDTO.setSize(5);
         if (totalCount % commentQueryDTO.getSize() == 0) {
             totalPage = totalCount / commentQueryDTO.getSize();
         } else {
@@ -357,13 +379,15 @@ public class CommentService {
         Integer offset = commentQueryDTO.getPage() < 1 ? 0 : commentQueryDTO.getSize() * (commentQueryDTO.getPage() - 1);
         commentQueryDTO.setOffset(offset);
 
-
-
-        commentExample.setOrderByClause("gmt_modified desc");
+        commentExample.setOrderByClause(commentQueryDTO.getSort()+" "+commentQueryDTO.getOrder());
+        //commentExample.setOrderByClause("gmt_modified desc");
         List<Comment> comments = commentMapper.selectByExampleWithRowbounds(commentExample,new RowBounds(commentQueryDTO.getSize()*(commentQueryDTO.getPage()-1), commentQueryDTO.getSize()));
         PaginationDTO paginationDTO = new PaginationDTO();
         paginationDTO.setTotalCount(totalCount);
         if (comments.size() == 0) {
+            paginationDTO.setPage(0);
+            paginationDTO.setTotalPage(0);
+            paginationDTO.setData(new ArrayList<>());
             return paginationDTO;
         }
         // 获取去重的评论人
@@ -404,4 +428,96 @@ public class CommentService {
 
     }
 
+    @Transactional
+    public void insert(CommentDTO commentDTO, UserDTO userDTO) {
+
+        if (commentDTO.getParentId() == null || commentDTO.getParentId() == 0) {
+            throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
+        }
+        if (commentDTO.getType() == null || !CommentTypeEnum.isExist(commentDTO.getType())) {
+            throw new CustomizeException(CustomizeErrorCode.TYPE_PARAM_WRONG);
+        }
+        Comment comment = new Comment();
+        if (commentDTO.getType() == CommentTypeEnum.COMMENT.getType()) {
+            // 回复评论
+            Comment dbComment = commentMapper.selectByPrimaryKey(commentDTO.getParentId());
+            if (dbComment == null) {
+                throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
+            }
+
+            // 获取回复的问题
+            Question question = updateQuestionAfterComment(dbComment.getParentId());
+            BeanUtils.copyProperties(commentDTO,comment);
+            commentMapper.insert(comment);
+
+            // 增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(comment.getParentId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.incCommentCount(parentComment);
+            parentComment = commentMapper.selectByPrimaryKey(comment.getParentId());
+
+            // 创建通知
+            createNotify(comment, dbComment.getCommentator(), userDTO.getName(), parentComment.getContent(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
+        }
+        if (commentDTO.getType() == CommentTypeEnum.SUB_COMMENT.getType()) {
+            // 回复子评论
+
+            // 获取回复的子评论
+            Comment dbComment = commentMapper.selectByPrimaryKey(commentDTO.getParentId());
+            if (dbComment == null) {
+                throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
+            }
+
+            // 获取回复的评论
+            Comment dbComment2 = commentMapper.selectByPrimaryKey(dbComment.getParentId());
+            if (dbComment2 == null) {
+                throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
+            }
+            // 获取回复的问题
+            Question question = updateQuestionAfterComment(dbComment2.getParentId());
+            BeanUtils.copyProperties(commentDTO,comment);
+           // Comment insertComment  = comment;
+            comment.setParentId(dbComment.getParentId());//设置回复评论方便读取
+            comment.setType(2);//设回2方便读取
+            //insertComment.setCommentCount(0);
+            commentMapper.insert(comment);
+
+            // 增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(dbComment2.getId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.incCommentCount(parentComment);
+            //parentComment = commentMapper.selectByPrimaryKey(dbComment2.getId());
+
+            // 创建通知
+            createNotify(comment, dbComment.getCommentator(), userDTO.getName(), dbComment.getContent(), NotificationTypeEnum.REPLY_SUB_COMMENT, question.getId());
+        }
+        if (commentDTO.getType() == CommentTypeEnum.QUESTION.getType()) {
+            // 回复问题
+            Question question = updateQuestionAfterComment(commentDTO.getParentId());
+            //comment.setCommentCount(0);
+            BeanUtils.copyProperties(commentDTO,comment);
+            commentMapper.insert(comment);
+
+
+            // 创建通知
+            createNotify(comment, question.getCreator(), userDTO.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
+        }
+        if(userDTO.getVipRank()!=0){//VIP积分策略，可自行修改，这里简单处理
+            score1CommentInc=score1CommentInc*2;
+            score2CommentInc=score2CommentInc*2;
+        }
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUserId(commentDTO.getCommentator());
+        userAccount.setScore1(score1CommentInc);
+        userAccount.setScore2(score2CommentInc);
+        userAccount.setScore3(score3CommentInc);
+        userAccount.setScore(score1CommentInc*score1Priorities+score2CommentInc*score2Priorities+score3CommentInc*score3Priorities);
+        userAccountExtMapper.incScore(userAccount);
+        updateUserAccoundByUserId(commentDTO.getCommentator());
+        userAccount=null;
+
+
+    }
 }

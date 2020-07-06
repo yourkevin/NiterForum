@@ -132,14 +132,15 @@ layui.config({
       var lis = [];
       //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
       $.ajax({
-        type: "POST",
+        type: "GET",
         url: "/api/comment/list",
         contentType: 'application/json',
-        data: JSON.stringify({
-          "type": 1,
-          "commentator": [[${user.id}]],
-          "page": page
-        }),
+        data: {
+          "type": 1
+          ,"commentator": [[${user.id}]]
+          ,"page": page
+          ,"size":5
+        },
         success: function (response) {
           if (response.code == 200) {
             if(page==1){

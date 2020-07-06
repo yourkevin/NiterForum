@@ -1,9 +1,12 @@
 package cn.niter.forum.service;
 
+import cn.niter.forum.dto.PaginationDTO;
 import cn.niter.forum.dto.ResultDTO;
 import cn.niter.forum.dto.UserDTO;
+import cn.niter.forum.dto.UserQueryDTO;
 import cn.niter.forum.exception.CustomizeErrorCode;
 import cn.niter.forum.mapper.UserAccountMapper;
+import cn.niter.forum.mapper.UserExtMapper;
 import cn.niter.forum.mapper.UserInfoMapper;
 import cn.niter.forum.mapper.UserMapper;
 import cn.niter.forum.model.*;
@@ -11,17 +14,21 @@ import cn.niter.forum.util.TokenUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserService {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserExtMapper userExtMapper;
     @Autowired
     private UserInfoMapper userInfoMapper;
     @Autowired
@@ -553,5 +560,53 @@ public class UserService {
             return registerOrLoginWithMail(name,password);
         }
        return ResultDTO.errorOf("未知错误，请联系管理员");
+    }
+
+    public PaginationDTO list(UserQueryDTO userQueryDTO) {
+        Integer totalPage;
+        Integer totalCount = userExtMapper.count(userQueryDTO);
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        if(userQueryDTO.getId()!=null&&(userQueryDTO.getId().longValue()!=0L))
+            criteria.andIdEqualTo(userQueryDTO.getId());
+        if(StringUtils.isNotBlank(userQueryDTO.getName()))
+            criteria.andNameEqualTo(userQueryDTO.getName());
+        if(StringUtils.isNotBlank(userQueryDTO.getPhone()))
+            criteria.andPhoneEqualTo(userQueryDTO.getPhone());
+        if(StringUtils.isNotBlank(userQueryDTO.getEmail()))
+            criteria.andEmailEqualTo(userQueryDTO.getEmail());
+
+
+        if (totalCount % userQueryDTO.getSize() == 0) {
+            totalPage = totalCount / userQueryDTO.getSize();
+        } else {
+            totalPage = totalCount / userQueryDTO.getSize() + 1;
+        }
+
+        if (userQueryDTO.getPage() > totalPage) {
+            userQueryDTO.setPage(totalPage);
+        }
+
+        Integer offset = userQueryDTO.getPage() < 1 ? 0 : userQueryDTO.getSize() * (userQueryDTO.getPage() - 1);
+        userQueryDTO.setOffset(offset);
+        userExample.setOrderByClause(userQueryDTO.getSort()+" "+userQueryDTO.getOrder());
+
+        List<User> users = userMapper.selectByExampleWithRowbounds(userExample,new RowBounds(userQueryDTO.getSize()*(userQueryDTO.getPage()-1), userQueryDTO.getSize()));
+        PaginationDTO paginationDTO = new PaginationDTO();
+        paginationDTO.setTotalCount(totalCount);
+        if (users.size() == 0) {
+            paginationDTO.setPage(0);
+            paginationDTO.setTotalPage(0);
+            paginationDTO.setData(new ArrayList<>());
+            return paginationDTO;
+        }
+        List<UserDTO> userDTOs = new ArrayList<>();
+        for (User user : users) {
+            userDTOs.add(getUserDTO(user));
+        }
+        paginationDTO.setData(userDTOs);
+        paginationDTO.setPagination(totalPage,userQueryDTO.getPage());
+        return paginationDTO;
+        //return userDTOs;
     }
 }

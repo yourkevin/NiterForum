@@ -31,4 +31,26 @@
         limit #{offset},#{size}
     </select>
 
+    <select id="count" parameterType="cn.niter.forum.dto.UserQueryDTO"
+            resultType="java.lang.Integer">
+        select count(*) from user
+        <where>
+            1=1
+            <if test="id != null and id != 0">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+        </where>
+    </select>
+
+
 </mapper>

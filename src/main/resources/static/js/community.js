@@ -22,7 +22,7 @@ function comment2target(targetId, type, content,ip,token) {
 
     $.ajax({
         type: "POST",
-        url: "/api/comment/add",
+        url: "/api/comment/insert",
         contentType: 'application/json',
         data: JSON.stringify({
             "parentId": targetId,
@@ -278,14 +278,14 @@ function collapseComments(e) {
         e.classList.remove("active");
     } else {
         var subCommentContainer = $("#comment-" + id);
-        if (subCommentContainer.children().length != 1) {
+        if (subCommentContainer.children().length != 1) {//没有加载过为1，已加载过大于1
             //展开二级评论
             comments.addClass("layui-show");
             // 标记二级评论展开状态
             e.setAttribute("data-collapse", "in");
             e.classList.add("active");
         } else {
-            $.getJSON("/comment/" + id, function (data) {
+            $.getJSON("/api/comment/list/" + id, function (data) {
                 $.each(data.data.reverse(), function (index, comment) {
                     var mediaLeftElement = $("<a/>", {
                         "class": "fly-avatar niter-avatar",
@@ -306,9 +306,6 @@ function collapseComments(e) {
                     }).append($("<cite/>", {
                         "html": comment.user.name
                     }))));
-
-
-
                  /*   var mediaBodyElement = $("<div/>", {
                         "class": "fly-detail-user"
                     }).append($("<a/>", {
@@ -325,9 +322,6 @@ function collapseComments(e) {
                         "class": "layui-badge fly-badge-vip",
                         "text": "VIP3"
                     })));*/
-
-
-
                   var timeElement = $("<div/>", {
                         "class": "detail-hits"
                     }).append($("<span/>", {
@@ -345,7 +339,7 @@ function collapseComments(e) {
                   })));
                     var filterHtml = filterXSS(comment.content);
                     var contentElement = $("<div/>", {
-                        "class": "detail-body jieda-body photos",
+                        "class": "detail-body sub-detail-body jieda-body photos",
                         "html":filterHtml
                     });
 
@@ -374,19 +368,24 @@ function collapseComments(e) {
                         "class": "pull-right",
                         "html": moment(comment.gmtCreate).format('YYYY-MM-DD  HH:mm')
                     })));
-
-
                  /*   var comment2Element = $("<div/>", {
                         "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comments"
                     }).append(mediaElement);*/
 
                     subCommentContainer.prepend(commentElement);
+                    console.log("00")
                 });
+
                 //展开二级评论
                 comments.addClass("layui-show");
                 // 标记二级评论展开状态
                 e.setAttribute("data-collapse", "in");
                 e.classList.add("active");
+
+                $('.sub-detail-body').each(function(){
+                    var othis = $(this), html = othis.html();
+                    othis.html(fly.content(html));
+                });
             });
         }
     }
@@ -400,7 +399,7 @@ function collapseSubComments(upId,subId) {
     var upComments = $("#comment-" + upId);
     var inputComments = $("#input-" + upId);
     var btnComments = $("#btn-" + upId);
-    var upName = '回复 '+thisComment.attr('data-name')+' ：';
+    var upName = '回复 @'+thisComment.attr('data-name')+' ：';
     //alert(upName);
     inputComments.attr('placeholder',upName);
    // inputComments.attr('id','input-'+subId);

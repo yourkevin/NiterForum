@@ -11,7 +11,7 @@ layui.define('fly', function(exports){
   var util = layui.util;
   var laytpl = layui.laytpl;
   var form = layui.form;
-  var fly = layui.fly;
+  fly = layui.fly;
   
   var gather = {}, dom = {
     jieda: $('#jieda')
@@ -216,24 +216,36 @@ layui.define('fly', function(exports){
     ,del: function(li){ //删除
       layer.confirm('确认删除该回复么？删除后无法恢复！', function(index){
         layer.close(index);
-        $.post('/comment/del/id', {
-          id: li.data('id'),
-          type:1
-        }, function(res){
-          if(res.code==200) {
-            li.remove();
-            swal("Good job!", ""+res.msg, "success");
-          }else swal("Oh,no!", ""+res.msg, "error");
+        $.ajax({
+          type: 'DELETE',
+          url: '/api/comment/delete',
+          data: {
+            id:li.data('id')
+            ,type:1
+          },
+          success: function(res){
+            if(res.code==200) {
+              li.remove();
+              swal("Good job!", ""+res.message, "success");
+            }else swal("Oh,no!", ""+res.message, "error");
+          },
+          error: function(data){
+            alert("删除失败");
+          }
         });
-
       });    
     }
   };
+
 
   $('.jieda-reply span').on('click', function(){
     var othis = $(this), type = othis.attr('type');
     gather.jiedaActive[type].call(this, othis.parents('li'));
   });
+
+
+
+
 
 
   //定位分页

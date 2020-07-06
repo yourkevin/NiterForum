@@ -1,22 +1,6 @@
 package cn.niter.forum.controller;
 
-import cn.niter.forum.dto.*;
-import cn.niter.forum.enums.CommentTypeEnum;
-import cn.niter.forum.exception.CustomizeErrorCode;
-import cn.niter.forum.exception.CustomizeException;
-import cn.niter.forum.model.Comment;
-import cn.niter.forum.model.UserAccount;
-import cn.niter.forum.provider.BaiduCloudProvider;
-import cn.niter.forum.service.CommentService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author wadao
@@ -27,12 +11,13 @@ import java.util.Map;
 
 @Controller
 public class CommentController {
-
+/*
     @Autowired
     private CommentService commentService;
     @Autowired
     private BaiduCloudProvider baiduCloudProvider;
 
+    @Deprecated
     @ResponseBody//@ResponseBody返回json格式的数据
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
     public Object post(@RequestBody CommentCreateDTO commentCreateDTO,//@RequestBody接受json格式的数据
@@ -69,7 +54,7 @@ public class CommentController {
 
     }
 
-
+    @Deprecated
     @ResponseBody
     @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
     public ResultDTO<List<CommentDTO>> comments(@PathVariable(name = "id") Long id) {
@@ -77,21 +62,7 @@ public class CommentController {
         return ResultDTO.okOf(commentDTOS);
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/api/comment/list", method = RequestMethod.POST)
-    public ResultDTO<List<CommentDTO>> commentList(
-            /*@RequestParam(name = "commentator",required = false) Long commentator
-            ,@RequestParam(name = "type",required = false) Integer type
-            ,@RequestParam(name = "id",required = false) Long id
-            ,@RequestParam(name = "parentId",required = false) Long parentId*/
-            @RequestBody CommentQueryDTO commentQueryDTO
-            ) {
-        PaginationDTO paginationDTO = commentService.listByCommentQueryDTO(commentQueryDTO);
-
-
-        return ResultDTO.okOf(paginationDTO);
-    }
-
+    @Deprecated
     @PostMapping("/comment/del/id")
     @ResponseBody
     public Map<String,Object> deleteCommentById(HttpServletRequest request,
@@ -125,5 +96,5 @@ public class CommentController {
         return map;
     }
 
-
+*/
 }

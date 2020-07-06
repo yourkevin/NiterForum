@@ -12,8 +12,8 @@ public class CommentDTO {
     private Long gmtCreate;
     private Long gmtModified;
     private String gmtModifiedStr;
-    private Long likeCount;
-    private Integer commentCount;
+    private Long likeCount = 0L;
+    private Integer commentCount = 0;
     private String content;
     private UserDTO user;
     private UserAccount userAccount;
