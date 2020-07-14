@@ -78,7 +78,7 @@
         <div style="margin-top: 20px;margin-bottom: 20px" class="layui-text layui-table video photos p-detail" id="descriptionP" th:text="${question.description}">
         </div>
         <div style="text-align: center;margin-top: 10px">
-          <span th:data-id="${question.id}" onclick="like_question(this)" style="font-size: 15px; color: #FFB800;cursor: pointer"><i class="layui-icon" th:text="${question.favorite?'&#xe658;':'&#xe600;'}">&#xe600; &#xe658;</i><th:block th:text="${question.favorite?'已':''}"></th:block>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span>
+          <span th:data-id="${question.id}" onclick="like_question(this)" style="font-size: 15px; color: #FFB800;cursor: pointer"><i th:id="${'questionLikeIcon-'+question.id}" class="layui-icon" th:text="${question.favorite?'&#xe658;':'&#xe600;'}"></i><span th:id="${'questionLikeText-'+question.id}" th:text="${question.favorite?'已':''}"></span>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span>
           <span class="copyshare"><i class="layui-icon" style="font-size: 15px; color: #1E9FFF;cursor: pointer">&#xe641; 分享</i></span>
         </div><!--分享-->
         <div style="margin-top: 10px">

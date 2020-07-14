@@ -133,12 +133,36 @@ function comment(e) {
 
 function like_comment(e) {
     var commentId = e.getAttribute("data-id");
+    var thumbicon = $("#thumbicon-" + commentId);
+    if(thumbicon.attr('class').indexOf('zanok')!=-1){
+        swal({
+            title: "点赞失败!",
+            text: "请不要重复点赞哦!",
+            icon: "error",
+            button: "确认",
+        });
+        return;
+    }
     like2target(commentId, 2);
+}
+
+function like_subComment(e) {
+    var commentId = e.getAttribute("data-id");
+    like2target(commentId, 3);
 }
 
 function like_question(e) {
     var questionId = e.getAttribute("data-id");
-    //alert(questionId);
+    var thumbtext = $("#questionLikeText-" + questionId);
+    if('已'==thumbtext.text()){
+        swal({
+            title: "收藏失败!",
+            text: "请不要重复收藏哦!您可以在帖子管理页取消收藏",
+            icon: "error",
+            button: "确认",
+        });
+        return;
+    }
     like2target(questionId, 1);
 }
 
@@ -146,7 +170,7 @@ function like_question(e) {
 function like2target(targetId, type){
     $.ajax({
         type: "POST",
-        url: "/like",
+        url: "/api/like/insert",
         contentType: 'application/json',
         data: JSON.stringify({
             "targetId": targetId,
@@ -160,15 +184,18 @@ function like2target(targetId, type){
                     icon: "success",
                     button: "确认",
                 });
-                if(type==2){//点赞评论时
+                if(type==2||type==3){//点赞评论时
                 var thumbicon = $("#thumbicon-" + targetId);
                 thumbicon.addClass("zanok");
                 var likecount = $("#likecount-" + targetId);
                 likecount.html(parseInt(likecount.text())+1);//点赞+1
                 }
                 if(type==1){//收藏问题时
-                    /*var thumbicon = $("#questionlikespan-" + targetId);
-                    thumbicon.removeClass("glyphicon-heart-empty");
+                    var thumbicon = $("#questionLikeIcon-" + targetId);
+                    thumbicon.html('&#xe658;');
+                    var thumbtext = $("#questionLikeText-" + targetId);
+                    thumbtext.html('已');
+                   /* thumbicon.removeClass("glyphicon-heart-empty");
                     thumbicon.addClass("glyphicon-heart");*/
                     var likecount = $("#questionlikecount-" + targetId);
                     likecount.html(parseInt(likecount.text())+1);//点赞+1
@@ -223,25 +250,25 @@ function like2target(targetId, type){
                 }
                 });
                 }
-                if (response.code == 2022) {
+                else if (response.code == 2022) {
                     if(type==2){//点赞评论时
                     var thumbicon = $("#thumbicon-" + targetId);
-                    thumbicon.addClass("new");
+                    thumbicon.addClass("zanok");
                     }
                     swal({
                         title: "点赞失败!",
-                        text: "请不要重复点赞哦!",
+                        text: "请不要重复点赞/收藏哦!",
                         icon: "error",
                         button: "确认",
                     });
                 }
-                if (response.code == 2023) {
-                    var thumbicon = $("#questionlikespan-" + targetId);
+                else if (response.code == 2023) {
+                  /*  var thumbicon = $("#questionlikespan-" + targetId);
                     thumbicon.removeClass("glyphicon-heart-empty");
-                    thumbicon.addClass("glyphicon-heart");
+                    thumbicon.addClass("glyphicon-heart");*/
                     swal({
                         title: "收藏失败!",
-                        text: "请不要重复收藏哦!",
+                        text: "请不要重复收藏哦!您可以在帖子管理页面取消收藏",
                         icon: "error",
                         button: "确认",
                     });

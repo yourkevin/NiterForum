@@ -428,15 +428,38 @@ layui.define(['laypage', 'fly', 'element', 'flow'], function(exports){
     var othis = $(this).parents('li'), id = othis.data('id');
     console.log("id"+id);
     layer.confirm('确定取消收藏吗？', function(index){
-      $.post('/user/p/like/remove/id', {
+     /* $.post('/api/post/like/remove', {
         id: id,
         type:1
       }, function(res){
         layer.close(index);
         if(res.code==200) {
           othis.remove();
-        }else swal("Oh,no!", ""+res.msg, "error");
+        }else swal("Oh,no!", ""+res.message, "error");
+      });*/
+      $.ajax({
+        type: 'DELETE',
+        url: '/api/like/remove',
+        contentType: 'application/json',
+        dataType: "json",
+        data: JSON.stringify({
+          "targetId": id,
+          "type": 1
+        }),
+        success: function(res){
+          layer.close(index);
+          if(res.code==200) {
+            othis.remove();
+          }else swal("Oh,no!", ""+res.message, "error");
+        },
+        error: function(data){
+          swal("取消失败!", ""+res.message, "error");
+          //alert("删除失败");
+        }
       });
+
+
+
     });
   });
 
