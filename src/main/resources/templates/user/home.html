@@ -5,6 +5,7 @@
   <th:block th:insert="~{common/header :: head}"></th:block>
   <script src="/js/community.js" type="application/javascript"></script>
   <script src="https://community-1251590924.cos.ap-hongkong.myqcloud.com/js/moment.js" type="application/javascript"></script>
+  <script src="/js/xss.min.js?v=1.5" type="application/javascript"></script>
 </head>
 <body style="margin-top: 0px">
 <div th:insert="~{common/header :: nav}" style="margin-top: 61px" class="html5plus-hide"></div>
@@ -171,7 +172,8 @@ layui.config({
           //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
           $('.reply-body-'+page).each(function(){
             var othis = $(this), html = othis.html();
-            othis.html(fly.content(html));
+            othis.html(filterXSS(fly.content(html)));
+           // othis.html(fly.content(html));
           });
         },
         error: function(xmlHttpRequest, textStatus,errorThrown){

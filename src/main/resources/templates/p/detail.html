@@ -424,7 +424,9 @@
 
     $('.detail-body').each(function(){
       var othis = $(this), html = othis.html();
-      othis.html(fly.content(html));
+      othis.html(filterXSS(fly.content(html)));
+      //html = filterXSS(html);
+     // othis.html(fly.content(html));
     });
 
     //监听折叠
