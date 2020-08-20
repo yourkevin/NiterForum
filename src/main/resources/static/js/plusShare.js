@@ -114,6 +114,8 @@
 				}, {
 					title: "新浪微博"
 				}, {
+					title: "复制链接"
+				}, {
 					title: "更多分享"
 				}]
 			}, function(e) {
@@ -132,7 +134,15 @@
 						};
 						share('sinaweibo', msg, callback);
 						break;
-					case 3: //更多分享
+					case 3: //复制链接
+						var clipboard = new ClipboardJS('.copyshare', {
+							text: function() {
+								return '我在尼特社区找到一篇好文章《'+msg.title+'》，快来戳后面的链接来围观吧！---'+msg.href+' ';
+							}
+						});
+						swal("复制成功!", "赶快去粘贴分享文章吧~", "success");
+						break;
+					case 4: //更多分享
 						var url = msg.href ? ('( ' + msg.href + ' )') : '';
 						msg.title = msg.title + url;
 						msg.content = msg.content + url;
