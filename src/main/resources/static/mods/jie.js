@@ -88,7 +88,7 @@ layui.define('fly', function(exports){
           id: div.data('id')
         }, function(res){
           if(res.code==200) {swal("Good job!", ""+res.msg, "success").then((value) => {
-            location.href = '/';});
+            location.href = '/forum';});
           }else swal("Oh,no!", ""+res.msg, "error");
         });
 
