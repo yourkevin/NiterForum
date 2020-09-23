@@ -123,25 +123,31 @@ public class UserController {
                 String  constellation = userInfoService.getConstellation(Integer.parseInt(birthday[1]), Integer.parseInt(birthday[2]));
                 userInfo.setConstellation(constellation);
             }
-            int i = userInfoService.updateByUserId(userInfo,user.getId());
-            int j = userService.updateUsernameById(user.getId(),obj.getString("username"));
+            int conflictCount = userService.countUserByName(obj.getString("username"));
+            if (conflictCount == 0) {
+                int i = userInfoService.updateByUserId(userInfo,user.getId());
+                int j = userService.updateUsernameById(user.getId(),obj.getString("username"));
+                if(j!=1){
+                    map.put("code",500);
+                    map.put("msg","妈呀，昵称修改失败啦！");
+                }
+                else if(i!=1) {
+                    map.put("code",500);
+                    map.put("msg","妈呀，资料修改失败啦！");
+                }
+                else{
+                    User dbUser = userService.selectUserByUserId(user.getId());
+                    UserDTO userDTO = userService.getUserDTO(dbUser);
+                    Cookie cookie = cookieUtils.getCookie("token",tokenUtils.getToken(userDTO),86400*3);
+                    response.addCookie(cookie);
+                    map.put("code",200);
+                    map.put("msg","恭喜您，资料修改成功！！！");
+                }
+            }else{
+                map.put("code",500);
+                map.put("msg","妈呀，昵称重复了！");
+            }
 
-            if(j!=1){
-                map.put("code",500);
-                map.put("msg","妈呀，昵称修改失败啦！");
-            }
-            else if(i!=1) {
-                map.put("code",500);
-                map.put("msg","妈呀，资料修改失败啦！");
-            }
-            else{
-                User dbUser = userService.selectUserByUserId(user.getId());
-                UserDTO userDTO = userService.getUserDTO(dbUser);
-                Cookie cookie = cookieUtils.getCookie("token",tokenUtils.getToken(userDTO),86400*3);
-                response.addCookie(cookie);
-                map.put("code",200);
-                map.put("msg","恭喜您，资料修改成功！！！");
-            }
         }
 
         return map;

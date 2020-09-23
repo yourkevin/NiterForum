@@ -47,6 +47,10 @@ public class UserService {
         return null;
     }
 
+    public int countUserByName(String name){
+        return (int)userMapper.countUserByName(name);
+    }
+
     public ResultDTO repass(Long user_id,String nowpass,String pass){
         User user = userMapper.selectByPrimaryKey(user_id);
         if((StringUtils.isBlank(nowpass)&&StringUtils.isBlank(user.getPassword()))||DigestUtils.sha256Hex(nowpass+salt).equals(user.getPassword())){
