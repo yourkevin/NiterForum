@@ -35,7 +35,7 @@
         <ul class="mine-msg" th:each="notification : ${pagination.data}">
           <li th:data-id="${notification.id}">
             <blockquote class="layui-elem-quote">
-              <a href="/" target="_blank"><cite th:text="${notification.notifierName}">Absolutely</cite></a><a th:text="${notification.typeName + ' '}"></a><a target="_blank" th:href="@{'/notification/'+ ${notification.id}}"><cite th:text="${notification.outerTitle}"></cite></a>
+              <a th:href="'/user/' + ${notification.notifier}" target="_blank"><cite th:text="${notification.notifierName}"></cite></a><a th:text="${notification.typeName + ' '}"></a><a target="_blank" th:href="@{'/notification/'+ ${notification.id}}"><cite th:text="${notification.outerTitle}"></cite></a>
               <span th:if="${notification.status == 1}" class="layui-badge layui-bg-green">已读</span>
               <span th:if="${notification.status == 0}" class="layui-badge layui-bg-red">未读</span>
             </blockquote>
