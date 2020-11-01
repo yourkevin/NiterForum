@@ -6,7 +6,7 @@
   <title th:text="${question.title+@environment.getProperty('site.main.titleInfo')}"></title>
   <script src="/js/moment.js" type="application/javascript"></script>
   <th:block th:insert="~{common/header :: head}"></th:block>
-  <script src="/js/xss.min.js?v=1.5" type="application/javascript"></script>
+  <script src="/js/xss.min.js?v=1.6" type="application/javascript"></script>
   <script src="/js/clipboard.js" type="application/javascript"></script>
   <!--link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">
   <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script-->
@@ -87,6 +87,8 @@
                         <a th:href="@{/forum/(page=1,tag=${tag})}"
                            th:text="${tag}" class="community-tag"></a>
           </span>
+          <br>
+          <small style="color: #999;">注意：本文归作者所有，未经作者允许，不得转载</small>
         </div><!--标签-->
 
       </div>
@@ -105,9 +107,9 @@
               </a>
               <div class="fly-detail-user">
                 <a th:href="${'/user/'+comment.user.id}" class="fly-link" target="_blank">
-                  <i th:if="${comment.userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
-                  <cite th:class="${comment.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${comment.user.name}"></cite>
-                  <i class="layui-badge fly-badge-vip layui-bg-gray" th:text="${@environment.getProperty('user.group.r'+comment.userAccount.groupId)}"></i>
+                  <i th:if="${comment.user.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
+                  <cite th:class="${comment.user.vipRank==1? 'fly-list-kiss':''}" th:text="${comment.user.name}"></cite>
+                  <i class="layui-badge fly-badge-vip layui-bg-gray" th:text="${comment.user.groupStr}"></i>
                 </a>
                 <span th:if="${question.user.id == comment.user.id}">(楼主)</span>
                 <!--
@@ -130,7 +132,7 @@
                 <i class="iconfont icon-zan" th:data-id="${comment.id}" onclick="like_comment(this)"></i>
                 <em th:id="${'likecount-'+comment.id}" th:text="${comment.likeCount}" th:class="${comment.likeCount != 0}? 'zanok' : ''"></em>
               </span>
-              <span th:data-id="${comment.id}" onclick="collapseComments(this)">
+              <span th:data-id="${comment.id}" onclick="collapseComments(this,2)">
                 <i class="iconfont icon-svgmoban53"></i>
                <em th:text="${comment.commentCount}" th:class="${comment.commentCount != 0}? 'zanok' : ''"></em>
               </span>
@@ -167,14 +169,15 @@
           <div class="layui-form-item layui-form-text">
             <a name="comment"></a>
             <div class="layui-input-block">
-              <textarea id="comment_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+              <textarea id="comment_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea talk-editor" style="height: 150px;"></textarea>
             </div>
           </div>
           <div class="layui-form-item">
             <input type="hidden" name="jid" value="123">
-            <button class="layui-btn" lay-filter="*"  onclick="commentQ()">回复</button>
+            <!--button id="addTalkBtn" class="layui-btn" lay-filter="*"  onclick="commentQ()">回复</button-->
+            <button id="commentQBtn" class="layui-btn">回复</button>
           </div>
-          <div id="commentQBtn" style="width: 100px;height: 36px;">
+          <!--div id="commentQBtn" style="width: 100px;height: 36px;">
             <div class="vaptcha-init-main">
               <div class="vaptcha-init-loading">
                 <a href="/" target="_blank">
@@ -183,7 +186,7 @@
                 <span class="vaptcha-text">Vaptcha启动中...</span>
               </div>
             </div>
-          </div>
+          </div-->
           <!--/form-->
         </div>
       </div>
@@ -265,14 +268,7 @@
 
     }
   };
-  /*var iframes = document.getElementsByTagName("iframe");
-  var i;
-  for (i = 0; i < iframes.length; i++) {
-    setIframeHeight(iframes[i]);
-  }*/
-  //iframe高度设置结束。
 </script>
-<script src="https://v.vaptcha.com/v3.js"></script>
 <script type="text/javascript">
   token = '';
   userIp=returnCitySN["cip"];
@@ -289,7 +285,102 @@
       post(userIp,token);
     }
   }
+</script>
+<script src="https://v.vaptcha.com/v3.js"></script>
+  <script type="text/javascript">
+    token = '';
+    userIp=returnCitySN["cip"];
+    //var obj2=null;
+    /*function commentQ() {
+      if(token == '') {
+        swal({
+          title: "哎哟...",
+          text: "请先完成人机验证再提交哦~",
+          icon: "error",
+          button: "确认",
+        });
+      }else{
+        post(userIp,token);
+      }
+    }*/
+    vaptcha({
+      vid: '[[${vaptcha_vid}]]', // 验证单元id
+      type: "invisible", // 显示类型 隐藏式
+      scene: 2, // 场景值 默认0
+      offline_server: '/validateOffline', //离线模式服务端地址，若尚未配置离线模式，请填写任意地址即可。
+      //可选参数
+      //lang: 'auto', // 语言 默认auto,可选值auto,zh-CN,en,zh-TW,jp
+      //https: true, // 使用https 默认 true
+    }).then(function (vaptchaObj) {
+      obj = vaptchaObj; //将VAPTCHA验证实例保存到局部变量中
+      //获取token的方式一：
+      //vaptchaObj.renderTokenInput('.login-form')//以form的方式提交数据时，使用此函数向表单添加token值
+      //获取token的方式二：
+      vaptchaObj.listen("pass", function () {
+        token = vaptchaObj.getToken();
+        console.log("token:"+token);
+        $.ajax({
+          type: "post",
+          url: "/validate",
+          ContentType: "application/json",
+          CacheControl: "no-cache",
+          data:{
+            scene:2,
+            token:token,
+            ip:userIp
+          },
+          //  dataType: "json",
+          success: function(data) {
+            if(data.success==1){
+              //成功
+              if(token == '') {
+                swal({
+                  title: "哎哟...",
+                  text: "请先完成人机验证再提交哦~",
+                  icon: "error",
+                  button: "确认",
+                });
+              }else{
+                post(userIp,token);
+              }
+              //    token = vaptchaObj.getToken();
+              //    console.log("token:"+token);
+            }
+            else if(data.success==0){
+              swal({
+                title: ""+data.msg,
+                text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
+                icon: "error",
+                button: "确认",
+              });
+              //vaptchaObj.reset();
+            }
+          },
+          error: function(msg) {
+            console.log(msg)
+          }
+        })
 
+      });
+      //关闭验证弹窗时触发
+      vaptchaObj.listen("close", function () {
+        //验证弹窗关闭触发
+        swal({
+          title: "哎哟...",
+          text: "您关闭了验证哦",
+          icon: "error",
+          button: "确认",
+        });
+      });
+    });
+    //VAPTCHA实例初始化完成后，等到用户点击登录按钮时执行validate()方法
+    $("#commentQBtn").on("click", function () {
+      obj.validate();
+    });
+
+
+
+   /*
   vaptcha({
     //配置参数
     vid: '[[${vaptcha_vid}]]', // 验证单元id
@@ -298,16 +389,7 @@
     scene:2,               //场景值02，即评论
     offline_server: '/validateOffline' //离线模式服务端地址
   }).then(function (vaptchaObj) {
-
-    //console.log("vaptchaObj:"+vaptchaObj)
-    //vaptchaObj.render()// 调用验证实例 vpObj 的 render 方法加载验证按钮
     vaptchaObj.listen('pass', function() {
-      //obj2=vaptchaObj;
-      //obj2.vaptcha.token=vaptchaObj.getToken();
-      // 验证成功， 进行登录操作
-      // console.log("1:"+vaptchaObj.getToken());
-      //console.log("2:"+obj2.getToken());
-      //getCode();
       token = vaptchaObj.getToken();
       console.log("token:"+token);
           $.ajax({
@@ -341,10 +423,6 @@
               console.log(msg)
             }
           })
-
-
-
-
     })
     vaptchaObj.listen('close', function() {
       //验证弹窗关闭触发
@@ -356,7 +434,7 @@
       });
     })
     vaptchaObj.render()// 调用验证实例 vaptchaObj 的 render 方法加载验证按钮
-  })
+  })*/
 </script>
 <script type="text/javascript">
     //addHtml5Plus();
@@ -413,11 +491,13 @@
     ,base: '/mods/'
   }).extend({
     fly: 'index'
-  }).use(['fly', 'face','element', 'layer'], function(){
+  }).use(['fly', 'face','element', 'layer','util'], function(){
     var $ = layui.$
-     ,fly = layui.fly;
-      var element = layui.element;
-      var layer = layui.layer;
+     ,fly = layui.fly
+     ,util = layui.util
+     ,element = layui.element
+     ,layer = layui.layer;
+
 
 
     //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
@@ -434,15 +514,16 @@
       layer.msg('展开状态：'+ data.show);
     });
 
-    /*
-   console.log("commentData3:"+commentData);
-    var getTpl = commentList.innerHTML
-            ,view = document.getElementById('view');
-    laytpl(getTpl).render(commentData, function(html){
-      view.innerHTML = html;
+    util.fixbar({
+      bar1: '&#xe611;'
+      ,bgcolor: '#009688'
+      ,click: function(type){
+        if(type === 'bar1'){
+          //layer.msg('打开 index.js，开启发表新帖的路径');
+          location.href = '#comment';
+        }
+      }
     });
-*/
-
   });
 
 </script>
