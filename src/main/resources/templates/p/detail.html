@@ -67,7 +67,7 @@
             <span th:text="${question.gmtModifiedStr}"></span><th:block th:text="${question.edited?' 编辑':' 发表'}"></th:block>
           </div>
           <div class="detail-hits" id="LAY_jieAdmin" data-id="123">
-            <span style="padding-right: 10px; color: #FF7200" >点击群号免费加入尼特社区交流群：<a target="_blank" th:href="${@environment.getProperty('site.info.contactQunUrl')}" th:text="${@environment.getProperty('site.info.contactQun')}"></a>。</span>
+            <span style="padding-right: 10px; color: #FF7200" >点击群号免费加入社区交流群：<a target="_blank" th:href="${@environment.getProperty('site.info.contactQunUrl')}" th:text="${@environment.getProperty('site.info.contactQun')}"></a>。</span>
             <span th:if="${loginUser!=null&&question.canEdit}" class="layui-btn layui-btn-xs jie-admin" type="edit"><a th:href="@{'/p/publish/'+${question.id}}" style="margin-left: -5px;"><i class="layui-icon">&#xe642;</i>编辑</a></span>
             <!--span th:data-id="${question.id}" onclick="like_question(this)" class="layui-btn layui-btn-xs layui-btn-warm"><i class="layui-icon">&#xe600;</i><th:block th:text="${question.favorite?'已':''}"></th:block>收藏(<span th:id="${'questionlikecount-'+question.id}" th:text="${question.likeCount}"></span>)</span-->
           </div>
