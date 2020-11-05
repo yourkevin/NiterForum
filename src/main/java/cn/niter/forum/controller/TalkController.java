@@ -30,7 +30,7 @@ import java.util.Map;
  */
 
 @Controller
-public class TController {
+public class TalkController {
 
     @Autowired
     private QuestionService questionService;
