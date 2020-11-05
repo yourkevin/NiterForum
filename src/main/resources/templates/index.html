@@ -68,7 +68,9 @@
             </div>
             <div class="fly-list-badge">
 
-              <span th:if="${question.status==2||question.status==3}" class="layui-badge layui-bg-orange">置顶</span>
+              <span th:if="${question.status==2}" class="layui-badge layui-bg-orange">置顶</span>
+              <span th:if="${question.status==3}" class="layui-badge layui-bg-red" >精帖</span>
+              <span th:if="${question.status==3}" class="layui-badge layui-bg-orange">置顶</span>
             </div>
           </li>
 
@@ -131,7 +133,7 @@
               </span>
             </div>
             <div class="fly-list-badge">
-              <span th:if="${question.status==1||question.status==3}" class="layui-badge layui-bg-red" >精帖</span>
+                <span th:if="${question.status==1}" class="layui-badge layui-bg-red" >精帖</span>
             </div>
            </div>
           </li>
