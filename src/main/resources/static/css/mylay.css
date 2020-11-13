@@ -55,6 +55,15 @@ margin-bottom: 5px;
     margin-bottom: 0.5em;
 }
 
+.layui-text ol{
+   padding: 5px 0 5px 15px;
+}
+
+.layui-text ol li{
+    margin-top:5px;
+    list-style-type: decimal;
+}
+
 .layui-clear img{
     max-height: 22px;
 }

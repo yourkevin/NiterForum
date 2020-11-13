@@ -51,4 +51,12 @@ ul, ol {
     z-index: 1 !important;
 }
 
+ol li{
+    margin-top:5px;
+    list-style-type: decimal;
+}
 
+ul li{
+    margin-top:5px;
+    list-style-type: disc;
+}
