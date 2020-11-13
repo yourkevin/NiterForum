@@ -266,6 +266,11 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+
+  <select id="countUserByName" parameterType="java.lang.String" resultType="java.lang.Long">
+    select count(*) from user where name=#{name}
+  </select>
+
   <update id="updateByExampleSelective" parameterType="map">
     <!--
       WARNING - @mbg.generated

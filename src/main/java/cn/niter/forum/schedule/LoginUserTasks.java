@@ -27,7 +27,8 @@ public class LoginUserTasks {
     private LoginUserCache loginUserCache;
 
 
-    @Scheduled(fixedRate = 1000 * 60 * 10)
+//    @Scheduled(fixedRate = 1000 * 60 * 10)
+    @Scheduled(fixedDelay = 1000 * 5)
     public void loginUserSchedule() {
         log.info("loginUserSchedule start {}", new Date());
      //从cache中读取最近登录用户
