@@ -18,6 +18,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import java.util.List;
 
 @Service
 public class UserService {
+    @Autowired
+    private Environment env;
     @Autowired
     private UserMapper userMapper;
     @Autowired
@@ -290,6 +293,17 @@ public class UserService {
         return userDTO;
     }
 
+    public UserDTO getUserDTO(Long id) {
+        User user = userMapper.selectByPrimaryKey(id);
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user,userDTO);
+        UserAccount userAccount = userAccountService.selectUserAccountByUserId(user.getId());
+        userDTO.setGroupId(userAccount.getGroupId());
+        userDTO.setVipRank(userAccount.getVipRank());
+        userDTO.setGroupStr(env.getProperty("user.group.r"+userAccount.getGroupId()));
+        return userDTO;
+    }
+
     public Object registerOrLoginWithMail(String mail,String password) {
 
         UserExample userExample = new UserExample();
@@ -535,6 +549,9 @@ public class UserService {
 
     public Object login(Integer type, String name, String password) {
         UserExample userExample = new UserExample();
+        System.out.println("pw:"+password);
+        System.out.println("salt:"+salt);
+        System.out.println("pw+salt:"+DigestUtils.sha256Hex(password+salt));
         if(type==1){//手机号登录
             userExample.createCriteria().andPhoneEqualTo(name).andPasswordEqualTo(DigestUtils.sha256Hex(password+salt));
         }else if(type==2){//邮箱登录
@@ -548,7 +565,7 @@ public class UserService {
             resultDTO.setData(tokenUtils.getToken(getUserDTO(users.get(0))));
             return resultDTO;
         }
-        else return ResultDTO.errorOf("密码错误或用户不存在");
+        else return ResultDTO.errorOf(CustomizeErrorCode.LOGIN_FAILED);
     }
 
     public Object register(Integer type, String name, String password) {

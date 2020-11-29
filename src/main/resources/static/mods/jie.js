@@ -132,6 +132,87 @@ layui.define('fly', function(exports){
     gather.jieAdmin[type] && gather.jieAdmin[type].call(this, othis.parent());
   });
 
+
+  //说说管理
+  gather.talkAdmin = {
+    //删求解
+    del: function(div){
+      layer.confirm('确认删除该条说说么？删除后将无法恢复！', function(index){
+        layer.close(index);
+        $.ajax({
+          type: 'DELETE',
+          url: '/api/talk/delete',
+          data: {id:div.data('id')},//'ids='+arr+'&_method=delete',
+          success: function(res){
+            if(res.code==200) {swal("Good job!", ""+res.message, "success").then((value) => {
+              location.href = '/talk';});
+            }else swal("Oh,no!", ""+res.msg, "error");
+          },
+          error: function(res){
+            swal("Oh,no!", "请求失败："+res.msg, "error");
+          }
+        });
+      });
+    }
+
+    //设置置顶等状态于操作
+    ,set: function(div){
+      var othis = $(this);
+      $.post('/api/talk/set', {
+        id: div.data('id')
+        ,rank: othis.attr('rank')
+        ,field: othis.attr('field')
+      }, function(res){
+        if(res.code==200) {swal("Good job!", ""+res.message, "success").then((value) => {
+          location.reload();});
+        }else swal("Oh,no!", ""+res.msg, "error");
+      });
+    }
+
+    //收藏，喜欢
+    ,like: function(div){
+      var othis = $(this), type = othis.data('type');
+      var talkId = div.data('id');
+      var thumbtext = $("#talkLikeText-" + talkId);
+      var likecount = $("#talkLikeCount-" + talkId);
+      var thumbicon = $("#talkLikeIcon-" + talkId);
+      if('已'==thumbtext.text()){
+        /*swal({
+          title: "收藏失败!",
+          text: "请不要重复收藏哦!您可以在帖子管理页取消收藏",
+          icon: "error",
+          button: "确认",
+        });
+        return;*/
+        thumbtext.html('');
+        likecount.html(parseInt(likecount.text())-1);//点赞+1
+        thumbicon.html('&#xe68c;');
+        removeLike(talkId, 11);
+        return;
+      }
+      thumbtext.html('已');
+      likecount.html(parseInt(likecount.text())+1);//点赞+1
+      thumbicon.html('&#xe68f;');
+      like2target(talkId, 11);
+
+     /* fly.json('/collection/'+ type +'/', {
+        cid: div.data('id')
+      }, function(res){
+        if(type === 'add'){
+          othis.data('type', 'remove').html('取消收藏').addClass('layui-btn-danger');
+        } else if(type === 'remove'){
+          othis.data('type', 'add').html('收藏').removeClass('layui-btn-danger');
+        }
+      });*/
+    }
+  };
+
+  $('body').on('click', '.talk-admin', function(){
+    var othis = $(this), type = othis.attr('type');
+    gather.talkAdmin[type] && gather.talkAdmin[type].call(this, othis.parent());
+  });
+
+
   //异步渲染
   /*var asyncRender = function(){
     var div = $('.fly-admin-box'), jieAdmin = $('#LAY_jieAdmin');
@@ -144,6 +225,13 @@ layui.define('fly', function(exports){
       });
     }
   }();*/
+
+
+
+
+
+
+
 
   //解答操作
   gather.jiedaActive = {

@@ -13,7 +13,6 @@ function post(ip,token) {
 }
 
 function comment2target(targetId, type, content,ip,token) {
-    //console.log(ip+"--3--"+token);
     if (!content) {
         //alert("不能回复空内容~~~");
         sweetAlert("出错啦...", "不能回复空内容~~~", "error");
@@ -166,6 +165,37 @@ function like_question(e) {
     like2target(questionId, 1);
 }
 
+function removeLike(targetId, type){
+    layer.confirm('确定取消收藏吗？', function(index){
+        $.ajax({
+            type: 'DELETE',
+            url: '/api/like/remove',
+            contentType: 'application/json',
+            dataType: "json",
+            data: JSON.stringify({
+                "targetId": targetId,
+                "type": type
+            }),
+            success: function(res){
+                layer.close(index);
+                if(res.code==200) {
+                    swal("成功!", ""+res.message, "success");
+                }else swal("Oh,no!", ""+res.message, "error");
+            },
+            error: function(data){
+                swal("取消失败!", ""+res.message, "error");
+                //alert("删除失败");
+            }
+        });
+
+
+
+    });
+}
+
+
+
+
 
 function like2target(targetId, type){
     $.ajax({
@@ -184,7 +214,7 @@ function like2target(targetId, type){
                     icon: "success",
                     button: "确认",
                 });
-                if(type==2||type==3){//点赞评论时
+                if(type==2||type==3||type==11){//点赞评论时
                 var thumbicon = $("#thumbicon-" + targetId);
                 thumbicon.addClass("zanok");
                 var likecount = $("#likecount-" + targetId);
@@ -251,7 +281,7 @@ function like2target(targetId, type){
                 });
                 }
                 else if (response.code == 2022) {
-                    if(type==2){//点赞评论时
+                    if(type==2||type==11){//点赞评论时
                     var thumbicon = $("#thumbicon-" + targetId);
                     thumbicon.addClass("zanok");
                     }
@@ -285,7 +315,7 @@ function like2target(targetId, type){
 /**
  * 展开二级评论
  */
-function collapseComments(e) {
+function collapseComments(e,type) {
     var id = e.getAttribute("data-id");
     var comments = $("#comment-" + id);  //获取二级评论元素
 
@@ -295,7 +325,7 @@ function collapseComments(e) {
     //inputComments2.attr('id','input-'+id);
     //btnComments2.attr('id','btn-'+id);
     btnComments2.attr('data-id',id);
-    btnComments2.attr('data-type',2);
+    btnComments2.attr('data-type',type);
     // 获取一下二级评论的展开状态
     var collapse = e.getAttribute("data-collapse");
     if (collapse) {
@@ -333,22 +363,6 @@ function collapseComments(e) {
                     }).append($("<cite/>", {
                         "html": comment.user.name
                     }))));
-                 /*   var mediaBodyElement = $("<div/>", {
-                        "class": "fly-detail-user"
-                    }).append($("<a/>", {
-                        "class": "fly-link",
-                        "href": "/user/"+comment.user.id
-                    }).append($("<cite/>", {
-                        "html": comment.user.name
-                    }))).append($("<span/>", {
-                        "class": "menu"
-                    }).append($("<i/>", {
-                        "class": "iconfont icon-renzheng",
-                        "title": "认证信息"
-                    })).append($("<i/>", {
-                        "class": "layui-badge fly-badge-vip",
-                        "text": "VIP3"
-                    })));*/
                   var timeElement = $("<div/>", {
                         "class": "detail-hits"
                     }).append($("<span/>", {
@@ -360,7 +374,7 @@ function collapseComments(e) {
                       "data-id": comment.id,
                       "data-name": comment.user.name,
                       "id": "comment-"+comment.id,
-                      "onclick" :"collapseSubComments("+id+","+comment.id+");"
+                      "onclick" :"collapseSubComments("+id+","+comment.id+","+type+");"
                   }).append($("<i/>", {
                       "class": "iconfont icon-svgmoban53"
                   })));
@@ -418,7 +432,7 @@ function collapseComments(e) {
     }
 }
 
-function collapseSubComments(upId,subId) {
+function collapseSubComments(upId,subId,type) {
    // e1.removeClass("layui-show");
    // var subId = e2.getAttribute("data-id");
    // alert("subId:"+subId+"upId"+upId);
@@ -433,7 +447,7 @@ function collapseSubComments(upId,subId) {
    // upComments.attr('id','comment-'+subId);
    // btnComments.attr('id','btn-'+subId);
     btnComments.attr('data-id',subId);
-    btnComments.attr('data-type',3);
+    btnComments.attr('data-type',type+1);
 
     // if(inputComments==Object)
 

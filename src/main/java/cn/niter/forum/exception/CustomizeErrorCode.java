@@ -22,9 +22,13 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     PHONE_CODE_ERROR(2033, "验证码错误或失效，请稍后再试！"),
     SUBMIT_PHONE_FAILED(2034, "手机号绑定/更新失败,可能该号码已在其他账号上绑定，请重试！"),
     USER_IS_EMPTY(2040, "该用户不存在或已被屏蔽！"),
+    LOGIN_FAILED(2041, "可能原因：①用户名密码不匹配②账号长时间未修改密码进入了保护模式。建议通过重置密码来找回账号/解除保护！"),
     NEWS_NOT_FOUND(2050, "该条资讯已经找不到了，已被删除或压根就不存在？"),
     VALIDATE_ERROR(2060,"参数校验失败"),
     TOKEN_ERROR(2061,"令牌校验失败"),
+    No_AUTHORITY(2062,"您无权进行此操作"),
+    UNKNOWN_EXCEPTION(2063,"未知异常"),
+    TALK_NOT_FOUND(2071,"没有找到目标说说，已被删除或压根就不存在？"),
     ;
 
     private Integer code;

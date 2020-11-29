@@ -726,6 +726,7 @@ editor.customConfig.emotions =[
 var $description = $('#description')
 editor.customConfig.onchange = function (html) {
     // 监控变化，同步更新到 textarea
+    //$description.val(html)
     $description.val(html)
 }
 editor.create();

@@ -51,16 +51,12 @@ public class LikeApi {
            ,@RequestBody @Valid ThumbVO thumbVO) {
 
         UserDTO user = (UserDTO) request.getAttribute("loginUser");
-        /*if (thumbVO == null) {
-            return ResultDTO.errorOf(CustomizeErrorCode.CAN_NOT_LIKE);
-        }*/
         ThumbDTO thumbDTO = new ThumbDTO();
         BeanUtils.copyProperties(thumbVO, thumbDTO);
         thumbDTO.setGmtCreate(System.currentTimeMillis());
         thumbDTO.setGmtModified(thumbDTO.getGmtCreate());
         thumbDTO.setUser(user);
        return likeService.insert(thumbDTO);
-        //return map;
     }
 
 

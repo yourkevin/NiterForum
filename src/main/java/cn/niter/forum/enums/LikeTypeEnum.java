@@ -3,7 +3,8 @@ package cn.niter.forum.enums;
 public enum LikeTypeEnum {
     QUESTION(1),
     COMMENT(2),
-    SUB_COMMENT(3);
+    SUB_COMMENT(3),
+    TALK(11);
     private Integer type;
 
 

@@ -26,6 +26,12 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     @Autowired
+    private TalkService talkService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
     private CommentMapper commentMapper;
 
     @Autowired
@@ -284,11 +290,13 @@ public class CommentService {
             BeanUtils.copyProperties(comment, commentDTO);
             UserDTO userDTO = new UserDTO();
             BeanUtils.copyProperties(userMap.get(comment.getCommentator()),userDTO);
-            commentDTO.setUser(userDTO);
-            UserAccountExample userAccountExample = new UserAccountExample();
+            //userDTO = userService.getUserDTO(userDTO.getId());
+           // System.out.println("userDTO:"+userDTO);
+            commentDTO.setUser(userService.getUserDTO(userDTO.getId()));
+            /*UserAccountExample userAccountExample = new UserAccountExample();
             userAccountExample.createCriteria().andUserIdEqualTo(userMap.get(comment.getCommentator()).getId());
             List<UserAccount> userAccounts = userAccountMapper.selectByExample(userAccountExample);
-            commentDTO.setUserAccount(userAccounts.get(0));
+            commentDTO.setUserAccount(userAccounts.get(0));*/
             commentDTO.setGmtModifiedStr(timeUtils.getTime(commentDTO.getGmtModified(),null));
             return commentDTO;
         }).collect(Collectors.toList());
@@ -412,11 +420,11 @@ public class CommentService {
             BeanUtils.copyProperties(comment, commentDTO);
             UserDTO userDTO = new UserDTO();
             BeanUtils.copyProperties(userMap.get(comment.getCommentator()),userDTO);
-            commentDTO.setUser(userDTO);
-            UserAccountExample userAccountExample = new UserAccountExample();
+            commentDTO.setUser(userService.getUserDTO(userDTO.getId()));
+           /* UserAccountExample userAccountExample = new UserAccountExample();
             userAccountExample.createCriteria().andUserIdEqualTo(userMap.get(comment.getCommentator()).getId());
             List<UserAccount> userAccounts = userAccountMapper.selectByExample(userAccountExample);
-            commentDTO.setUserAccount(userAccounts.get(0));
+            commentDTO.setUserAccount(userAccounts.get(0));*/
             commentDTO.setGmtModifiedStr(timeUtils.getTime(commentDTO.getGmtModified(),null));
             return commentDTO;
         }).collect(Collectors.toList());
@@ -430,7 +438,6 @@ public class CommentService {
 
     @Transactional
     public void insert(CommentDTO commentDTO, UserDTO userDTO) {
-
         if (commentDTO.getParentId() == null || commentDTO.getParentId() == 0) {
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }
@@ -504,6 +511,105 @@ public class CommentService {
             // 创建通知
             createNotify(comment, question.getCreator(), userDTO.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
         }
+        if (commentDTO.getType() == CommentTypeEnum.TALK.getType()) {
+            // 回复问题
+            Talk talk = new Talk();
+            talk.setId(commentDTO.getParentId());
+            talk.setCommentCount(1);
+            talk.setGmtLatestComment(System.currentTimeMillis());
+            talk = talkService.updateExt(talk,null);
+            if(talk == null)
+                throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
+
+            //Question question = updateQuestionAfterComment(commentDTO.getParentId());
+            //comment.setCommentCount(0);
+            BeanUtils.copyProperties(commentDTO,comment);
+            commentMapper.insert(comment);
+            // 创建通知
+            createNotify(comment, talk.getCreator(), userDTO.getName(), "点击去看看吧~", NotificationTypeEnum.REPLY_TALK, talk.getId());
+        }
+        if (commentDTO.getType() == CommentTypeEnum.TALK_COMMENT.getType()) {
+            // 回复说说的评论
+            // 回复的评论
+            Comment dbComment = commentMapper.selectByPrimaryKey(commentDTO.getParentId());
+            if (dbComment == null) {
+                throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
+            }
+            TalkQueryDTO talkQueryDTO = new TalkQueryDTO();
+            talkQueryDTO.setId(dbComment.getParentId());
+            talkQueryDTO.convert();
+            PaginationDTO paginationDTO = talkService.list(talkQueryDTO, null);
+            if(paginationDTO.getTotalCount()!=1)
+                throw new CustomizeException(CustomizeErrorCode.TALK_NOT_FOUND);
+            //TalkVO talkVO = (TalkVO)paginationDTO.getData().get(0);
+            Talk talk = new Talk();
+            //BeanUtils.copyProperties(talkVO,talk);
+            //System.out.println("commentDTO.getParentId():"+commentDTO.getParentId());
+            talk.setId(dbComment.getParentId());
+            talk.setCommentCount(1);
+            talk.setGmtLatestComment(System.currentTimeMillis());
+            talk = talkService.updateExt(talk,null);
+            //System.out.println("talk:"+talk);
+            // 获取回复的说说
+            //Talk question = updateQuestionAfterComment(dbComment.getParentId());
+            BeanUtils.copyProperties(commentDTO,comment);
+            comment.setType(2);//设回2方便读取
+            commentMapper.insert(comment);
+
+            // 增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(comment.getParentId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.incCommentCount(parentComment);
+            parentComment = commentMapper.selectByPrimaryKey(comment.getParentId());
+            //System.out.println("parentComment:"+parentComment);
+            // 创建通知
+            createNotify(comment, dbComment.getCommentator(), userDTO.getName(), parentComment.getContent(), NotificationTypeEnum.REPLY_TALK_COMMENT, talk.getId());
+        }
+        if (commentDTO.getType() == CommentTypeEnum.TALK_SUB_COMMENT.getType()) {
+            // 回复子评论
+            // 获取回复的子评论
+            Comment dbComment = commentMapper.selectByPrimaryKey(commentDTO.getParentId());
+            if (dbComment == null) {
+                throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
+            }
+
+            // 获取回复的评论
+            Comment dbComment2 = commentMapper.selectByPrimaryKey(dbComment.getParentId());
+            if (dbComment2 == null) {
+                throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
+            }
+            // 获取回复的说说
+            TalkQueryDTO talkQueryDTO = new TalkQueryDTO();
+            talkQueryDTO.setId(dbComment2.getParentId());
+            talkQueryDTO.convert();
+            PaginationDTO paginationDTO = talkService.list(talkQueryDTO, null);
+            if(paginationDTO.getTotalCount()!=1)
+                throw new CustomizeException(CustomizeErrorCode.TALK_NOT_FOUND);
+            Talk talk = new Talk();
+            talk.setId(dbComment2.getParentId());
+            talk.setCommentCount(1);
+            talk.setGmtLatestComment(System.currentTimeMillis());
+            talk = talkService.updateExt(talk,null);
+            BeanUtils.copyProperties(commentDTO,comment);
+            // Comment insertComment  = comment;
+            comment.setParentId(dbComment.getParentId());//设置回复评论方便读取
+            comment.setType(2);//设回2方便读取
+            //insertComment.setCommentCount(0);
+            commentMapper.insert(comment);
+
+            // 增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(dbComment2.getId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.incCommentCount(parentComment);
+            //parentComment = commentMapper.selectByPrimaryKey(dbComment2.getId());
+
+            // 创建通知
+            createNotify(comment, dbComment.getCommentator(), userDTO.getName(), dbComment.getContent(), NotificationTypeEnum.REPLY_TALK_COMMENT, talk.getId());
+        }
+
+/*
         if(userDTO.getVipRank()!=0){//VIP积分策略，可自行修改，这里简单处理
             score1CommentInc=score1CommentInc*2;
             score2CommentInc=score2CommentInc*2;
@@ -517,7 +623,7 @@ public class CommentService {
         userAccountExtMapper.incScore(userAccount);
         updateUserAccoundByUserId(commentDTO.getCommentator());
         userAccount=null;
-
+*/
 
     }
 }

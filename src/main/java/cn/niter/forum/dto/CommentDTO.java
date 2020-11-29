@@ -1,6 +1,5 @@
 package cn.niter.forum.dto;
 
-import cn.niter.forum.model.UserAccount;
 import lombok.Data;
 
 @Data
@@ -16,6 +15,6 @@ public class CommentDTO {
     private Integer commentCount = 0;
     private String content;
     private UserDTO user;
-    private UserAccount userAccount;
+    //private UserAccount userAccount;
 
 }

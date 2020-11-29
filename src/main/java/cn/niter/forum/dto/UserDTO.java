@@ -9,4 +9,5 @@ public class UserDTO {
     private String avatarUrl;
     private Integer vipRank;
     private Integer groupId;
+    private String groupStr;
 }

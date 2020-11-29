@@ -3,7 +3,10 @@ package cn.niter.forum.enums;
 public enum CommentTypeEnum {
     QUESTION(1),
     COMMENT(2),
-    SUB_COMMENT(3);
+    SUB_COMMENT(3),
+    TALK(11),
+    TALK_COMMENT(12),
+    TALK_SUB_COMMENT(13);
     private Integer type;
 
 

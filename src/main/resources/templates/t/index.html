@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta name="baidu-site-verification" th:content="${@environment.getProperty('baidu.site.verification')}"  />
-  <meta name="sogou_site_verification" th:content="${@environment.getProperty('sogou.site.verification')}"/>
-  <th:block th:insert="~{common/header :: head}"></th:block>
-  <link rel="stylesheet" href="/css/community.css">
-  <link rel="stylesheet" href="/css/t-global.css">
+    <meta name="baidu-site-verification" th:content="${@environment.getProperty('baidu.site.verification')}"/>
+    <meta name="sogou_site_verification" th:content="${@environment.getProperty('sogou.site.verification')}"/>
+    <th:block th:insert="~{common/header :: head}"></th:block>
+    <script src="/js/xss.min.js?v=1.5" type="application/javascript"></script>
+    <link rel="stylesheet" href="/css/community.css">
+    <link rel="stylesheet" href="/css/t-global.css">
 
     <title th:text="${@environment.getProperty('site.main.title')}"></title>
 </head>
@@ -13,221 +14,469 @@
 
 <div th:insert="~{common/header :: nav}"></div>
 
-<div th:insert="~{common/header :: sub_nav}"></div>
-
+<!--div th:insert="~{common/header :: sub_nav}"></div-->
 
 
 <div class="layui-container">
-  <div class="layui-row layui-col-space15">
-    <div class="layui-col-md8">
-        <div class="fly-panel">
-            <div class="fly-panel-title fly-filter">
-                <a>置顶</a>
-                <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md8">
+
+
+            <div class="fly-panel" id="talk_panel">
+                <div class="fly-panel-title">
+                    我要说一说
+                    <!--button class="layui-btn" style="float: right;margin-top: 10px" onclick="addTalk()">发布</button-->
+                    <button id="addTalkBtn" class="layui-btn" style="float: right;margin-top: 10px">发布</button>
+
+                    <!--a class="layui-badge layui-bg-green" onclick="addTalk()">发布</a-->
+                </div>
+                <div class="fly-panel-main layui-form layui-form-pane">
+                    <div class="layui-form-text">
+                        <a name="comment"></a>
+                        <div class="layui-input-block">
+                            <textarea id="talk_content" name="content" required lay-verify="required"
+                                      placeholder="请输入内容" class="layui-textarea talk-editor"
+                                      style="height: 150px;"></textarea>
+                        </div>
+                    </div>
+                    <input type="hidden" id="images_str" name="images_str" class="upload_image_url" value="">
+                    <input type="hidden" id="video_str" name="video_str" class="upload_video_url" value="">
+                    <!--div id="addTalkBtn" style="width: 100px;height: 36px;">
+                        <div class="vaptcha-init-main">
+                            <div class="vaptcha-init-loading">
+                                <a href="/" target="_blank">
+                                    <img src="https://r.vaptcha.com/public/img/vaptcha-loading.gif" />
+                                </a>
+                                <span class="vaptcha-text">Vaptcha启动中...</span>
+                            </div>
+                        </div>
+                    </div-->
+                </div>
             </div>
-            <ul class="fly-list">
-                <li th:each="question : ${topQuestions}">
-                    <a th:href="${'/user/'+question.user.id}" class="fly-avatar niter-avatar">
-                        <img th:src="${question.user.avatarUrl}"
-                             th:alt="${question.user.name}">
-                    </a>
-                    <h2>
-                        <a class="layui-badge" th:if="${question.column2==1}">提问</a>
-                        <a class="layui-badge" th:if="${question.column2==2}">分享</a>
-                        <a class="layui-badge" th:if="${question.column2==3}">建议</a>
-                        <a class="layui-badge" th:if="${question.column2==4}">讨论</a>
-                        <a class="layui-badge layui-bg-green" th:if="${question.column2==5}">公告</a>
-                        <a class="layui-badge" th:if="${question.column2==6}">动态</a>
-                        <a class="layui-badge" th:if="${question.column2==9}">其它</a>
-                        <a th:if="${question.permission==10}" class="fly-list-like layui-hide-xs" title="会员尊享"><i class="layui-icon">&#xe735</i></a>
-                        <a th:href="@{'/p/'+ ${question.id}}" th:text="${question.title}" th:title="${question.title}" target="_blank" th:style="${question.permission==10? 'color:red':''}"></a>
-                        <a th:if="${question.viewCount>100}" class="fly-list-like layui-hide-xs" title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
-                    </h2>
-                    <div class="fly-list-info">
-                        <a th:href="${'/user/'+question.user.id}" link target="_blank">
-                            <i th:if="${question.userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
-                            <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
-                            <i class="layui-badge fly-badge-vip layui-bg-gray layui-hide-xs" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
-                        </a>
-                        <span th:text="${question.gmtLatestCommentStr}"></span>
 
-                        <span class="fly-list-kiss layui-hide-xs" title="浏览"><i class="iconfont icon-kiss"></i><span th:text="${question.viewCount}"></span></span>
-                        <span class="fly-list-like layui-hide-xs" title="收藏"><i class="layui-icon">&#xe600;</i><span th:text="${question.LikeCount}"></span></span>
-                        <!--span class="layui-badge fly-badge-accept layui-hide-xs">已结</span-->
-                        <span class="fly-list-nums" >
-                <i class="iconfont icon-pinglun1" title="回复" ></i> <span th:text="${question.commentCount}"></span>
-              </span>
-                    </div>
-                    <div class="fly-list-badge">
 
-                        <span th:if="${question.status==2||question.status==3}" class="layui-badge layui-bg-orange">置顶</span>
-                    </div>
-                </li>
+            <div class="fly-panel" style="margin-bottom: 0;">
 
-            </ul>
-        </div>
-
-      <div class="fly-panel" style="margin-bottom: 0;">
-        
-        <div class="fly-panel-title fly-filter">
-          <a th:href="@{/t/(sort='new',search=${search},tag=${tag},column=${column})}" th:class="${sort == 'new' || sort == null ? 'layui-this':''}">综合</a>
-          <span class="fly-mid"></span>
-          <a th:class="${sort == 'hot7' ? 'layui-this':''}" th:href="@{/t/(sort='hot7',search=${search},tag=${tag},column=${column})}">周榜</a>
-          <span class="fly-mid"></span>
-          <a th:class="${sort == 'hot30' ? 'layui-this':''}" th:href="@{/t/(sort='hot30',search=${search},tag=${tag},column=${column})}">月榜</a>
-          <span class="fly-mid"></span>
-          <a th:class="${sort == 'good' ? 'layui-this':''}" th:href="@{/t/(sort='good',search=${search},tag=${tag},column=${column})}">精华</a>
-          <span class="fly-filter-right">
-            <a th:href="@{/(sort=${sort},search=${search},tag=${tag},column=${column})}"><i class="layui-icon">&#xe649;</i>楼层模式</a>
+                <!--div class="fly-panel-title fly-filter">
+                    <a th:href="@{/t/(sort='new',search=${search},tag=${tag},column=${column})}"
+                       th:class="${sort == 'new' || sort == null ? 'layui-this':''}">综合</a>
+                    <span class="fly-mid"></span>
+                    <a th:class="${sort == 'hot7' ? 'layui-this':''}"
+                       th:href="@{/t/(sort='hot7',search=${search},tag=${tag},column=${column})}">周榜</a>
+                    <span class="fly-mid"></span>
+                    <a th:class="${sort == 'hot30' ? 'layui-this':''}"
+                       th:href="@{/t/(sort='hot30',search=${search},tag=${tag},column=${column})}">月榜</a>
+                    <span class="fly-mid"></span>
+                    <a th:class="${sort == 'good' ? 'layui-this':''}"
+                       th:href="@{/t/(sort='good',search=${search},tag=${tag},column=${column})}">精华</a>
+                    <span class="fly-filter-right">
+            <a th:href="@{/(sort=${sort},search=${search},tag=${tag},column=${column})}"><i
+                    class="layui-icon">&#xe649;</i>楼层模式</a>
             <span class="fly-mid layui-hide-xs"></span>
-            <a th:href="@{/t/(sort='new',search=${search},tag=${tag},column=${column})}" th:class="${sort == 'new' || sort == null ? 'layui-this layui-hide-xs':'layui-hide-xs'}">按最新</a>
+            <a th:href="@{/t/(sort='new',search=${search},tag=${tag},column=${column})}"
+               th:class="${sort == 'new' || sort == null ? 'layui-this layui-hide-xs':'layui-hide-xs'}">按最新</a>
             <span class="fly-mid layui-hide-xs"></span>
-            <a th:class="${sort == 'no' ? 'layui-this layui-hide-xs':'layui-hide-xs'}" th:href="@{/t/(sort='no',search=${search},tag=${tag},column=${column})}">抢沙发</a>
+            <a th:class="${sort == 'no' ? 'layui-this layui-hide-xs':'layui-hide-xs'}"
+               th:href="@{/t/(sort='no',search=${search},tag=${tag},column=${column})}">抢沙发</a>
           </span>
+                </div-->
+                <!--
+                        <ul class="t-list" id="t-index">
+                          <li th:each="question : ${pagination.data}">
+                           <div th:if="${question.status==0||question.status==1}">
+                            <a th:href="${'/user/'+question.user.id}" class="fly-avatar niter-avatar">
+                              <img th:src="${question.user.avatarUrl}"
+                                   th:alt="${question.user.name}">
+                            </a>
+                            <div class="fly-list-info">
+                                <a th:href="${'/user/'+question.user.id}" link target="_blank">
+                                    <i th:if="${question.userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
+                                    <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
+                                    <i class="layui-badge fly-badge-vip layui-bg-gray layui-hide-xs" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
+                                </a>
+                            </div>
+                            <div class="fly-list-info">
+                                   <span th:text="${#dates.format(question.gmtLatestComment,'yyyy-MM-dd HH:mm')}"></span>
+                               </div>
+                               <a th:if="${question.permission==10}" class="fly-list-like layui-hide-xs" title="会员尊享"><i class="layui-icon">&#xe735</i></a>
+                               <a th:href="@{'/p/'+ ${question.id}}" th:text="${question.title}" th:title="${question.title}" th:style="${question.permission==10? 'font-weight: bold;color:red':'font-weight: bold;'}"></a>
+                               <a th:if="${question.viewCount>100}" class="fly-list-like layui-hide-xs" title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
+                               <p>SpringBoot框架。</p>
+
+                            <div class="fly-list-badge">
+                                <a th:if="${question.permission==10}" class="fly-list-like " title="会员尊享"><i class="layui-icon">&#xe735</i></a>
+                                <a th:if="${question.viewCount>100}" class="fly-list-like " title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
+                                <span th:if="${question.status==1||question.status==3}" class="layui-badge layui-bg-red" >精帖</span>
+                            </div>
+                           </div>
+                          </li>
+                        </ul>
+                -->
+                <ul class="t-list" id="t-index2">
+                </ul>
+
+            </div>
         </div>
-<!--
-        <ul class="t-list" id="t-index">
-          <li th:each="question : ${pagination.data}">
-           <div th:if="${question.status==0||question.status==1}">
-            <a th:href="${'/user/'+question.user.id}" class="fly-avatar niter-avatar">
-              <img th:src="${question.user.avatarUrl}"
-                   th:alt="${question.user.name}">
-            </a>
-            <div class="fly-list-info">
-                <a th:href="${'/user/'+question.user.id}" link target="_blank">
-                    <i th:if="${question.userAccount.vipRank==1}" class="layui-icon fly-list-kiss" title="红砖会员等级：LV1">&#xe735</i>
-                    <cite th:class="${question.userAccount.vipRank==1? 'fly-list-kiss':''}" th:text="${question.user.name}"></cite>
-                    <i class="layui-badge fly-badge-vip layui-bg-gray layui-hide-xs" th:text="${@environment.getProperty('user.group.r'+question.userAccount.groupId)}"></i>
-                </a>
-            </div>
-            <div class="fly-list-info">
-                   <span th:text="${#dates.format(question.gmtLatestComment,'yyyy-MM-dd HH:mm')}"></span>
-               </div>
-               <a th:if="${question.permission==10}" class="fly-list-like layui-hide-xs" title="会员尊享"><i class="layui-icon">&#xe735</i></a>
-               <a th:href="@{'/p/'+ ${question.id}}" th:text="${question.title}" th:title="${question.title}" th:style="${question.permission==10? 'font-weight: bold;color:red':'font-weight: bold;'}"></a>
-               <a th:if="${question.viewCount>100}" class="fly-list-like layui-hide-xs" title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
-               <p>SpringBoot框架。</p>
-
-            <div class="fly-list-badge">
-                <a th:if="${question.permission==10}" class="fly-list-like " title="会员尊享"><i class="layui-icon">&#xe735</i></a>
-                <a th:if="${question.viewCount>100}" class="fly-list-like " title="烫烫烫"><i  class="layui-icon" style="font-size: 20px">&#xe756;</i></a>
-                <span th:if="${question.status==1||question.status==3}" class="layui-badge layui-bg-red" >精帖</span>
-            </div>
-           </div>
-          </li>
-        </ul>
--->
-        <ul class="t-list" id="t-index2">
-          </ul>
-
-      </div>
+        <th:block th:insert="~{common/sider :: t_index}"></th:block>
     </div>
-      <th:block th:insert="~{common/sider :: index}"></th:block>
-  </div>
 </div>
 
 
 <!--script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_30088308'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "w.cnzz.com/c.php%3Fid%3D30088308' type='text/javascript'%3E%3C/script%3E"));</script-->
 <th:block th:insert="~{common/footer :: foot}"></th:block>
-<script th:inline="javascript">
-  layui.cache.page = '';
-  layui.cache.user = {
-    username: '匿名用户'
-    ,uid: -1
-    ,avatar: '/images/avatar/00.jpg'
-    ,experience: 83
-    ,sex: '男'
-  };
-  layui.config({
-    version: "3.0.0"
-    ,base: '/mods/'  //这里实际使用时，建议改成绝对路径
-  }).extend({
-    fly: 'index'
-  }).use(['fly','flow','layer'], function() {
+<script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+<script src="https://v.vaptcha.com/v3.js"></script>
+<script>
+    userIp = returnCitySN["cip"];
+    vaptcha({
+        vid: '[[${vaptcha_vid}]]', // 验证单元id
+        type: "invisible", // 显示类型 隐藏式
+        scene: 6, // 场景值 默认0
+        offline_server: '/validateOffline', //离线模式服务端地址，若尚未配置离线模式，请填写任意地址即可。
+        //可选参数
+        //lang: 'auto', // 语言 默认auto,可选值auto,zh-CN,en,zh-TW,jp
+        //https: true, // 使用https 默认 true
+    }).then(function (vaptchaObj) {
+        obj = vaptchaObj; //将VAPTCHA验证实例保存到局部变量中
+        //获取token的方式一：
+        //vaptchaObj.renderTokenInput('.login-form')//以form的方式提交数据时，使用此函数向表单添加token值
+        //获取token的方式二：
+        vaptchaObj.listen("pass", function () {
+            var talk_content = $("#talk_content").val();
+            if (isEmpty(talk_content)) {
+                swal({
+                    title: "发布失败",
+                    text: "内容不能为空，说点什么吧",
+                    icon: "error",
+                    button: "确认",
+                });
+                vaptchaObj.reset(); //重置验证码
+                return;
+            }
+            if (talk_content.length>1023) {
+                swal({
+                    title: "发布失败",
+                    text: "您说的太多了，建议文本长度不超过1000，当前为："+talk_content.length,
+                    icon: "error",
+                    button: "确认",
+                });
+                vaptchaObj.reset(); //重置验证码
+                return;
+            }
+            token = vaptchaObj.getToken();
+            // 验证成功进行后续操作
+            $.ajax({
+                type: "post",
+                url: "/validate",
+                ContentType: "application/json",
+                CacheControl: "no-cache",
+                data: {
+                    scene: 6,
+                    token: token,
+                    ip: userIp
+                },
+                //  dataType: "json",
+                success: function (data) {
+                    if (data.success == 1) {
+                        //成功
+                        addTalk(userIp, token);
+                        //    token = vaptchaObj.getToken();
+                        //    console.log("token:"+token);
+                    } else if (data.success == 0) {
+                        swal({
+                            title: "" + data.msg,
+                            text: "您未能通过我们的第二次智能检测，请稍后再试或联系管理员",
+                            icon: "error",
+                            button: "确认",
+                        });
+                        //vaptchaObj.reset();
+                    }
+                },
+                error: function (msg) {
+                    console.log(msg)
+                }
+            })
 
-      var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
-      var flow = layui.flow;
-      var layer = layui.layer;
-      //var page=[[${page}]];
-      flow.load({
-          elem: '#t-index2' //指定列表容器
-          ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
-              if([[${tag}]]!=null)
-              var tag = [[${tag}]];
-              var sort = [[${sort}]];
-              var column = [[${column}]];
-              var search = [[${search}]];
-             // alert(tag);
-              var lis = [];
-              //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
-             $.get('/t/list?page='+page+'&tag='+tag+'&sort='+sort+'&search='+search+'&column='+column, function(res){
-                  //假设你的列表返回在data集合中
-                  layui.each(res.questions, function(index, item){
-                      var str="          <li>" +
-                          "           <div>" +
-                          "            <a href=\"/user/"+item.user.id+"\" class=\"fly-avatar niter-avatar\">\n" +
-                          "              <img src=\""+item.user.avatarUrl+"\"\n" +
-                          "                   alt=\""+item.user.name+"\">\n" +
-                          "            </a>\n" +
-                          "            <div class=\"fly-list-info\">\n" +
-                          "                <a href=\"/user/"+item.user.id+" \" link target=\"_blank\">\n";
-                      if(item.userAccount.vipRank==1)//为vip，显示会员图标
-                          str = str + " <i class=\"layui-icon fly-list-kiss\" title=\"红砖会员等级：LV1\">&#xe735</i>\n";
-                          str = str + " <cite class=\"";
-                      if(item.userAccount.vipRank==1)//为vip，昵称红名
-                          str = str +"fly-list-kiss"+"\">"+item.user.name+"</cite>";
-                      else str = str +"\">"+item.user.name+"</cite>";
-                          str = str +
-                          "       <i class=\"layui-badge fly-badge-vip layui-bg-gray layui-hide-xs\" >"+item.userGroupName+"</i>\n" +
-                          "                </a><div class=\"t-list-badge\"><span class=\"layui-badge layui-bg-gray\" style='cursor: pointer' onclick=\"javascript:window.open('/p/"+item.id+"')\">详情</span>";
-                      if(item.status==1||item.status==3)
-                          str = str +" <span class=\"layui-badge layui-bg-red\" >精帖</span>";
-                          str = str + "            </div></div>\n" +
-                          "            <div class=\"fly-list-info\">\n" +
-                          "                   <span>"+item.gmtLatestCommentStr+"</span>\n" +
-                          "                <span class=\"fly-list-nums\" >\n" +
-                              "                <i class=\"iconfont layui-hide-xs\" title=\"浏览\" >&#xe60b;</i> <span class=\"layui-hide-xs\">"+item.viewCount+"</span>\n" +
-                              "                <i class=\"layui-icon\" title=\"收藏\">&#xe600;</i> <span>"+item.likeCount+"</span>\n" +
-                              "                <i class=\"iconfont icon-pinglun1\" title=\"回复\" ></i> <span>"+item.commentCount+"</span>\n" +
-                              "                </span>"+
-                          "               </div><div class='t-photos'>" ;
-                      if(item.permission==10)//会员专享贴，会员图标+红色标题
-                          str = str +" <a class=\"fly-list-like layui-hide-xs\" title=\"会员尊享\"><i class=\"layui-icon\">&#xe735</i></a>\n"
-                                    +"    <a target='_blank' href=\"/p/"+item.id+"\" title=\""+item.title+"\" style=\"font-weight: bold;font-size:15px;color:red\">"+item.title+"</a>\n";
-                       else  str = str+"<a target='_blank' href=\"/p/"+item.id+"\" title=\""+item.title+"\" style=\"font-weight: bold;font-size:15px;\">"+item.title+"</a>\n";
-                      if(item.viewCount>100)//浏览数超过1000，热门标识
-                      str = str +" <a class=\"fly-list-like layui-hide-xs\" title=\"烫烫烫\"><i  class=\"layui-icon\" style=\"font-size: 20px\">&#xe756;</i></a>\n";
-                      if(item.permission==0)
-                          str = str +"<p>"+item.shortDescription+"</p>\n" ;
-                      else if(item.isVisible==1)//权限控制，没有权限的用户不显示页面
-                          str = str +"<p>"+item.shortDescription+"</p>\n" ;
-                      str = str+"</div> ";
-                      str = str +" </div>\n" +
-                          "          </li>";
-                      if(item.status==0||item.status==1) lis.push(str);
-                  });
-
-                  //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
-                  //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
-                  next(lis.join(''), page < res.totalPage);
-              });
-              /*lis.push('<li>'+ 'item.title' +'</li>');
-              next(lis.join(''), 1 < 2);*/
-          }
-      });
-
-      $('body').on('click', '.t-photos img', function(){
-          //window.open(this.src);
-          layer.photos({
-              photos: {
-                  "data": [{
-                      "src": this.src
-                  }]},
-              anim:1
-          });
-      });
-
-  });
+        });
+        //关闭验证弹窗时触发
+        vaptchaObj.listen("close", function () {
+            //验证弹窗关闭触发
+            swal({
+                title: "哎哟...",
+                text: "您关闭了验证哦",
+                icon: "error",
+                button: "确认",
+            });
+        });
+    });
+    //VAPTCHA实例初始化完成后，等到用户点击登录按钮时执行validate()方法
+    $("#addTalkBtn").on("click", function () {
+        obj.validate();
+    });
 </script>
+<script th:inline="javascript">
+    layui.cache.page = '';
+    layui.cache.user = {
+        username: '匿名用户'
+        , uid: -1
+        , avatar: '/images/avatar/00.jpg'
+        , experience: 83
+        , sex: '男'
+    };
+    layui.config({
+        version: "3.0.0"
+        , base: '/mods/'  //这里实际使用时，建议改成绝对路径
+    }).extend({
+        fly: 't_index'
+    }).use(['fly', 'flow', 'layer'], function () {
+
+        var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+        var flow = layui.flow;
+        var layer = layui.layer;
+        var fly = layui.fly;
+        //var page=[[${page}]];
+        flow.load({
+            elem: '#t-index2' //指定列表容器
+            // ,isAuto:false//懒加载
+            , end: "咱可是有底线滴~"//底部文字
+            , done: function (page, next) { //到达临界点（默认滚动触发），触发下一页
+                /*  if([[${tag}]]!=null)
+                  var tag = [[${tag}]];
+                  var sort = [[${sort}]];
+                  var column = [[${column}]];
+                  var search = [[${search}]];*/
+                // alert(tag);
+                var lis = [];
+                //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                $.ajax({
+                    type: "GET",
+                    url: "/api/talk/list",
+                    contentType: 'application/json',
+                    data: {
+                        "page": page
+                        ,"sort":"gmt_latest_comment"
+                    },
+                    success: function (response) {
+                        if (response.code == 200) {
+                            /* if(page==1){
+                                 var comment_count = $("#comment_count");
+                                 comment_count.html(response.data.totalCount);
+                             }*/
+                            layui.each(response.data.data, function (index, item) {
+                                var str = "          <li>" +
+                                    "           <div>" +
+                                    "            <a href=\"/user/" + item.user.id + "\" class=\"fly-avatar niter-avatar\">\n" +
+                                    "              <img src=\"" + item.user.avatarUrl + "\"\n" +
+                                    "                   alt=\"" + item.user.name + "\">\n" +
+                                    "            </a>\n" +
+                                    "            <div class=\"fly-list-info\">\n" +
+                                    "                <a href=\"/user/" + item.user.id + " \" link target=\"_blank\">\n";
+                                if (item.user.vipRank == 1)//为vip，显示会员图标
+                                    str = str + " <i class=\"layui-icon fly-list-kiss\" title=\"红砖会员等级：LV1\">&#xe735</i>\n";
+                                str = str + " <cite class=\"";
+                                if (item.user.vipRank == 1)//为vip，昵称红名
+                                    str = str + "fly-list-kiss" + "\">" + item.user.name + "</cite>";
+                                else str = str + "\">" + item.user.name + "</cite>";
+                                str = str +
+                                    "       <i class=\"layui-badge fly-badge-vip layui-bg-gray layui-hide-xs\" >" + item.userGroupStr + "</i>\n" +
+                                    "                </a><div class=\"t-list-badge\">";
+                                if (item.status == 1 || item.status == 3)
+                                    str = str + " <span class=\"layui-badge layui-bg-red\" >精帖</span>";
+                                str = str + "<span class=\"layui-badge layui-bg-gray\" style='cursor: pointer' onclick=\"javascript:window.open('/t/" + item.id + "')\">详情</span>   </div></div>\n" +
+                                    "            <div class=\"fly-list-info\">\n" +
+                                    "                   <span>" + item.gmtLatestCommentStr + "</span>\n" +
+                                    "                <span class=\"fly-list-nums\" >\n" +
+                                    "                <i class=\"iconfont layui-hide-xs\" title=\"浏览\" >&#xe60b;</i> <span class=\"layui-hide-xs\">" + item.viewCount + "</span>\n" +
+                                    "                <i class=\"layui-icon\" title=\"收藏\">&#xe600;</i> <span>" + item.likeCount + "</span>\n" +
+                                    "                <i class=\"iconfont icon-pinglun1\" title=\"回复\" ></i> <span>" + item.commentCount + "</span>\n" +
+                                    "                </span>" +
+                                    "               </div><div  >";
+                                if (!isEmpty(item.title)) {
+                                    if (item.permission == 10)//会员专享贴，会员图标+红色标题
+                                        str = str + " <a class=\"fly-list-like layui-hide-xs\" title=\"会员尊享\"><i class=\"layui-icon\">&#xe735</i></a>\n"
+                                            + "    <a target='_blank' href=\"/p/" + item.id + "\" title=\"" + item.title + "\" style=\"font-weight: bold;font-size:15px;color:red\">" + item.title + "</a>\n";
+                                    else str = str + "<a target='_blank' href=\"/p/" + item.id + "\" title=\"" + item.title + "\" style=\"font-weight: bold;font-size:15px;\">" + item.title + "</a>\n";
+                                }
+                                if (item.viewCount > 100)//浏览数超过1000，热门标识
+                                    str = str + " <a class=\"fly-list-like layui-hide-xs\" title=\"烫烫烫\"><i  class=\"layui-icon\" style=\"font-size: 20px\">&#xe756;</i></a>\n";
+                                if (item.permission == 0)
+                                    str = str + "<div class='talk-content t-detail-body-" + page + "'>" + item.description + "</div>\n";
+                                else if (item.isVisible == 1)//权限控制，没有权限的用户不显示页面
+                                    str = str + "<p>" + item.description + "</p>\n";
+
+                                if (!isEmpty(item.imageUrls)) {
+                                    str = str + "<div id='t-photos-" + item.id + "' class=\"t-photos\">";
+                                    for(j = 0,len=item.imageUrls.length; j < len&&j<9; j++) {
+                                        str = str + "<img data-id=" + item.id + "  layer-src=\"" + item.imageUrls[j] + "/watermark_text\" src=\"" + item.imageUrls[j] + "/t_small\">";
+                                    }
+                                    str = str + "</div> ";
+                                }
+                                str = str + " </div></div>" +
+                                    "          </li>";
+                                if (item.status == 0 || item.status == 1) lis.push(str);
+                            });
+
+                            //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                            //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                            next(lis.join(''), page < response.data.totalPage);
+
+
+                        } else {
+                            var str = "<div class=\"fly-none\" style=\"min-height: 50px; padding:30px 0; height:auto;\"><span>出错啦，请联系管理员</span></div>";
+                            lis.push(str);
+                        }
+                        //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
+                        $('.t-detail-body-' + page).each(function () {
+                            var othis = $(this), html = othis.html();
+                            othis.html(filterXSS(fly.content(html)));
+                            // othis.html(fly.content(html));
+                        });
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        var str = "<div class=\"fly-none\" style=\"min-height: 50px; padding:30px 0; height:auto;\"><span>错误" + xmlHttpRequest.status + "，请联系管理员</span></div>";
+                        lis.push(str);
+                        next(lis.join(''), 1 < 1);
+                    },
+                    dataType: "json"
+                });
+
+            }
+        });
+
+        $('body').on('click', '.t-photos img', function () {
+            layer.photos({
+                photos: '#t-photos-' + $(this).attr("data-id")
+                , anim: 1 //0-6的选择，指定弹出图片动画类型，默认随机
+            });
+            this.click();
+        });
+
+
+    });
+
+    /**
+     * 多图清除按钮点击事件
+     */
+    function clearMultipleImgs() {
+        console.log('进来了');
+        $('#upload_image_list').html("");
+        $(".upload_image_url").val('');
+    };
+
+
+    /**
+     * 多图上传的单击删除操作
+     * @param this_img
+     */
+    function delMultipleImgs(this_img) {
+        //获取下标
+        var subscript = $("#upload_image_list img").index(this_img);
+        multiple_images = $('.upload_image_url').val().split(",");
+        //删除图片
+        this_img.remove();
+        //删除数组
+        multiple_images.splice(subscript, 1);
+        $('.upload_image_url').val(multiple_images);
+    };
+
+    function addTalk(userIp, token) {
+        var talk_content = $("#talk_content").val();
+        var images_str = $("#images_str").val();
+        var video_str = $("#video_str").val();
+        console.log(talk_content + images_str);
+        $.ajax({
+            type: "POST",
+            url: "/api/talk/insert",
+            contentType: 'application/json',
+            data: JSON.stringify({
+                "description": talk_content
+                //,"title": targetId
+                //,"tag": 1
+                , "images": images_str
+                , "video": video_str
+                , "type": 1
+                , "ip": userIp
+                , "token": token
+            }),
+            success: function (response) {
+                if (response.code == 200) {
+                    swal({
+                        title: "发布成功!",
+                        text: "点击确认后即可刷新页面!",
+                        icon: "success",
+                        button: "确认",
+                    }).then((value) => {
+                        window.location.reload();
+                });
+
+                } else {
+                    if (response.code == 2003) {
+                        /* var isAccepted = confirm(response.message);
+                         if (isAccepted) {
+                             window.open("https://github.com/login/oauth/authorize?client_id=b6ecb208ce93f679a75a&redirect_uri=http://localhost:8887/callback&scope=user&state=1");
+                             window.localStorage.setItem("closable", true);
+                         }*/
+                        swal({
+                            title: "错误：" + response.code,
+                            text: response.message,
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
+                        }).then((willDelete) => {
+                            if(willDelete) {
+                                window.open("/sso/login");
+                                window.localStorage.setItem("closable", true);
+
+                                var interval = setInterval(function () {
+                                    var loginState = window.localStorage.getItem("loginState");
+                                    if (loginState == "true") {
+                                        window.localStorage.removeItem("loginState");
+                                        //  console.log("0");
+                                        clearInterval(interval);
+                                        // location.reload();
+                                        // $("#comment_content").val(content);
+                                        swal({
+                                            title: "登陆成功!",
+                                            text: "您可以提交回复啦!",
+                                            icon: "success",
+                                            button: "好的",
+                                        });
+
+                                        //$("#navigation").load("#navigation");
+
+                                        return;
+                                    }
+                                    // console.log("1");
+                                    // document.getElementById("comment_content").value=content;
+//do whatever here..
+                                }, 2000);
+
+
+                            } else {
+                                swal({
+                                         title: "已取消登录!",
+                                         text: "取消登陆后，无法成功回复!",
+                                         icon: "error",
+                                         button: "确认",
+                                     });
+                    }
+                    });
+                    } else {
+                        sweetAlert("错误：" + response.code, response.message, "error");
+                    }
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                swal(textStatus, "错误：" + XMLHttpRequest.status, "error");
+            },
+            dataType: "json"
+        });
+
+
+    };
+
+</script>
+
+
 </body>
 </html>

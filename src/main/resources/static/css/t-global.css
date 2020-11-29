@@ -428,6 +428,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
 .home-jieda li p{color:#999;}
 .home-jieda li p span{padding-right:5px;}
 
+.talk-content a{padding:0 5px; color:#4F99CF;}
 /* 我的消息 */
 #LAY-minemsg{min-height:420px;}
 .mine-msg li{position:relative; margin-bottom: 15px; padding: 10px 0 5px; line-height:24px; border-bottom:1px dotted #E9E9E9}
@@ -503,7 +504,7 @@ body .fly-user-main{position: relative; min-height: 600px;}
 .t-list-one .fly-none{min-height: 70px;}
 
 
-.t-photos img{max-width: 100%}
+.t-photos img{width: 30%;margin: 1%}
 .news-photos img{max-width: 33%;max-height: 300px}
 
 

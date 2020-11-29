@@ -29,4 +29,25 @@
     where id = #{id}
     </update>
 
+    <select id="count" parameterType="cn.niter.forum.dto.LikeQueryDTO"
+            resultType="java.lang.Integer">
+        select count(*) from thumb
+        <where>
+            1=1
+            <if test="id != null and id != 0">
+                and id = #{id}
+            </if>
+            <if test="targetId != null and targetId != 0">
+                and target_id = #{targetId}
+            </if>
+            <if test="liker != null and liker != 0">
+                and liker = #{liker}
+            </if>
+
+            <if test="type != null and type != 0">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
 </mapper>
