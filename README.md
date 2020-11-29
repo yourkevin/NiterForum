@@ -4,6 +4,9 @@
  [介绍视频（欢迎留言收藏）](https://www.bilibili.com/video/av93706388 "视频介绍")
  
  [NiterApp（欢迎下载体验）](https://m3w.cn/niter "欢迎下载")。完美适配了NiterForum，支持app端扫码登录！
+ 
+ 尼特社区官方交流群：[955295791](https://jq.qq.com/?_wv=1027&k=5uPXrY2 "欢迎加入")
+
 ## 在线体验
 [https://niter.cn/forum](https://niter.cn/forum "https://niter.cn/")
 
@@ -59,7 +62,7 @@
 #### 更多功能
 1. 搜索
 2. 排序
-3. 聊天室
+3. 说说板块[畅所欲言](https://niter.cn/talk "说说")
 4. 瀑布流模式
 5. 看看板块[定期更新新闻资讯](https://niter.cn/news "看看")
 6. 针对搜索引擎进行优化（SEO）
