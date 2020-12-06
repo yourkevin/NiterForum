@@ -12,14 +12,15 @@
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <link rel="stylesheet" href="/layui/css/layui.css">
   <link rel="stylesheet" href="/css/global.css">
-  <link rel="stylesheet" href="/css/mylay.css?v=1.1">
+  <link rel="stylesheet" href="/css/mylay.css?v=1.36">
   <link rel="stylesheet" href="/css/wap2app.css?v=1.7">
   <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+  <script src="/js/util.js"></script>
   <script src="/js/jquery-3.4.1.min.js"></script>
-  <script src="/js/community.js?v=1.4.6" type="application/javascript"></script>
+  <script src="/js/community.js?v=1.4.22" type="application/javascript"></script>
   <script src="/js/sweetalert.min.js"></script>
-  <script src="/js/plusShare.js?v=1.6" type="text/javascript" charset="utf-8"></script>
-  <script src="/js/wap2app.js?v=1.5.19" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/plusShare.js?v=1.7" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/wap2app.js?v=1.5.20" type="text/javascript" charset="utf-8"></script>
 </th:block>
 
 <div th:fragment="nav" class="fly-header layui-bg-cyan html5plus-hide">
@@ -40,11 +41,12 @@
         <a></a>
         <dl class="layui-nav-child">
           <dd><a href="/news"><i class="layui-icon">&#xe705;</i>看看</a></dd>
-          <dd><a href="/chat"><i class="iconfont icon-jiaoliu"></i>聊聊</a></dd>
+          <dd><a href="/talk"><i class="iconfont icon-jiaoliu"></i>说说</a></dd>
           <dd><a th:href="${@environment.getProperty('site.info.contactQunUrl')}" target="_blank"><i class="layui-icon">&#xe770;</i>官方群</a></dd>
           <!--dd><a href="/dev"><i class="iconfont icon-iconmingxinganli"></i>实验室</a></dd-->
           <dd><a target="_blank" href="https://gitee.com/yourkevin/NiterForum/"><i><img src="/images/gitee120c.png" style="height: 16px"></i>Gitee</a></dd>
           <dd><a target="_blank" href="https://github.com/yourkevin/NiterForum/"><i><img src="/images/github120c.png" style="height: 16px"></i>Github</a></dd>
+          <dd><a target="_blank" href="/doc.html"><i class="layui-icon" style="font-size: 16px; color: #42a0ff;">&#xe655;</i>API文档</a></dd>
           <dd><a target="_blank" href="https://api-1251590924.cos.ap-nanjing.myqcloud.com/qrcode/index.html"><i class="layui-icon" style="font-size: 16px; color: #ffdd11;">&#xe65e;</i>打赏</a></dd>
         </dl>
       </li>
@@ -57,17 +59,21 @@
       <!--li th:class="${'devnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
         <a href="/dev"><i class="iconfont icon-iconmingxinganli"></i>实验室</a>
       </li-->
+      <li th:class="${'talknav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
+        <a href="/talk"><i class="layui-icon">&#xe63a;</i>说说</a>
+      </li>
       <li th:class="${'newsnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
         <a href="/news"><i class="layui-icon">&#xe705;</i>看看</a>
       </li>
-      <li th:class="${'chatnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
-        <a href="/chat"><i class="iconfont icon-jiaoliu"></i>聊聊</a>
-      </li>
+      <!--li th:class="${'chatnav' == navtype}? 'layui-nav-item layui-this' : 'layui-nav-item'">
+        <a href="/chat"><i class="iconfont icon-jiaoliu"></i>留言</a>
+      </li-->
       <li class="layui-nav-item">
         <a href="https://github.com/yourkevin/NiterForum/" target="_blank"><i class="layui-icon">&#xe635;</i>源码</a>
         <dl class="layui-nav-child">
           <dd><a target="_blank" href="https://gitee.com/yourkevin/NiterForum/"><i><img src="/images/gitee120c.png" style="height: 28px"></i>Gitee</a></dd>
           <dd><a target="_blank" href="https://github.com/yourkevin/NiterForum/"><i><img src="/images/github120c.png" style="height: 28px"></i>Github</a></dd>
+          <dd><a target="_blank" href="/doc.html"><i class="layui-icon" style="font-size: 30px; color: #42a0ff;">&#xe655;</i>API文档</a></dd>
           <dd><a target="_blank" href="https://api-1251590924.cos.ap-nanjing.myqcloud.com/qrcode/index.html"><i class="layui-icon" style="font-size: 30px; color: #ffdd11;">&#xe65e;</i>打赏</a></dd>
         </dl>
       </li>
@@ -145,6 +151,7 @@
             <dl class="layui-nav-child">
               <dd><a target="_blank" href="https://gitee.com/yourkevin/NiterForum/"><i><img src="/images/gitee120c.png" style="height: 28px"></i>Gitee</a></dd>
               <dd><a target="_blank" href="https://github.com/yourkevin/NiterForum/"><i><img src="/images/github120c.png" style="height: 28px"></i>Github</a></dd>
+              <dd><a target="_blank" href="/doc.html"><i class="layui-icon" style="font-size: 30px; color: #42a0ff;">&#xe655;</i>API文档</a></dd>
               <dd><a target="_blank" href="https://api-1251590924.cos.ap-nanjing.myqcloud.com/qrcode/index.html"><i class="layui-icon" style="font-size: 30px; color: #ffdd11;">&#xe65e;</i>打赏</a></dd>
             </dl>
           </li>
