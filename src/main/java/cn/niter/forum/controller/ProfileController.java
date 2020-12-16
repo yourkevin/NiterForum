@@ -41,7 +41,7 @@ public class ProfileController {
 
     @Value("${vaptcha.vid}")
     private String vaptcha_vid;
-    @Value("${jiguang.sms.enable}")
+    @Value("${sms.enable}")
     private Integer smsEnable;
 
     @UserLoginToken

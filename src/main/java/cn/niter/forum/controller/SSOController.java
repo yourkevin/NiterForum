@@ -9,7 +9,6 @@ import cn.niter.forum.model.User;
 import cn.niter.forum.model.UserAccount;
 import cn.niter.forum.service.UserAccountService;
 import cn.niter.forum.service.UserService;
-import cn.niter.forum.util.CookieUtils;
 import cn.niter.forum.util.TokenUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ import java.util.Map;
 public class SSOController {
     @Value("${vaptcha.vid}")
     private String vaptcha_vid;
-    @Value("${jiguang.sms.enable}")
+    @Value("${sms.enable}")
     private Integer smsEnable;
     @Autowired
     private AppUserCache appUserCache;
@@ -45,29 +44,6 @@ public class SSOController {
     private UserAccountService userAccountService;
     @Autowired
     private TokenUtils tokenUtils;
-    @Autowired
-    private CookieUtils cookieUtils;
-
-  /*  @ResponseBody//@ResponseBody返回json格式的数据
-    @RequestMapping(value = "/api/sso/login", method = RequestMethod.POST)
-    public Object login(HttpServletRequest request,
-                           @RequestParam("name") String name,
-                           @RequestParam("password") String password,
-                           @RequestParam("type") Integer type,
-                        HttpServletResponse response) {
-        ResultDTO resultDTO = (ResultDTO)userService.login(type,name,password);
-        if(200==resultDTO.getCode()){
-            Cookie cookie = cookieUtils.getCookie("token",""+resultDTO.getData(),86400*3);
-            response.addCookie(cookie);
-        }
-        return resultDTO;
-    }*/
-
-
-
-
-
-
 
     @RequestMapping("/sso/{action}")
     public String aouth(HttpServletRequest request,
@@ -93,6 +69,12 @@ public class SSOController {
             model.addAttribute("section", "register");
             model.addAttribute("sectionName", "注册");
           //  return "/user/reg";
+        }
+        else if("reset".equals(action)){
+            model.addAttribute("initOssType", 2);
+            model.addAttribute("section", "register");
+            model.addAttribute("sectionName", "重置密码");
+            //  return "/user/reg";
         }
         else {
             return "redirect:/forum";

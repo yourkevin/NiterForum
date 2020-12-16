@@ -15,7 +15,7 @@
             <ul class="layui-tab-title">
                 <li th:if="${section=='login'}" onclick="javascript:setType(3)" class="layui-this">密码登录</li>
                 <li onclick="javascript:setType(2)" th:class="${section=='register'?'layui-this':''}" th:text="${'邮箱'+sectionName}"></li>
-                <li th:if="${1==smsEnable}" onclick="javascript:setType(1)" th:text="${'手机'+sectionName}"></li>
+                <li th:if="${0!=smsEnable}" onclick="javascript:setType(1)" th:text="${'手机'+sectionName}"></li>
 
                 <li th:if="${section=='login'}" class="html5plus-hide layui-hide-xs" onclick="javascript:alertQrcode()">扫码登录</li>
             </ul>
@@ -55,7 +55,7 @@
                             </div>
                     </div>
                 </div>
-                <div class="layui-tab-item " th:if="${1==smsEnable}">
+                <div class="layui-tab-item " th:if="${0!=smsEnable}">
                     <div class="layui-form layui-form-pane">
                         <div class="layui-form-item">
                             <label for="phone" class="layui-form-label">手机号</label>
@@ -101,8 +101,8 @@
                 <div class="layui-form-item">
                     <button type="button" class="layui-btn" onclick="login()">提交</button>
                     <span style="padding-left:20px;">
-                    <a th:if="${section == 'login'}" href="/sso/register">尚无账号?点击此处去注册</a>
-                    <a th:if="${section == 'register'}" href="/sso/login">已有账号?点击此处去登陆</a>
+                    <th:block th:if="${section == 'login'}"><a href="/sso/register">尚无账号?去注册</a> | <a href="/sso/reset">忘记密码?去重置</a></th:block>
+                    <a th:if="${section == 'register'}" href="/sso/login">已有账号?去登陆</a>
                 </span>
                 </div>
                 <div class="layui-form-item fly-form-app">
@@ -572,34 +572,6 @@
                     });
                 }
             });
-
-           /* $.getJSON(
-                "/mail/registerOrLoginWithMail",
-                "mail="+mail,
-                function(result){
-                    if(result.code==200){
-                        window.location.href='/registerorLoginWithMailisOk?token='+result.message;
-                    }
-
-                    else   {
-                        swal({
-                            title: "注册/登录失败!",
-                            text: ""+result.message,
-                            icon: "error",
-                            button: "确认",
-                        });
-                    }
-                },
-                "text"//xml,json,text或不写
-            ); */
-       /* }
-        else
-            swal({
-                title: "验证失败!",
-                text: "验证码不匹配,请重新输入！",
-                icon: "error",
-                button: "确认",
-            });*/
     }
 </script>
 <script type="text/javascript">
@@ -644,7 +616,7 @@
             //  console.log(obj2.getToken());
             // var username = $("#username").val();
 //if(phone.length!=11) {sweetAlert("哎哟...", "手机号长度不合法！请重新输入!", "error");return;}
-            $.post('/phone/getPhoneCode', {
+            $.post('/api/sso/phone/getPhoneCode', {
                 phone:phone,
                 token:token,
                 ip:userIp
@@ -695,7 +667,7 @@
             return false;
         }
        // console.log("code:"+verifyPhoneCode+" msg_id:"+msg_id+" phone:"+phone)
-        $.post('/phone/ValidCode', {
+        $.post('/api/sso/phone/ValidCode', {
             msg_id:msg_id,
             code:verifyPhoneCode,
             phone:phone,
@@ -719,31 +691,6 @@
                 });
             }
         });
-
-
-
-
-
-       /* $.getJSON(
-            "/phone/ValidCode",
-            "msg_id=" + msg_id+"&&code="+verifyPhoneCode+"&&phone="+phone+"&&state=2&&password="+pass,//2即登录注册
-            function(result){
-                if(result.code==200){
-                    window.location.href='/registerorLoginWithMailisOk?token='+result.message;
-                }
-
-                else   {
-                    swal({
-                        title: "注册/登录失败!",
-                        text: ""+result.message,
-                        icon: "error",
-                        button: "确认",
-                    });
-                }
-            },
-            "text"//xml,json,text或不写
-        );*/
-
     }
 
 </script>
@@ -753,11 +700,9 @@
         var password = $("#password").val();
         var type=1;//1为手机号，2为邮箱号
         if(password.length<6||password.length>16){
-            swal("修改失败!", "当前密码长度不满足要求!", "warning");
+            swal("登录失败!", "当前密码长度不满足要求!", "warning");
             return false;
         }
-
-
 
         var mailReg = new RegExp("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$");
         if((!mailReg.test(phoneorMail))){//邮箱不合法
@@ -794,6 +739,26 @@
                     }).then((value) => {
                         window.location.href='/forum';
                 });
+                }else if(res.code==2041){
+                    swal({
+                        title: "登录失败!",
+                        text: ""+res.message,
+                        icon: "error",
+                        buttons: {
+                            reset: {
+                                text: "重置密码",
+                                value: "reset",
+                            },
+                            cancel: "再试试"
+                        },
+                        //dangerMode: true,
+                    })
+                        .then((value) => {
+                        if (value=='reset') {
+                        window.location.href='/sso/reset';
+                        }
+                });
+                    //swal("Oh,no!", ""+res.message, "error");
                 }
                 else swal("Oh,no!", ""+res.message, "error");
             },
@@ -801,18 +766,6 @@
                 swal(textStatus, "错误："+XMLHttpRequest.status, "error");
             }
         });
-
-       /* $.post('/api/sso/login', {
-            name: phoneorMail
-            ,password:password
-            ,type:type
-        }, function(res){
-            if(res.code==200) {
-                swal("Good job!", ""+res.message+res.data, "success").then((value) => {
-                    location.reload();});
-            }
-            else swal("Oh,no!", ""+res.message, "error");
-        });*/
     }
 </script>
 </body>
