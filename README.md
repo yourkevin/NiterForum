@@ -7,6 +7,8 @@
  
  尼特社区官方交流群：[955295791](https://jq.qq.com/?_wv=1027&k=5uPXrY2 "欢迎加入")
 
+ 当您下载并使用本程序，意味着您已完整阅读并同意[《NiterForum-中文版授权协议》](/wikis/尼特IT-NiterForum-中文版授权协议 "尼特IT-NiterForum-中文版授权协议")
+
 ## 在线体验
 [https://niter.cn/forum](https://niter.cn/forum "https://niter.cn/")
 
