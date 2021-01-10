@@ -36,7 +36,7 @@ public class LoginUserTasks {
             User user = new User();
             for(Long key : loginUserMap.keySet()){
                 user.setId(key.longValue());
-                user.setGmtModified(System.currentTimeMillis());
+                user.setGmtModified(loginUserMap.get(key));
                 userMapper.updateByPrimaryKeySelective(user);
             }
         }
