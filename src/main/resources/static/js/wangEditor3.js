@@ -1471,7 +1471,7 @@ Link.prototype = {
             checkResult = linkCheck(text, link);
         }
         if (checkResult === true) {
-            editor.cmd.do('insertHTML', '<a href="' + link + '" target="_blank"><img style="height: 12px;" src="https://api.d5.nz/api/favicon/?url=' + link + '">' + text + '</a>');
+            editor.cmd.do('insertHTML', '<a href="' + link + '" target="_blank"><img style="height: 12px;" src="https://api.xinac.net/icon/?url=' + link + '">' + text + '</a>');
         } else {
             alert(checkResult);
         }
