@@ -181,7 +181,7 @@ public class SsoApi {
                     return userService.updateUserPhoneById(id,phone);
                 }
                 if("2".equals(state)){//注册、登录（不需要密码）、重置
-                    ResultDTO resultDTO;
+                    /*ResultDTO resultDTO;
                     if("null".equals(password)){ //登录
                         resultDTO = new ResultDTO();
                         resultDTO.setCode(200);
@@ -189,6 +189,8 @@ public class SsoApi {
                     }else{ // 注册、重置
                         resultDTO = (ResultDTO)userService.registerOrLoginWithPhone(phone,password);
                     }
+                    */
+                    ResultDTO resultDTO = (ResultDTO)userService.registerOrLoginWithPhone(phone,password);
                     if(200==resultDTO.getCode()){
                         Cookie cookie = cookieUtils.getCookie("token",resultDTO.getMessage(),86400*3);
                         response.addCookie(cookie);

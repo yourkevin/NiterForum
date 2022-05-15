@@ -451,9 +451,6 @@
         });  }
     var clipboard = new ClipboardJS('.copyshare', {
         text: function() {
-            //     var con = '我在凯文社区找到一篇好文章《'+document.title+'》，快来围观吧！---'+this.location.href;
-            //alert("进来了"+document.title+this.location.href);
-            //alert(con);
             if(navigator.userAgent.indexOf("Html5Plus") > -1) {
                 //5+ 原生分享
                 myPlusShare();
