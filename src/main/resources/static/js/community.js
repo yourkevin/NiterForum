@@ -43,19 +43,13 @@ function comment2target(targetId, type, content,ip,token) {
 
             } else {
                 if (response.code == 2003) {
-                   /* var isAccepted = confirm(response.message);
-                    if (isAccepted) {
-                        window.open("https://github.com/login/oauth/authorize?client_id=b6ecb208ce93f679a75a&redirect_uri=http://localhost:8887/callback&scope=user&state=1");
-                        window.localStorage.setItem("closable", true);
-                    }*/
                     swal({
                         title: "错误："+response.code,
                         text: response.message,
                         icon: "warning",
                         buttons: true,
                         dangerMode: true,
-                    })
-                        .then((willDelete) => {
+                    }).then((willDelete) => {
                         if (willDelete) {
                             window.open("/sso/login");
                             window.localStorage.setItem("closable", true);
@@ -239,10 +233,10 @@ function like2target(targetId, type){
                         icon: "warning",
                         buttons: true,
                         dangerMode: true,
-                    })
-                        .then((willDelete) => {
+                    }).then((willDelete) => {
                         if (willDelete) {
-                            window.open("https://github.com/login/oauth/authorize?client_id=b6ecb208ce93f679a75a&redirect_uri=" + document.location.origin + "/callback&scope=user&state=1");
+                            window.open("/sso/login");
+                            //window.open("https://github.com/login/oauth/authorize?client_id=b6ecb208ce93f679a75a&redirect_uri=" + document.location.origin + "/callback&scope=user&state=1");
                             window.localStorage.setItem("closable", true);
 
                             var interval = setInterval(function(){
@@ -269,7 +263,6 @@ function like2target(targetId, type){
 //do whatever here..
                             }, 2000);
 
-
                         } else {
                             swal({
                                      title: "已取消登录!",
@@ -293,9 +286,6 @@ function like2target(targetId, type){
                     });
                 }
                 else if (response.code == 2023) {
-                  /*  var thumbicon = $("#questionlikespan-" + targetId);
-                    thumbicon.removeClass("glyphicon-heart-empty");
-                    thumbicon.addClass("glyphicon-heart");*/
                     swal({
                         title: "收藏失败!",
                         text: "请不要重复收藏哦!您可以在帖子管理页面取消收藏",
