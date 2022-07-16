@@ -156,9 +156,6 @@ JDK，Maven
 [码问](http://www.mawen.co/)
 [LayUI](https://fly.layui.com/)
 
-### 使用协议&免责声明
-当您下载并使用本程序，意味着您已完整阅读并同意[《NiterForum-中文版授权协议》](https://gitee.com/yourkevin/NiterForum/wikis/%E5%B0%BC%E7%89%B9IT-NiterForum-%E4%B8%AD%E6%96%87%E7%89%88%E6%8E%88%E6%9D%83%E5%8D%8F%E8%AE%AE "尼特IT-NiterForum-中文版授权协议")
-
 ### 打赏我们
 扫码二维码或者点击下方图片向我们打赏。您的每一份捐赠，对我们都是莫大的鼓励与支持,一块也是爱(* ￣3)(ε￣ *)
 
